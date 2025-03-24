@@ -8,7 +8,8 @@ import {
   AiOutlineSetting,
 } from "react-icons/ai";
 import { CiChat1 } from "react-icons/ci";
-import { MdOutlineAnalytics, MdLogout } from "react-icons/md";
+import { MdOutlineAnalytics, MdLogout, MdOutlineInventory } from "react-icons/md";
+
 import { NavLink } from "react-router-dom";
 import { useContext } from "react";
 import { ThemeContext } from "../App";
@@ -30,7 +31,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
         <div className="imgcontent">
           <img src={logo} />
         </div>
-        <h2>Proyecto</h2>
+        <h2>Spider System</h2>
       </div>
       {linksArray.map(({ icon, label, to }) => (
         <div className="LinkContainer" key={label}>
@@ -82,23 +83,23 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
 //#region Data links
 const linksArray = [
   {
-    label: "Home",
+    label: "Inicio",
     icon: <AiOutlineHome />,
     to: "/",
   },
   {
-    label: "Estadisticas",
+    label: "Sistema de Alertas",
     icon: <MdOutlineAnalytics />,
     to: "/estadisticas",
   },
   {
-    label: "Productos",
+    label: "Analisis Predictivo",
     icon: <CiChat1 />,
     to: "/productos",
   },
   {
-    label: "Diagramas",
-    icon: <MdOutlineAnalytics />,
+    label: "Inventario",
+    icon: <MdOutlineInventory />,
     to: "/diagramas",
   },
   {
