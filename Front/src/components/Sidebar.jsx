@@ -2,31 +2,35 @@ import styled from "styled-components";
 import logo from "../assets/react.svg";
 import { v } from "../styles/Variables";
 import {
-  AiOutlineLeft,
   AiOutlineHome,
   AiOutlineApartment,
   AiOutlineSetting,
 } from "react-icons/ai";
 import { CiChat1 } from "react-icons/ci";
-import { MdOutlineAnalytics, MdLogout, MdOutlineInventory } from "react-icons/md";
+import { MdOutlineAnalytics, MdLogout, MdOutlineInventory, MdOutlineQueryStats } from "react-icons/md";
+import { FiAlertTriangle } from "react-icons/fi";
+import { TbDeviceDesktopAnalytics, TbReportAnalytics } from "react-icons/tb";
+import { RiAdminLine } from "react-icons/ri";
+import { IoCartOutline } from "react-icons/io5";
 
 import { NavLink } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ThemeContext } from "../App";
-export function Sidebar({ sidebarOpen, setSidebarOpen }) {
-  const ModSidebaropen = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
+
+export function Sidebar() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { setTheme, theme } = useContext(ThemeContext);
   const CambiarTheme = () => {
     setTheme((theme) => (theme === "light" ? "dark" : "light"));
   };
 
   return (
-    <Container isOpen={sidebarOpen} themeUse={theme}>
-      <button className="Sidebarbutton" onClick={ModSidebaropen}>
-        <AiOutlineLeft />
-      </button>
+    <Container
+      isOpen={sidebarOpen}
+      themeUse={theme}
+      onMouseEnter={() => setSidebarOpen(true)}
+      onMouseLeave={() => setSidebarOpen(false)}
+    >
       <div className="Logocontent">
         <div className="imgcontent">
           <img src={logo} />
@@ -80,6 +84,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
     </Container>
   );
 }
+
 //#region Data links
 const linksArray = [
   {
@@ -89,23 +94,38 @@ const linksArray = [
   },
   {
     label: "Sistema de Alertas",
-    icon: <MdOutlineAnalytics />,
-    to: "/estadisticas",
+    icon: <FiAlertTriangle />,
+    to: "/sistema_de_alertas",
   },
   {
     label: "Analisis Predictivo",
-    icon: <CiChat1 />,
-    to: "/productos",
+    icon: <TbDeviceDesktopAnalytics />,
+    to: "/analisis_predictivo",
   },
   {
     label: "Inventario",
     icon: <MdOutlineInventory />,
-    to: "/diagramas",
+    to: "/inventario",
   },
   {
-    label: "Reportes",
-    icon: <MdOutlineAnalytics />,
-    to: "/reportes",
+    label: "Analisis de Inventario",
+    icon: <TbReportAnalytics />,
+    to: "/analisis_de_inventario",
+  },
+  {
+    label: "Metricas",
+    icon: <MdOutlineQueryStats />,
+    to: "/metricas",
+  },
+  {
+    label: "Admin",
+    icon: <RiAdminLine />,
+    to: "/admin",
+  },
+  {
+    label: "Compras",
+    icon: <IoCartOutline />,
+    to: "/compras",
   },
 ];
 const secondarylinksArray = [
@@ -128,36 +148,12 @@ const Container = styled.div`
   background: ${(props) => props.theme.bg};
   position: sticky;
   padding-top: 20px;
-  .Sidebarbutton {
-    position: absolute;
-    top: ${v.xxlSpacing};
-    right: -18px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: ${(props) => props.theme.bgtgderecha};
-    box-shadow: 0 0 4px ${(props) => props.theme.bg3},
-      0 0 7px ${(props) => props.theme.bg};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    transform: ${({ isOpen }) => (isOpen ? `initial` : `rotate(180deg)`)};
-    border: none;
-    letter-spacing: inherit;
-    color: inherit;
-    font-size: inherit;
-    text-align: inherit;
-    padding: 0;
-    font-family: inherit;
-    outline: none;
-  }
+  width: ${({ isOpen }) => (isOpen ? '300px' : '80px')}; // Ancho original restaurado
+  transition: width 0.3s;
   .Logocontent {
     display: flex;
     justify-content: center;
     align-items: center;
-
     padding-bottom: ${v.lgSpacing};
     .imgcontent {
       display: flex;
@@ -175,7 +171,6 @@ const Container = styled.div`
   }
   .LinkContainer {
     margin: 8px 0;
-   
     padding: 0 15%;
     :hover {
       background: ${(props) => props.theme.bg3};
@@ -186,11 +181,10 @@ const Container = styled.div`
       text-decoration: none;
       padding: calc(${v.smSpacing}-2px) 0;
       color: ${(props) => props.theme.text};
-      height:50px;
+      height: 50px;
       .Linkicon {
         padding: ${v.smSpacing} ${v.mdSpacing};
         display: flex;
-
         svg {
           font-size: 25px;
         }
@@ -261,7 +255,6 @@ const Container = styled.div`
               bottom: 0;
               background: ${({ themeUse }) =>
                 themeUse === "light" ? v.lightcheckbox : v.checkbox};
-
               transition: 0.4s;
               &::before {
                 position: absolute;
@@ -275,7 +268,6 @@ const Container = styled.div`
               }
               &.round {
                 border-radius: 34px;
-
                 &::before {
                   border-radius: 50%;
                 }
