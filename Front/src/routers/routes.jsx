@@ -13,6 +13,15 @@ import styled from "styled-components";
 
 const AppContainer = styled.div`
   display: flex;
+  width: 100%;
+  height: 100vh;
+`;
+
+const ContentContainer = styled.div`
+  flex: 1;
+  overflow: auto;
+  width: 100%;
+  height: 100%;
 `;
 
 function Layout() {
@@ -21,18 +30,18 @@ function Layout() {
 
   if (hideSidebar) {
     return (
-      <div className="content-container login-page">
+      <ContentContainer className="login-page">
         <Routes>
           <Route path="/login" element={<LoginPage />} />
         </Routes>
-      </div>
+      </ContentContainer>
     );
   }
 
   return (
     <AppContainer>
       <Sidebar />
-      <div className="content-container">
+      <ContentContainer>
         <Routes>
           <Route path="/" element={<Inicio />} />
           <Route path="/sistema_de_alertas" element={<Alertas />} />
@@ -43,7 +52,7 @@ function Layout() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/compras" element={<Compras />} />
         </Routes>
-      </div>
+      </ContentContainer>
     </AppContainer>
   );
 }

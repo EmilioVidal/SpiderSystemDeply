@@ -29,6 +29,9 @@ const Container = styled.div`
   background: ${({ theme }) => theme.bgtotal};
   transition: all 0.3s;
   color: ${({ theme }) => theme.text};
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
 `;
 
 export default App;
