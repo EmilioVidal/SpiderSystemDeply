@@ -3,6 +3,7 @@ import { Card, Button, Title } from "@ui5/webcomponents-react";
 import { LineChart, BarChart } from "@ui5/webcomponents-react-charts";
 import lineChartIcon from "@ui5/webcomponents-icons/dist/line-chart.js";
 import barChartIcon from "@ui5/webcomponents-icons/dist/horizontal-bar-chart.js";
+import styled from "styled-components";
 import {
   Container,
   ChartWrapper,
