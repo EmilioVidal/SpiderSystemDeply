@@ -31,7 +31,12 @@ const Container = styled.div`
   color: ${({ theme }) => theme.text};
   height: 100vh;
   width: 100%;
-  overflow: hidden;
+  position: relative;
+  
+  @media (max-width: 768px) {
+    height: auto;
+    min-height: 100vh;
+  }
 `;
 
 export default App;

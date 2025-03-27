@@ -1,6 +1,27 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, Lock, Mail, MessageSquare } from "lucide-react";
+import styled from "styled-components";
+
+const RoundedInput = styled.input`
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  &:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+    outline: none;
+  }
+`;
+
+const RoundedButton = styled.button`
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+`;
 
 export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -11,7 +32,8 @@ export function LoginPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Aquí puedes manejar el submit del formulario si es necesario
+    // Aquí iría la lógica de autenticación
+    window.location.href = "/home"; // Redirige a la página de inicio después del login
   };
 
   return (
@@ -40,9 +62,9 @@ export function LoginPage() {
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
                   <Mail className="h-5 w-5 text-base-content/40" />
                 </div>
-                <input
+                <RoundedInput
                   type="email"
-                  className="input input-bordered w-full h-14 pl-10" // Ajusta el ancho y la altura aquí
+                  className="input input-bordered w-full h-14 pl-10"
                   placeholder="you@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -58,9 +80,9 @@ export function LoginPage() {
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
                   <Lock className="h-5 w-5 text-base-content/40" />
                 </div>
-                <input
+                <RoundedInput
                   type={showPassword ? "text" : "password"}
-                  className="input input-bordered w-full h-14 pl-10" // Ajusta el ancho y la altura aquí
+                  className="input input-bordered w-full h-14 pl-10"
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -79,15 +101,18 @@ export function LoginPage() {
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary w-full max-w-sm h-14 bg-blue-500 hover:bg-blue-700 text-white">
+            <RoundedButton 
+              type="submit" 
+              className="btn btn-primary w-full max-w-sm h-14 bg-blue-500 hover:bg-blue-700 text-white"
+            >
               Sign in
-            </button>
+            </RoundedButton>
           </form>
 
           <div className="text-center">
             <p className="text-base-content/60">
               Don&apos;t have an account?{" "}
-              <Link to="/" className="link text-blue-500 hover:text-blue-700">
+              <Link to="/home" className="link text-blue-500 hover:text-blue-700">
                 Create account
               </Link>
             </p>
