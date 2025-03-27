@@ -50,7 +50,7 @@ export function Cuenta() {
           )}
         </div>
         <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} accept="image/*" />
-        <button onClick={handleProfileImageClick} className="bg-gray-200 px-4 py-2 rounded cursor-pointer text-gray-700">Upload new picture</button>
+        <button onClick={handleProfileImageClick} className="bg-gray-200 px-4 py-2 rounded cursor-pointer text-gray-700">Subir nueva foto</button>
         <button className="bg-red-500 text-white px-4 py-2 rounded">Borrar</button>
       </div>
 
