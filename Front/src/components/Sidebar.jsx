@@ -12,7 +12,7 @@ import { FiAlertTriangle } from "react-icons/fi";
 import { TbDeviceDesktopAnalytics, TbReportAnalytics } from "react-icons/tb";
 import { RiAdminLine } from "react-icons/ri";
 import { IoCartOutline } from "react-icons/io5";
-import { VscMenu } from "react-icons/vsc";
+import { VscMenu,VscAccount } from "react-icons/vsc";
 
 import { NavLink } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
@@ -166,9 +166,9 @@ const linksArray = [
 ];
 const secondarylinksArray = [
   {
-    label: "Configuración",
-    icon: <AiOutlineSetting />,
-    to: "/null",
+    label: "Cuenta",
+    icon: <VscAccount />,
+    to: "/cuenta",
   },
   {
     label: "Salir",
