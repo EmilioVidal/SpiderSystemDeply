@@ -187,7 +187,7 @@ const MenuButton = styled.button`
   background: transparent;
   border: none;
   cursor: pointer;
-  color: ${(props) => props.theme.text};
+  color: ${(props) => props.theme.textColor};
   font-size: 24px;
   z-index: 999;
   
@@ -198,7 +198,7 @@ const MenuButton = styled.button`
 `;
 
 const Container = styled.div`
-  color: ${(props) => props.theme.text};
+  color: ${(props) => props.theme.textColor};
   background: ${(props) => props.theme.bg};
   position: fixed;
   top: 0;
@@ -270,7 +270,7 @@ const Container = styled.div`
       align-items: center;
       text-decoration: none;
       padding: calc(${v.smSpacing}-2px) 0;
-      color: ${(props) => props.theme.text};
+      color: ${(props) => props.theme.textColor};
       height: 50px;
       
       @media (max-width: 768px) {
