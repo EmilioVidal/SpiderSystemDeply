@@ -206,8 +206,8 @@ export const UI5ChartGlobalStyles = createGlobalStyle`
   div[part="content"],
   [class*="ui5-busy-indicator"] {
     background-color: transparent !important;
-    border-color: transparent !important;
-    border-bottom-color: transparent !important;
+    border-color: transparent  !important;
+    border-bottom-color: transparent  !important;
   }
   
   /* Target the rounded corner container */
@@ -406,29 +406,6 @@ export const UI5ChartGlobalStyles = createGlobalStyle`
 
 /* Override the UI5 Card bottom radius */
 export const CardBottomFix = createGlobalStyle`
-  /* Target the specific elements from the screenshot */
-  div[class*="eTZCsL"],
-  div[class*="bYuLVA"],
-  div[class*="eTZCsLbYuLVA"],
-  div[class="sc-eTZCsL bYuLVA"] {
-    border-bottom-color: ${({ theme }) => theme.bgtotal} !important;
-    border-color: ${({ theme }) => theme.bg3} !important;
-    background-color: ${({ theme }) => theme.bgtotal} !important;
-    border-bottom-left-radius: 8px !important;
-    border-bottom-right-radius: 8px !important;
-    overflow: hidden !important;
-  }
-  
-  /* Target ui5-card border properties specifically */
-  ui5-card,
-  ui5-card-root,
-  ui5-card-inner,
-  .ui5-card-root,
-  .ui5-card-inner {
-    border-bottom-color: ${({ theme }) => theme.bgtotal} !important;
-    border-bottom: none !important;
-  }
-  
   /* Target all elements that might have rounded corners */
   .ui5-card-inner, 
   [class*="ui5-card-inner"],
@@ -447,14 +424,6 @@ export const CardBottomFix = createGlobalStyle`
     background-color: ${({ theme }) => theme.bgtotal} !important;
     border-bottom-color: ${({ theme }) => theme.bgtotal} !important;
     border-color: ${({ theme }) => theme.bg3} !important;
-  }
-  
-  /* Force all border-bottoms to use theme color */
-  .ui5-card-fix *,
-  ui5-card *,
-  .ui5-card-inner *,
-  [class*="ui5-"] * {
-    border-bottom-color: ${({ theme }) => theme.bgtotal} !important;
   }
   
   /* Target specifically border properties */
@@ -493,10 +462,7 @@ export const CardBottomFix = createGlobalStyle`
   [class*="ui5-busy-indicator"]::after,
   ui5-card::after,
   div[class*="sc-"]::after,
-  div[class*="sc-dgykE"]::after,
-  div[class*="eTZCsLbYuLVA"]::after,
-  div[class*="eTZCsL"]::after,
-  div[class*="bYuLVA"]::after {
+  div[class*="sc-dgykE"]::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -519,24 +485,5 @@ export const CardBottomFix = createGlobalStyle`
     height: 5px;
     background-color: ${({ theme }) => theme.bgtotal};
     z-index: 9999;
-  }
-  
-  /* Target before/after elements that might have a white background */
-  div::before, div::after {
-    border-bottom-color: ${({ theme }) => theme.bgtotal} !important;
-    border-color: ${({ theme }) => theme.bg3} !important;
-  }
-  
-  /* Target .sc-* classes which might be styled-components generated classes */
-  [class^="sc-"],
-  [class*=" sc-"] {
-    border-bottom-color: ${({ theme }) => theme.bgtotal} !important;
-  }
-  
-  /* Target specifically the styles seen in the DevTools */
-  [style*="border-bottom-color: rgb(235, 235, 235)"],
-  [style*="border-color: rgb(235, 235, 235)"] {
-    border-bottom-color: ${({ theme }) => theme.bgtotal} !important;
-    border-color: ${({ theme }) => theme.bg3} !important;
   }
 `; 
