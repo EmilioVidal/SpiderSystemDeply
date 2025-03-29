@@ -111,7 +111,7 @@ export function Predictivo() {
       
       try {
         // Apply background color to all chart SVG containers
-        const elements = chartContainerRef.current.querySelectorAll('svg, svg rect, div[class*="chart"], div[class*="Chart"], canvas, .ui5-chart-canvas, .recharts-surface');
+        const elements = chartContainerRef.current.querySelectorAll('.ui5-chart-container svg, .ui5-chart svg, .highcharts-container svg, .recharts-wrapper svg, .ui5-chart-container svg rect, .ui5-chart canvas, .ui5-chart-canvas, .recharts-surface');
         elements.forEach(el => {
           if (el.tagName === 'rect') {
             // Handle SVG rect elements
@@ -175,9 +175,14 @@ export function Predictivo() {
     styleEl.innerHTML = `
       /* Basic background fixes for chart elements */
       .ui5-chart-container,
-      svg,
-      rect,
-      canvas,
+      .ui5-chart-container svg,
+      .ui5-chart svg,
+      .highcharts-container svg,
+      .recharts-wrapper svg,
+      .ui5-chart rect,
+      .highcharts-container rect,
+      .recharts-wrapper rect,
+      canvas.chart-canvas,
       .highcharts-background,
       .highcharts-plot-background,
       .recharts-surface,
@@ -197,12 +202,18 @@ export function Predictivo() {
       }
       
       /* Target specific white elements */
-      rect[fill="white"],
-      rect[fill="#ffffff"],
-      rect[fill="#FFFFFF"],
-      *[fill="white"],
-      *[fill="#ffffff"],
-      *[fill="#FFFFFF"] {
+      .ui5-chart-container rect[fill="white"],
+      .ui5-chart-container rect[fill="#ffffff"],
+      .ui5-chart-container rect[fill="#FFFFFF"],
+      .ui5-chart-container *[fill="white"],
+      .ui5-chart-container *[fill="#ffffff"],
+      .ui5-chart-container *[fill="#FFFFFF"],
+      .highcharts-container rect[fill="white"],
+      .highcharts-container rect[fill="#ffffff"],
+      .highcharts-container rect[fill="#FFFFFF"],
+      .recharts-wrapper rect[fill="white"],
+      .recharts-wrapper rect[fill="#ffffff"],
+      .recharts-wrapper rect[fill="#FFFFFF"] {
         fill: ${theme.bgtotal} !important;
       }
       
@@ -242,8 +253,8 @@ export function Predictivo() {
   useEffect(() => {
     const fixCardWhiteBackground = () => {
       try {
-        // Directly target the UI5 card inner elements by class name pattern
-        const cardElements = document.querySelectorAll('.ui5-card-inner, div[class*="ui5-card-inner"], div[ui5-card]');
+        // Directly target the UI5 card inner elements by class name pattern within the chart container
+        const cardElements = chartContainerRef.current.querySelectorAll('.ui5-card-inner, div[class*="ui5-card-inner"], div[ui5-card]');
         cardElements.forEach(el => {
           el.style.backgroundColor = theme.bgtotal;
           el.style.borderBottomColor = theme.bgtotal;

@@ -236,8 +236,15 @@ export const UI5ChartGlobalStyles = createGlobalStyle`
   .ui5-chart,
   .ui5-chart-wrapper,
   .ui5-chart-canvas,
-  svg,
-  rect {
+  .ui5-chart-container svg,
+  .ui5-chart-wrapper svg,
+  .ui5-chart svg,
+  .MuiPaper-root svg,
+  .ui5-webcomponents-react-card svg,
+  .highcharts-container svg,
+  .highcharts-root svg,
+  .recharts-wrapper svg,
+  rect.chart-background {
     background-color: ${({ theme }) => theme.bgtotal} !important;
     fill: ${({ theme }) => theme.bgtotal} !important;
   }
@@ -245,9 +252,9 @@ export const UI5ChartGlobalStyles = createGlobalStyle`
   /* Target the bottom rounded corner specifically */
   .highcharts-root svg > path,
   .highcharts-root > path,
-  svg > path[fill="white"],
-  svg > path[fill="#ffffff"],
-  path[d*="A"],
+  .ui5-chart-container svg > path[fill="white"],
+  .ui5-chart-container svg > path[fill="#ffffff"],
+  .highcharts-container path[d*="A"],
   path.highcharts-background,
   .recharts-curve,
   rect.highcharts-background {
@@ -256,7 +263,9 @@ export const UI5ChartGlobalStyles = createGlobalStyle`
   }
   
   /* Fix for rounded corners at bottom */
-  svg path {
+  .ui5-chart-container svg path,
+  .highcharts-container svg path,
+  .recharts-wrapper svg path {
     fill: ${({ theme }) => theme.bgtotal} !important;
   }
   
@@ -285,7 +294,8 @@ export const UI5ChartGlobalStyles = createGlobalStyle`
   /* Target the specific white rounded corner element */
   .highcharts-container .highcharts-background,
   .highcharts-container svg > *:first-child,
-  svg > path:first-of-type,
+  .ui5-chart-container svg > path:first-of-type,
+  .recharts-wrapper svg > path:first-of-type,
   g.highcharts-container path {
     fill: ${({ theme }) => theme.bgtotal} !important;
     stroke: none !important;
