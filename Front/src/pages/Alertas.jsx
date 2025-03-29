@@ -4,13 +4,6 @@ import {
   PageHeader,
   PageTitle,
   AlertsContainer,
-  AlertItem,
-  AlertLeftSection,
-  AlertIcon,
-  AlertTitle,
-  AlertRightSection,
-  StatusBadge,
-  ResolveButton,
   FilterToolbar,
   PaginationContainer,
   PaginationButton,
@@ -509,35 +502,72 @@ export function Alertas() {
 
         <AlertsContainer ref={alertsContainerRef}>
           {currentAlerts.length > 0 ? (
-            currentAlerts.map((alert) => (
-              <AlertItem key={alert.id} type={alert.type} className="alert-item">
-                <AlertLeftSection>
-                  <AlertIcon type={alert.type}>
-                    {AlertIcons[alert.type]}
-                  </AlertIcon>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    {ProductIcons[alert.productIcon]}
-                    <AlertTitle>
-                      {alert.title}
-                    </AlertTitle>
-                  </div>
-                </AlertLeftSection>
-
-                <AlertRightSection>
-                  <StatusBadge type={alert.type}>
-                    {alert.status}
-                  </StatusBadge>
-                  {!alert.resolved && (
-                    <button 
-                      style={roundedButtonStyle}
-                      onClick={() => handleResolveAlert(alert.id)}
-                    >
-                      Marcar como resuelta
-                    </button>
-                  )}
-                </AlertRightSection>
-              </AlertItem>
-            ))
+            <div style={{ 
+              width: "100%", 
+              backgroundColor: "white", 
+              borderRadius: "8px", 
+              boxShadow: "0 1px 4px rgba(0, 0, 0, 0.1)" 
+            }}>
+              <div style={{ 
+                padding: "0.75rem 1rem", 
+                borderBottom: "1px solid #e5e5e5", 
+                fontWeight: "bold", 
+                fontSize: "1rem" 
+              }}>
+                Alertas
+              </div>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                {currentAlerts.map((alert) => (
+                  <li 
+                    key={alert.id}
+                    className="alert-item"
+                    style={{ 
+                      padding: "1rem", 
+                      borderBottom: "1px solid #f0f0f0",
+                      transition: "background-color 0.1s",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <div style={{ color: alert.type === "error" ? "#bb0000" : alert.type === "warning" ? "#e9730c" : "#107e3e" }}>
+                          {AlertIcons[alert.type]}
+                        </div>
+                        <div>
+                          <div style={{ fontSize: "0.875rem", fontWeight: "500" }}>{alert.title}</div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "0.8rem", color: "#6a6d70", marginTop: "4px" }}>
+                            {ProductIcons[alert.productIcon]} {alert.productIcon.charAt(0).toUpperCase() + alert.productIcon.slice(1)}
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <span style={{
+                          padding: "0.25rem 0.5rem",
+                          borderRadius: "4px",
+                          backgroundColor: alert.type === "error" ? "#ffebeb" : alert.type === "warning" ? "#fff8d6" : "#ebf5cb",
+                          color: alert.type === "error" ? "#bb0000" : alert.type === "warning" ? "#e9730c" : "#107e3e",
+                          fontSize: "0.75rem",
+                          fontWeight: "500"
+                        }}>
+                          {alert.status}
+                        </span>
+                        {!alert.resolved && (
+                          <button 
+                            style={roundedButtonStyle}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleResolveAlert(alert.id);
+                            }}
+                          >
+                            Marcar como resuelta
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ) : (
             <div style={{ 
               padding: '2rem', 
@@ -545,7 +575,7 @@ export function Alertas() {
               color: '#666',
               backgroundColor: 'white',
               borderRadius: '4px',
-              boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1)'
+              boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)'
             }}>
               No se encontraron alertas con los filtros seleccionados
             </div>
