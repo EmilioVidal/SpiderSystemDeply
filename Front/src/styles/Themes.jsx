@@ -1,4 +1,5 @@
 export const Light ={
+    name: "light",
     body: "#fff",
     textColor: "#202020",
     bodyRgba: "255, 255, 255",
@@ -48,6 +49,7 @@ export const Light ={
   lightcheckbox: "#fce100"
 }
 export const Dark = {
+    name: "dark",
     bgtgderecha:"#21252B",
     body: "#202020",
     textColor: "#fff",

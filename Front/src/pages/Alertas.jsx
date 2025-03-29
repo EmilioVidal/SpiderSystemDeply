@@ -11,6 +11,27 @@ import {
 } from "../styles/Alertas/AlertasStyle";
 import UI5ThemeProvider from "../components/UI5ThemeProvider";
 
+// Theme icons
+const SunIcon = (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 17C14.7614 17 17 14.7614 17 12C17 9.23858 14.7614 7 12 7C9.23858 7 7 9.23858 7 12C7 14.7614 9.23858 17 12 17Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M12 1V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M12 21V23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M4.22 4.22L5.64 5.64" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M18.36 18.36L19.78 19.78" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M1 12H3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M21 12H23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M4.22 19.78L5.64 18.36" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M18.36 5.64L19.78 4.22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const MoonIcon = (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21 12.79C20.8426 14.4922 20.2043 16.1144 19.1581 17.4668C18.1119 18.8192 16.7035 19.8458 15.0957 20.4265C13.4879 21.0073 11.748 21.1181 10.0795 20.7461C8.41102 20.3741 6.88299 19.5345 5.67423 18.3258C4.46546 17.117 3.62594 15.589 3.25391 13.9205C2.88188 12.252 2.99272 10.5121 3.57346 8.9043C4.1542 7.29651 5.18083 5.88813 6.53321 4.84194C7.88559 3.79576 9.5078 3.15731 11.21 3C10.2134 4.34827 9.73385 6.00945 9.85853 7.68141C9.98321 9.35338 10.7039 10.9251 11.8894 12.1106C13.0749 13.2961 14.6466 14.0168 16.3186 14.1415C17.9906 14.2662 19.6517 13.7866 21 12.79Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 // SVG icons for alerts
 const AlertIcons = {
   error: (
@@ -89,7 +110,7 @@ const ChevronDown = (
   </svg>
 );
 
-export function Alertas() {
+function AlertasContent({ isDarkTheme, toggleTheme }) {
   const alertsContainerRef = useRef(null);
   const [containerHeight, setContainerHeight] = useState(0);
   const [estimatedAlertHeight, setEstimatedAlertHeight] = useState(100); // Default height estimation in pixels
@@ -384,9 +405,9 @@ export function Alertas() {
   const roundedButtonStyle = {
     borderRadius: '18px',
     padding: '0.25rem 1rem',
-    backgroundColor: 'white',
-    border: '1px solid #d9d9d9',
-    color: '#32363a',
+    backgroundColor: isDarkTheme ? '#2d3239' : 'white',
+    border: isDarkTheme ? '1px solid #4d5358' : '1px solid #d9d9d9',
+    color: isDarkTheme ? '#e5e5e5' : '#32363a',
     cursor: 'pointer',
     fontSize: '0.75rem',
     fontWeight: '400',
@@ -395,213 +416,266 @@ export function Alertas() {
     alignItems: 'center',
     justifyContent: 'center',
     transition: 'background-color 0.1s ease-in-out, box-shadow 0.1s ease-in-out',
-    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+    boxShadow: isDarkTheme ? '0 1px 2px rgba(0, 0, 0, 0.2)' : '0 1px 2px rgba(0, 0, 0, 0.05)',
+  };
+
+  // Update filter dropdown styles for dark mode
+  const filterDropdownStyle = {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    marginTop: '4px',
+    backgroundColor: isDarkTheme ? '#2d3239' : 'white',
+    border: isDarkTheme ? '1px solid #4d5358' : '1px solid #d9d9d9',
+    borderRadius: '4px',
+    boxShadow: isDarkTheme ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.15)',
+    zIndex: 10,
+    minWidth: '200px'
   };
 
   return (
-    <UI5ThemeProvider>
-      <Container>
-        <PageHeader>
+    <Container>
+      <PageHeader>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <PageTitle>Sistema de alertas</PageTitle>
-        </PageHeader>
+          <button 
+            onClick={toggleTheme}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: isDarkTheme ? '#fff' : '#32363a',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '8px',
+              borderRadius: '50%',
+              transition: 'background-color 0.2s ease'
+            }}
+            aria-label="Toggle theme"
+          >
+            {isDarkTheme ? SunIcon : MoonIcon}
+          </button>
+        </div>
+      </PageHeader>
 
-        <FilterToolbar>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative' }} ref={filterDropdownRef}>
-            <div 
-              style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                cursor: 'pointer',
-                padding: '4px 8px',
-                border: '1px solid #d9d9d9',
-                borderRadius: '4px',
-                backgroundColor: activeFilters.length > 0 ? '#f0f0f0' : 'transparent'
-              }}
-              onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
-            >
-              {FilterIcon}
-              <span style={{ marginLeft: '8px' }}>
-                Filtros ({activeFilters.length})
-              </span>
-              <span style={{ marginLeft: '4px', display: 'flex', alignItems: 'center' }}>
-                {ChevronDown}
-              </span>
-            </div>
-            
-            {isFilterDropdownOpen && (
-              <div style={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                marginTop: '4px',
-                backgroundColor: 'white',
-                border: '1px solid #d9d9d9',
-                borderRadius: '4px',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-                zIndex: 10,
-                minWidth: '200px'
-              }}>
-                <div style={{ padding: '8px 12px', borderBottom: '1px solid #e5e5e5', fontWeight: 'bold' }}>
-                  Filtrar por estado
-                </div>
-                {availableFilters.map(filter => (
-                  <div 
-                    key={filter.id}
-                    style={{ 
-                      padding: '8px 12px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      cursor: 'pointer',
-                      backgroundColor: activeFilters.includes(filter.id) ? '#f0f0f0' : 'transparent'
-                    }}
-                    onClick={() => toggleFilter(filter.id)}
-                  >
-                    <div style={{
-                      width: '16px',
-                      height: '16px',
-                      borderRadius: '2px',
-                      border: '1px solid #d9d9d9',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: activeFilters.includes(filter.id) ? filter.color : 'white'
-                    }}>
-                      {activeFilters.includes(filter.id) && (
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M9.5 3.5L5 8L2.5 5.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      )}
-                    </div>
-                    <span style={{ marginLeft: '8px' }}>{filter.label}</span>
-                  </div>
-                ))}
-              </div>
-            )}
+      <FilterToolbar>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative' }} ref={filterDropdownRef}>
+          <div 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              cursor: 'pointer',
+              padding: '4px 8px',
+              border: isDarkTheme ? '1px solid #4d5358' : '1px solid #d9d9d9',
+              borderRadius: '4px',
+              backgroundColor: activeFilters.length > 0 
+                ? (isDarkTheme ? '#3d4249' : '#f0f0f0') 
+                : 'transparent'
+            }}
+            onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
+          >
+            {FilterIcon}
+            <span style={{ marginLeft: '8px' }}>
+              Filtros ({activeFilters.length})
+            </span>
+            <span style={{ marginLeft: '4px', display: 'flex', alignItems: 'center' }}>
+              {ChevronDown}
+            </span>
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <NavigationButton disabled={currentPage === 1} onClick={() => handlePageChange(1)}>
-              {ChevronDoubleLeft}
-            </NavigationButton>
-            
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-              <PaginationButton 
-                key={page} 
-                active={currentPage === page} 
-                onClick={() => handlePageChange(page)}
-              >
-                {page}
-              </PaginationButton>
-            ))}
-            
-            <NavigationButton disabled={currentPage === totalPages || totalPages === 0} onClick={() => handlePageChange(totalPages)}>
-              {ChevronDoubleRight}
-            </NavigationButton>
-          </div>
-        </FilterToolbar>
-
-        <AlertsContainer ref={alertsContainerRef}>
-          {currentAlerts.length > 0 ? (
-            <div style={{ 
-              width: "100%", 
-              backgroundColor: "white", 
-              borderRadius: "8px", 
-              boxShadow: "0 1px 4px rgba(0, 0, 0, 0.1)" 
-            }}>
+          {isFilterDropdownOpen && (
+            <div style={filterDropdownStyle}>
               <div style={{ 
-                padding: "0.75rem 1rem", 
-                borderBottom: "1px solid #e5e5e5", 
-                fontWeight: "bold", 
-                fontSize: "1rem" 
+                padding: '8px 12px', 
+                borderBottom: isDarkTheme ? '1px solid #4d5358' : '1px solid #e5e5e5', 
+                fontWeight: 'bold' 
               }}>
-                Alertas
+                Filtrar por estado
               </div>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                {currentAlerts.map((alert) => (
-                  <li 
-                    key={alert.id}
-                    className="alert-item"
-                    style={{ 
-                      padding: "1rem", 
-                      borderBottom: "1px solid #f0f0f0",
-                      transition: "background-color 0.1s",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <div style={{ color: alert.type === "error" ? "#bb0000" : alert.type === "warning" ? "#e9730c" : "#107e3e" }}>
-                          {AlertIcons[alert.type]}
-                        </div>
-                        <div>
-                          <div style={{ fontSize: "0.875rem", fontWeight: "500" }}>{alert.title}</div>
-                          <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "0.8rem", color: "#6a6d70", marginTop: "4px" }}>
-                            {ProductIcons[alert.productIcon]} {alert.productIcon.charAt(0).toUpperCase() + alert.productIcon.slice(1)}
-                          </div>
-                        </div>
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <span style={{
-                          padding: "0.25rem 0.5rem",
-                          borderRadius: "4px",
-                          backgroundColor: alert.type === "error" ? "#ffebeb" : alert.type === "warning" ? "#fff8d6" : "#ebf5cb",
-                          color: alert.type === "error" ? "#bb0000" : alert.type === "warning" ? "#e9730c" : "#107e3e",
-                          fontSize: "0.75rem",
-                          fontWeight: "500"
-                        }}>
-                          {alert.status}
-                        </span>
-                        {!alert.resolved && (
-                          <button 
-                            style={roundedButtonStyle}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleResolveAlert(alert.id);
-                            }}
-                          >
-                            Marcar como resuelta
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <div style={{ 
-              padding: '2rem', 
-              textAlign: 'center', 
-              color: '#666',
-              backgroundColor: 'white',
-              borderRadius: '4px',
-              boxShadow: '0 1px 4px rgba(0, 0, 0, 0.1)'
-            }}>
-              No se encontraron alertas con los filtros seleccionados
+              {availableFilters.map(filter => (
+                <div 
+                  key={filter.id}
+                  style={{ 
+                    padding: '8px 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    backgroundColor: activeFilters.includes(filter.id) 
+                      ? (isDarkTheme ? '#3d4249' : '#f0f0f0') 
+                      : 'transparent'
+                  }}
+                  onClick={() => toggleFilter(filter.id)}
+                >
+                  <div style={{
+                    width: '16px',
+                    height: '16px',
+                    borderRadius: '2px',
+                    border: isDarkTheme ? '1px solid #4d5358' : '1px solid #d9d9d9',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: activeFilters.includes(filter.id) ? filter.color : (isDarkTheme ? '#2d3239' : 'white')
+                  }}>
+                    {activeFilters.includes(filter.id) && (
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9.5 3.5L5 8L2.5 5.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </div>
+                  <span style={{ marginLeft: '8px' }}>{filter.label}</span>
+                </div>
+              ))}
             </div>
           )}
-        </AlertsContainer>
-        
-        {/* Panel de información sobre paginación */}
-        <div style={{ 
-          padding: '0.5rem 2rem', 
-          fontSize: '0.75rem', 
-          color: '#666',
-          display: 'flex',
-          justifyContent: 'space-between',
-          borderTop: '1px solid #e5e5e5'
-        }}>
-          <span>
-            Mostrando {currentAlerts ? currentAlerts.length : 0} de {filteredAlerts ? filteredAlerts.length : 0} alertas
-          </span>
-          <span>
-            {currentPage === 1 ? 'Primera Página' : 
-             currentPage === 2 ? 'Segunda Página' : 
-             currentPage === 3 ? 'Tercera Página' : 
-             `Página ${currentPage}`}
-          </span>
         </div>
-      </Container>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <NavigationButton disabled={currentPage === 1} onClick={() => handlePageChange(1)}>
+            {ChevronDoubleLeft}
+          </NavigationButton>
+          
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+            <PaginationButton 
+              key={page} 
+              active={currentPage === page} 
+              onClick={() => handlePageChange(page)}
+            >
+              {page}
+            </PaginationButton>
+          ))}
+          
+          <NavigationButton disabled={currentPage === totalPages || totalPages === 0} onClick={() => handlePageChange(totalPages)}>
+            {ChevronDoubleRight}
+          </NavigationButton>
+        </div>
+      </FilterToolbar>
+
+      <AlertsContainer ref={alertsContainerRef}>
+        {currentAlerts.length > 0 ? (
+          <div style={{ 
+            width: "100%", 
+            backgroundColor: isDarkTheme ? "#1e2329" : "white", 
+            borderRadius: "8px", 
+            boxShadow: isDarkTheme ? "0 1px 4px rgba(0, 0, 0, 0.3)" : "0 1px 4px rgba(0, 0, 0, 0.1)" 
+          }}>
+            <div style={{ 
+              padding: "0.75rem 1rem", 
+              borderBottom: isDarkTheme ? "1px solid #4d5358" : "1px solid #e5e5e5", 
+              fontWeight: "bold", 
+              fontSize: "1rem",
+              color: isDarkTheme ? "#e5e5e5" : "#32363a"
+            }}>
+              Alertas
+            </div>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+              {currentAlerts.map((alert) => (
+                <li 
+                  key={alert.id}
+                  className="alert-item"
+                  style={{ 
+                    padding: "1rem", 
+                    borderBottom: isDarkTheme ? "1px solid #2d3239" : "1px solid #f0f0f0",
+                    transition: "background-color 0.1s",
+                    cursor: "pointer",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <div style={{ color: alert.type === "error" ? "#bb0000" : alert.type === "warning" ? "#e9730c" : "#107e3e" }}>
+                        {AlertIcons[alert.type]}
+                      </div>
+                      <div>
+                        <div style={{ 
+                          fontSize: "0.875rem", 
+                          fontWeight: "500",
+                          color: isDarkTheme ? "#e5e5e5" : "#32363a"
+                        }}>{alert.title}</div>
+                        <div style={{ 
+                          display: "flex", 
+                          alignItems: "center", 
+                          gap: "4px", 
+                          fontSize: "0.8rem", 
+                          color: isDarkTheme ? "#a6a6a6" : "#6a6d70", 
+                          marginTop: "4px" 
+                        }}>
+                          {ProductIcons[alert.productIcon]} {alert.productIcon.charAt(0).toUpperCase() + alert.productIcon.slice(1)}
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <span style={{
+                        padding: "0.25rem 0.5rem",
+                        borderRadius: "4px",
+                        backgroundColor: alert.type === "error" 
+                          ? (isDarkTheme ? "#3a0000" : "#ffebeb") 
+                          : alert.type === "warning" 
+                            ? (isDarkTheme ? "#3a2806" : "#fff8d6") 
+                            : (isDarkTheme ? "#0d2e16" : "#ebf5cb"),
+                        color: alert.type === "error" ? "#bb0000" : alert.type === "warning" ? "#e9730c" : "#107e3e",
+                        fontSize: "0.75rem",
+                        fontWeight: "500"
+                      }}>
+                        {alert.status}
+                      </span>
+                      {!alert.resolved && (
+                        <button 
+                          style={roundedButtonStyle}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleResolveAlert(alert.id);
+                          }}
+                        >
+                          Marcar como resuelta
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div style={{ 
+            padding: '2rem', 
+            textAlign: 'center', 
+            color: isDarkTheme ? '#a6a6a6' : '#666',
+            backgroundColor: isDarkTheme ? '#1e2329' : 'white',
+            borderRadius: '4px',
+            boxShadow: isDarkTheme ? '0 1px 4px rgba(0, 0, 0, 0.3)' : '0 1px 4px rgba(0, 0, 0, 0.1)'
+          }}>
+            No se encontraron alertas con los filtros seleccionados
+          </div>
+        )}
+      </AlertsContainer>
+      
+      {/* Panel de información sobre paginación */}
+      <div style={{ 
+        padding: '0.5rem 2rem', 
+        fontSize: '0.75rem', 
+        color: isDarkTheme ? '#a6a6a6' : '#666',
+        display: 'flex',
+        justifyContent: 'space-between',
+        borderTop: isDarkTheme ? '1px solid #4d5358' : '1px solid #e5e5e5'
+      }}>
+        <span>
+          Mostrando {currentAlerts ? currentAlerts.length : 0} de {filteredAlerts ? filteredAlerts.length : 0} alertas
+        </span>
+        <span>
+          {currentPage === 1 ? 'Primera Página' : 
+           currentPage === 2 ? 'Segunda Página' : 
+           currentPage === 3 ? 'Tercera Página' : 
+           `Página ${currentPage}`}
+        </span>
+      </div>
+    </Container>
+  );
+}
+
+export function Alertas() {
+  return (
+    <UI5ThemeProvider>
+      <AlertasContent />
     </UI5ThemeProvider>
   );
 }

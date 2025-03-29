@@ -5,9 +5,10 @@ export const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  background: ${({ theme }) => theme.bgtotal || "#f7f7f7"};
-  color: ${({ theme }) => theme.textColor || "#32363a"};
+  background: ${({ theme }) => theme.bgtotal};
+  color: ${({ theme }) => theme.textColor};
   font-family: "72", "72full", Arial, Helvetica, sans-serif;
+  transition: all 0.3s ease;
 `;
 
 export const PageHeader = styled.div`
@@ -21,7 +22,7 @@ export const PageTitle = styled.h1`
   font-size: 1.625rem;
   font-weight: 400;
   margin-bottom: 1rem;
-  color: #32363a;
+  color: ${({ theme }) => theme.textColor};
 `;
 
 export const AlertsContainer = styled.div`
@@ -31,7 +32,21 @@ export const AlertsContainer = styled.div`
   flex-direction: column;
   gap: 0.5rem;
   padding: 1rem 2rem;
-  background-color: ${({ theme }) => theme.bgtotal || "#f5f5f5"};
+  background-color: ${({ theme }) => theme.bgtotal};
+  
+  /* Custom scrollbar that adapts to theme */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: ${({ theme }) => theme.name === 'dark' ? '#2d3239' : '#f0f0f0'};
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.name === 'dark' ? '#6a6d70' : '#c4c4c4'};
+    border-radius: 4px;
+  }
 `;
 
 export const AlertItem = styled.div`
@@ -41,15 +56,17 @@ export const AlertItem = styled.div`
   padding: 1rem 1.5rem;
   width: 100%;
   border-radius: 0.25rem;
-  background-color: ${({ type }) => 
-    type === "success" ? "#f5faf6" : 
-    type === "warning" ? "#fffaf0" : 
-    "#fff0f0"};
+  background-color: ${({ theme, type }) => 
+    type === "success" ? (theme.name === 'dark' ? '#132f1e' : '#f5faf6') : 
+    type === "warning" ? (theme.name === 'dark' ? '#3a2806' : '#fffaf0') : 
+    (theme.name === 'dark' ? '#380000' : '#fff0f0')};
   border-left: 4px solid ${({ type }) => 
     type === "success" ? "#107e3e" : 
     type === "warning" ? "#e9730c" : 
     "#bb0000"};
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 0 1px ${({ theme }) => theme.name === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'}, 
+              0 1px 3px ${({ theme }) => theme.name === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.1)'};
+  transition: background-color 0.3s ease;
 `;
 
 export const AlertLeftSection = styled.div`
@@ -79,7 +96,7 @@ export const AlertContent = styled.div`
 export const AlertTitle = styled.div`
   font-size: 0.875rem;
   font-weight: 400;
-  color: #32363a;
+  color: ${({ theme }) => theme.textColor};
 `;
 
 export const AlertRightSection = styled.div`
@@ -96,10 +113,10 @@ export const StatusBadge = styled.div`
   border-radius: 1rem;
   font-size: 0.75rem;
   font-weight: 400;
-  background-color: ${({ type }) => 
-    type === "success" ? "#107e3e" : 
-    type === "warning" ? "#e9730c" : 
-    "#bb0000"};
+  background-color: ${({ theme, type }) => 
+    type === "success" ? (theme.name === 'dark' ? '#0d5e2f' : '#107e3e') : 
+    type === "warning" ? (theme.name === 'dark' ? '#d15700' : '#e9730c') : 
+    (theme.name === 'dark' ? '#a10000' : '#bb0000')};
   color: white;
 `;
 
@@ -111,19 +128,19 @@ export const ResolveButton = styled.button`
   border-radius: 0.25rem;
   font-size: 0.75rem;
   font-weight: 400;
-  background-color: white;
-  border: 1px solid #d9d9d9;
-  color: #32363a;
+  background-color: ${({ theme }) => theme.name === 'dark' ? '#2d3239' : 'white'};
+  border: 1px solid ${({ theme }) => theme.name === 'dark' ? '#4d5358' : '#d9d9d9'};
+  color: ${({ theme }) => theme.textColor};
   cursor: pointer;
   height: 2rem;
   transition: background-color 0.1s ease-in-out;
   
   &:hover {
-    background-color: #f5f5f5;
+    background-color: ${({ theme }) => theme.name === 'dark' ? '#3d4249' : '#f5f5f5'};
   }
   
   &:active {
-    background-color: #e6e6e6;
+    background-color: ${({ theme }) => theme.name === 'dark' ? '#4d5259' : '#e6e6e6'};
   }
 `;
 
@@ -132,10 +149,11 @@ export const FilterToolbar = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 2rem;
-  background-color: ${({ theme }) => theme.bgtotal || "#f5f5f5"};
-  border-bottom: 1px solid #e5e5e5;
-  color: #32363a;
+  background-color: ${({ theme }) => theme.bgtotal};
+  border-bottom: 1px solid ${({ theme }) => theme.name === 'dark' ? '#4d5358' : '#e5e5e5'};
+  color: ${({ theme }) => theme.textColor};
   font-size: 0.875rem;
+  transition: all 0.3s ease;
 `;
 
 export const PaginationContainer = styled.div`
@@ -145,7 +163,7 @@ export const PaginationContainer = styled.div`
   gap: 0.25rem;
   margin-top: auto;
   padding: 1rem;
-  background-color: #f5f5f5;
+  background-color: ${({ theme }) => theme.name === 'dark' ? '#1c2228' : '#f5f5f5'};
 `;
 
 export const PaginationButton = styled.button`
@@ -155,15 +173,23 @@ export const PaginationButton = styled.button`
   width: 2rem;
   height: 2rem;
   border-radius: 0.25rem;
-  background-color: ${({ active }) => (active ? "#0854a0" : "transparent")};
-  color: ${({ active }) => (active ? "white" : "#32363a")};
-  border: ${({ active }) => (active ? "none" : "1px solid #d9d9d9")};
+  background-color: ${({ active, theme }) => active 
+    ? (theme.name === 'dark' ? '#0a6ed1' : '#0854a0') 
+    : (theme.name === 'dark' ? 'transparent' : 'transparent')};
+  color: ${({ active, theme }) => active 
+    ? 'white' 
+    : theme.textColor};
+  border: ${({ active, theme }) => active 
+    ? 'none' 
+    : `1px solid ${theme.name === 'dark' ? '#4d5358' : '#d9d9d9'}`};
   cursor: pointer;
   font-size: 0.875rem;
   transition: background-color 0.1s ease-in-out;
   
   &:hover {
-    background-color: ${({ active }) => (active ? "#0854a0" : "#f5f5f5")};
+    background-color: ${({ active, theme }) => active 
+      ? (theme.name === 'dark' ? '#0a6ed1' : '#0854a0') 
+      : (theme.name === 'dark' ? '#2d3239' : '#f5f5f5')};
   }
   
   &:disabled {
@@ -180,18 +206,18 @@ export const NavigationButton = styled.button`
   height: 2rem;
   border-radius: 0.25rem;
   background-color: transparent;
-  border: 1px solid #d9d9d9;
-  color: #32363a;
+  border: 1px solid ${({ theme }) => theme.name === 'dark' ? '#4d5358' : '#d9d9d9'};
+  color: ${({ theme }) => theme.textColor};
   cursor: pointer;
   transition: background-color 0.1s ease-in-out;
   
   &:hover {
-    background-color: #f5f5f5;
+    background-color: ${({ theme }) => theme.name === 'dark' ? '#2d3239' : '#f5f5f5'};
   }
   
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    color: #a6a6a6;
+    color: ${({ theme }) => theme.name === 'dark' ? '#6a6d70' : '#a6a6a6'};
   }
 `;

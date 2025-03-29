@@ -4,24 +4,37 @@ import { ThemeContext } from '../App';
 
 // This component provides proper theme configuration for UI5 components
 const UI5ThemeProvider = ({ children }) => {
-  const { theme } = useContext(ThemeContext);
+  const { theme, setTheme } = useContext(ThemeContext);
+  const isDarkTheme = theme === 'dark';
+  
+  const toggleTheme = () => {
+    setTheme(isDarkTheme ? 'light' : 'dark');
+  };
   
   // Set UI5 theme based on app theme
   useEffect(() => {
     // Apply minimal UI5 theming
-    document.documentElement.style.setProperty('--sapBackgroundColor', theme === 'dark' ? '#121212' : '#f7f7f7');
-    document.documentElement.style.setProperty('--sapTextColor', theme === 'dark' ? '#ffffff' : '#32363a');
-    document.documentElement.style.setProperty('--sapContent_GridBackground', theme === 'dark' ? '#121212' : '#f7f7f7');
-    document.documentElement.style.setProperty('--sapChart_BackgroundColor', theme === 'dark' ? '#121212' : '#f7f7f7');
+    document.documentElement.style.setProperty('--sapBackgroundColor', isDarkTheme ? '#121212' : '#f7f7f7');
+    document.documentElement.style.setProperty('--sapTextColor', isDarkTheme ? '#ffffff' : '#32363a');
+    document.documentElement.style.setProperty('--sapContent_GridBackground', isDarkTheme ? '#121212' : '#f7f7f7');
+    document.documentElement.style.setProperty('--sapChart_BackgroundColor', isDarkTheme ? '#121212' : '#f7f7f7');
     
     // More specific variables for chart elements
-    document.documentElement.style.setProperty('--sapVizChart_Background', theme === 'dark' ? '#121212' : '#f7f7f7');
-    document.documentElement.style.setProperty('--sapUiChartBackgroundColor', theme === 'dark' ? '#121212' : '#f7f7f7');
-  }, [theme]);
+    document.documentElement.style.setProperty('--sapVizChart_Background', isDarkTheme ? '#121212' : '#f7f7f7');
+    document.documentElement.style.setProperty('--sapUiChartBackgroundColor', isDarkTheme ? '#121212' : '#f7f7f7');
+  }, [isDarkTheme]);
+  
+  // Pass isDarkTheme and toggleTheme as properties of the children
+  const enhancedChildren = React.Children.map(children, child => {
+    if (React.isValidElement(child)) {
+      return React.cloneElement(child, { isDarkTheme, toggleTheme });
+    }
+    return child;
+  });
   
   return (
-    <ThemeProvider theme={theme === 'dark' ? 'sap_horizon_dark' : 'sap_horizon'}>
-      {children}
+    <ThemeProvider theme={isDarkTheme ? 'sap_horizon_dark' : 'sap_horizon'}>
+      {enhancedChildren}
     </ThemeProvider>
   );
 };
