@@ -203,7 +203,7 @@ const paymentMethods = [
   { 
     id: 4, 
     name: "Pago Anticipado", 
-    subtitle: "5% de descuento",
+    subtitle: "Pago al realizar pedido",
     customIcon: TimeMoneyIcon
   },
   { 

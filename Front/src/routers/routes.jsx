@@ -7,6 +7,7 @@ import { Analisis_Inv } from "../pages/Analisis_Inv";
 import { Metricas } from "../pages/Metricas";
 import { Admin } from "../pages/Admin";
 import { Compras } from "../pages/Compras";
+import { Gestion_de_Proveedores } from "../pages/Gestion_de_Proveedores";
 import { LoginPage } from "../pages/Login";
 import { Cuenta } from "../pages/Cuenta";
 import { Sidebar } from "../components/Sidebar";
@@ -83,6 +84,7 @@ function Layout() {
           <Route path="/metricas" element={<Metricas />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/compras" element={<Compras />} />
+          <Route path="/gestion_proveedores" element={<Gestion_de_Proveedores />} />
           <Route path="/cuenta" element={<Cuenta />} />
         </Routes>
       </ContentContainer>
