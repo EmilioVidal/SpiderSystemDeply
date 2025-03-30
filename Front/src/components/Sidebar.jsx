@@ -11,7 +11,7 @@ import { MdOutlineAnalytics, MdLogout, MdOutlineInventory, MdOutlineQueryStats }
 import { FiAlertTriangle } from "react-icons/fi";
 import { TbDeviceDesktopAnalytics, TbReportAnalytics } from "react-icons/tb";
 import { RiAdminLine } from "react-icons/ri";
-import { IoCartOutline } from "react-icons/io5";
+import { IoCartOutline, IoChatboxOutline  } from "react-icons/io5";
 import { VscMenu,VscAccount } from "react-icons/vsc";
 
 import { NavLink } from "react-router-dom";
@@ -162,6 +162,11 @@ const linksArray = [
     label: "Compras",
     icon: <IoCartOutline />,
     to: "/compras",
+  },
+  {
+    label: "Compras",
+    icon: <IoChatboxOutline />,
+    to: "/chat",
   },
 ];
 const secondarylinksArray = [

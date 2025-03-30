@@ -9,6 +9,7 @@ import { Admin } from "../pages/Admin";
 import { Compras } from "../pages/Compras";
 import { LoginPage } from "../pages/Login";
 import { Cuenta } from "../pages/Cuenta";
+import ChatPage from "../pages/ChatPage";
 import { Sidebar } from "../components/Sidebar";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
@@ -84,6 +85,7 @@ function Layout() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/compras" element={<Compras />} />
           <Route path="/cuenta" element={<Cuenta />} />
+          <Route path="/chat" element={<ChatPage />} />
         </Routes>
       </ContentContainer>
     </AppContainer>
