@@ -7,7 +7,7 @@ import {
   AiOutlineSetting,
 } from "react-icons/ai";
 import { CiChat1 } from "react-icons/ci";
-import { MdOutlineAnalytics, MdLogout, MdOutlineInventory, MdOutlineQueryStats, MdBusinessCenter } from "react-icons/md";
+import { MdOutlineAnalytics, MdLogout, MdOutlineInventory, MdOutlineQueryStats, MdBusinessCenter, MdOutlineShoppingCart } from "react-icons/md";
 import { FiAlertTriangle } from "react-icons/fi";
 import { TbDeviceDesktopAnalytics, TbReportAnalytics } from "react-icons/tb";
 import { RiAdminLine } from "react-icons/ri";
@@ -167,6 +167,11 @@ const linksArray = [
     label: "Gestión de Proveedores",
     icon: <MdBusinessCenter />,
     to: "/gestion_proveedores",
+  },
+  {
+    label: "Ordenes",
+    icon: <MdOutlineShoppingCart />,
+    to: "/ordenes",
   },
 ];
 const secondarylinksArray = [

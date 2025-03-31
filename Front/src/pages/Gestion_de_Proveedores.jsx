@@ -3,6 +3,7 @@ import { ThemeContext } from "../App";
 import UI5ThemeProvider from "../components/UI5ThemeProvider";
 import { createGlobalStyle } from "styled-components";
 import "material-icons/iconfont/material-icons.css";
+import { useLocation } from "react-router-dom";
 import {
   Container,
   PageHeader,
@@ -38,7 +39,7 @@ import {
   Badge,
   ThemeToggle
 } from "../styles/GestionDeProveedores/GestionDeProveedoresStyle";
-import { MdBusinessCenter } from "react-icons/md";
+import { MdBusinessCenter, MdOutlineShoppingCart } from "react-icons/md";
 
 // Define a GlobalStyle component for this page
 const GlobalStyle = createGlobalStyle`
@@ -333,6 +334,8 @@ const Gestion_de_Proveedores = () => {
   const { theme, setTheme } = useContext(ThemeContext);
   const isDarkTheme = theme === "dark";
   const toggleTheme = () => setTheme(isDarkTheme ? "light" : "dark");
+  const location = useLocation();
+  const isOrdersPage = location.pathname === "/ordenes";
   
   const [suppliers, setSuppliers] = useState(suppliersData);
   const [searchQuery, setSearchQuery] = useState("");
@@ -579,17 +582,19 @@ const Gestion_de_Proveedores = () => {
         <ContentArea>
           <PageHeader>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <MdBusinessCenter size={24} />
-              <PageTitle>Gestión de Proveedores</PageTitle>
+              {isOrdersPage ? <MdOutlineShoppingCart size={24} /> : <MdBusinessCenter size={24} />}
+              <PageTitle>{isOrdersPage ? "Órdenes de Compra" : "Gestión de Proveedores"}</PageTitle>
             </div>
-            <ThemeToggle onClick={toggleTheme}>
-              {isDarkTheme ? <SunIcon /> : <MoonIcon />}
-            </ThemeToggle>
+            <div>
+              <ThemeToggle onClick={toggleTheme} title={isDarkTheme ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}>
+                {isDarkTheme ? <SunIcon /> : <MoonIcon />}
+              </ThemeToggle>
+            </div>
           </PageHeader>
           
           <Card>
             <CardHeader>
-              Proveedores de Super Shoes
+              {isOrdersPage ? "Órdenes de Compra" : "Proveedores de Super Shoes"}
             </CardHeader>
             <CardContent>
               <ToolbarSection>
