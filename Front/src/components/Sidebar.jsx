@@ -7,6 +7,7 @@ import {
   AiOutlineSetting,
 } from "react-icons/ai";
 import { CiChat1 } from "react-icons/ci";
+import { IoChatboxOutline } from "react-icons/io5";
 import { MdOutlineAnalytics, MdLogout, MdOutlineInventory, MdOutlineQueryStats, MdBusinessCenter, MdOutlineShoppingCart } from "react-icons/md";
 import { FiAlertTriangle } from "react-icons/fi";
 import { TbDeviceDesktopAnalytics, TbReportAnalytics } from "react-icons/tb";
