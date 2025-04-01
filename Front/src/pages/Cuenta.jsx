@@ -1,360 +1,164 @@
-import React, { useState, useRef, useEffect } from "react";
-import { 
-  Container, 
-  Title, 
-  InfoContainer, 
-  InfoTitle, 
-  InfoRow, 
-  InfoLabel, 
-  InfoValue, 
-  ProfileImage, 
-  EditButton, 
-  EditProfileButton,
-  ChangePasswordButton,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalTitle,
-  CloseButton,
-  FormGroup,
-  Label,
-  Input,
-  ButtonGroup,
-  CancelButton,
-  SaveButton,
-  ProfileImageContainer,
-  FileInput,
-  NotificationContainer
-} from "../styles/Cuenta/CuentaStyles";
-import { FiEdit2, FiCheck, FiCamera, FiX } from "react-icons/fi";
+import React, { useState, useRef, useContext } from "react";
+import { FiCamera, FiMail, FiLogOut, FiTrash2, FiCheckCircle } from "react-icons/fi";
 import { VscAccount } from "react-icons/vsc";
+import { ThemeContext } from "../App"; // Importando el contexto del tema
 
 export function Cuenta() {
+  const { theme } = useContext(ThemeContext); // Obteniendo el tema actual
+  const isDarkMode = theme === 'dark';
+
   const [userData, setUserData] = useState({
-    nombre: "Mauricio",
-    apellidos: "Perea González",
-    correo: "mauricio.perea@sap.mx",
-    telefono: "81 4083 8756",
-    rol: "Gerente de Compras",
-    profileImage: null // Para guardar la URL de la imagen
+    nombre: "",
+    apellidos: "",
+    correo: "",
+    telefono: "",
+    profileImage: "",
   });
 
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [formData, setFormData] = useState({...userData});
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: ""
-  });
-  const [passwordError, setPasswordError] = useState("");
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const fileInputRef = useRef(null);
-  const [notification, setNotification] = useState({
-    visible: false,
-    message: "",
-    type: "success" // "success" o "error"
-  });
 
-  useEffect(() => {
-    if (notification.visible) {
-      const timer = setTimeout(() => {
-        setNotification(prev => ({ ...prev, visible: false }));
-      }, 3000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [notification.visible]);
-
-  const showNotification = (message, type = "success") => {
-    setNotification({
-      visible: true,
-      message,
-      type
-    });
-    setTimeout(() => {
-      setNotification(prev => ({ ...prev, visible: false }));
-    }, 3000);
-  };
-
-  const handleEditClick = () => {
-    setFormData({...userData});
-    setShowEditModal(true);
-  };
-
-  const handleSaveClick = () => {
-    // Aquí iría la lógica para guardar los cambios en el servidor
-    setUserData(formData);
-    setShowEditModal(false);
-    showNotification("¡Información guardada con éxito! ✅", "success");
-  };
-
-  const handleCancelClick = () => {
-    setFormData({...userData});
-    setShowEditModal(false);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handlePasswordChange = (e) => {
-    const { name, value } = e.target;
-    setPasswordData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleChangePasswordClick = () => {
-    setShowPasswordModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowPasswordModal(false);
-    setPasswordData({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: ""
-    });
-    setPasswordError("");
-  };
-
-  const handleSavePassword = () => {
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      showNotification("Las contraseñas no coinciden.", "error");
-      return;
-    }
-    
-    if (passwordData.newPassword.length < 6) {
-      showNotification("La nueva contraseña debe tener al menos 6 caracteres.", "error");
-      return;
-    }
-    
-    // Aquí iría la lógica para cambiar la contraseña en el servidor
-    setShowPasswordModal(false);
-    setPasswordData({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: ""
-    });
-    setPasswordError("");
-    showNotification("¡Contraseña actualizada exitosamente! 🔐", "success");
-  };
-
-  // Funciones para manejar la imagen de perfil
   const handleProfileImageClick = () => {
     fileInputRef.current.click();
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
     if (file) {
-      // Validar tamaño del archivo (máximo 2MB)
-      if (file.size > 2 * 1024 * 1024) {
-        showNotification("El archivo es demasiado grande. El tamaño máximo es 2MB.", "error");
-        return;
-      }
-      
-      // Validar tipo de archivo (solo imágenes)
-      if (!file.type.startsWith('image/')) {
-        showNotification("Por favor, selecciona una imagen válida.", "error");
-        return;
-      }
-      
       const reader = new FileReader();
-      reader.onload = (event) => {
-        setUserData({ ...userData, profileImage: event.target.result });
-        showNotification("¡Imagen actualizada correctamente! 📸", "success");
+      reader.onload = (e) => {
+        setUserData({ ...userData, profileImage: e.target.result });
       };
       reader.readAsDataURL(file);
     }
   };
 
+  const handleSaveChanges = () => {
+    setShowConfirmModal(true);
+  };
+
   return (
-    <Container>
-      <Title>Cuenta</Title>
-      <InfoContainer>
-        <EditButton onClick={handleEditClick}>
-          <FiEdit2 /> Editar
-        </EditButton>
-        <InfoTitle>Información General</InfoTitle>
-        <InfoRow>
-          <InfoLabel>Nombre:</InfoLabel>
-          <InfoValue>{userData.nombre}</InfoValue>
-        </InfoRow>
-        <InfoRow>
-          <InfoLabel>Apellidos:</InfoLabel>
-          <InfoValue>{userData.apellidos}</InfoValue>
-        </InfoRow>
-        <InfoRow>
-          <InfoLabel>Correo electrónico:</InfoLabel>
-          <InfoValue>{userData.correo}</InfoValue>
-        </InfoRow>
-        <InfoRow>
-          <InfoLabel>Número de teléfono:</InfoLabel>
-          <InfoValue>{userData.telefono}</InfoValue>
-        </InfoRow>
-        <InfoRow>
-          <InfoLabel>Rol en la empresa:</InfoLabel>
-          <InfoValue>{userData.rol}</InfoValue>
-        </InfoRow>
-        
-        <ProfileImageContainer>
-          <ProfileImage>
-            {userData.profileImage ? (
-              <img src={userData.profileImage} alt="Foto de perfil" />
-            ) : (
-              <VscAccount />
-            )}
-            <EditProfileButton onClick={handleProfileImageClick} title="Cambiar imagen">
-              <FiCamera />
-            </EditProfileButton>
-          </ProfileImage>
-          <FileInput 
-            type="file" 
-            ref={fileInputRef} 
-            onChange={handleFileChange} 
-            accept="image/*" 
-          />
-        </ProfileImageContainer>
-      </InfoContainer>
-      
-      <div style={{ marginTop: '30px' }}>
-        <ChangePasswordButton onClick={handleChangePasswordClick}>
-          Cambiar Contraseña
-        </ChangePasswordButton>
+    <div className={`max-w-3xl mx-auto p-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-md`}>
+      <h2 className={`text-2xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Cuenta</h2>
+      <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mb-6`}>Información</p>
+
+      {/* Profile Picture */}
+      <div className="flex items-center gap-4">
+        <div className={`relative w-20 h-20 rounded-full ${isDarkMode ? 'border-gray-600' : 'border-gray-300'} border overflow-hidden`}>
+          {userData.profileImage ? (
+            <img src={userData.profileImage} alt="Profile" className="w-full h-full object-cover" />
+          ) : (
+            <div className={`w-full h-full flex items-center justify-center ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+              <VscAccount className={`${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} size={40} />
+            </div>
+          )}
+        </div>
+        <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} accept="image/*" />
+        <button 
+          onClick={handleProfileImageClick} 
+          className={`${isDarkMode ? 'bg-gray-700 text-gray-200' : 'bg-gray-200 text-gray-700'} px-4 py-2 rounded cursor-pointer`}
+        >
+          Subir nueva foto
+        </button>
+        <button className="bg-red-500 text-white px-4 py-2 rounded">Borrar</button>
       </div>
-      
-      {notification.visible && (
-        <NotificationContainer type={notification.type}>
-          {notification.type === "success" ? <FiCheck /> : <FiX />}
-          {notification.message}
-        </NotificationContainer>
+
+      {/* Full Name */}
+      <div className="mt-6 grid grid-cols-2 gap-4">
+        <div>
+          <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Nombre</label>
+          <input 
+            type="text" 
+            value={userData.nombre} 
+            onChange={(e) => setUserData({...userData, nombre: e.target.value})} 
+            className={`w-full p-2 rounded mt-1 ${
+              isDarkMode 
+                ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500 focus:ring-blue-500' 
+                : 'border-gray-300 bg-white text-gray-900'
+            } border`} 
+          />
+        </div>
+        <div>
+          <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Apellidos</label>
+          <input 
+            type="text" 
+            value={userData.apellidos} 
+            onChange={(e) => setUserData({...userData, apellidos: e.target.value})} 
+            className={`w-full p-2 rounded mt-1 ${
+              isDarkMode 
+                ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500 focus:ring-blue-500' 
+                : 'border-gray-300 bg-white text-gray-900'
+            } border`} 
+          />
+        </div>
+      </div>
+
+      {/* Email */}
+      <div className="mt-6">
+        <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Correo</label>
+        <div className="relative mt-1">
+          <FiMail className={`absolute left-3 top-2.5 ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`} />
+          <input 
+            type="email" 
+            value={userData.correo} 
+            onChange={(e) => setUserData({...userData, correo: e.target.value})} 
+            className={`w-full p-2 pl-10 rounded ${
+              isDarkMode 
+                ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500 focus:ring-blue-500' 
+                : 'border-gray-300 bg-white text-gray-900'
+            } border`} 
+          />
+        </div>
+      </div>
+
+      {/* Role and Phone */}
+      <div className="mt-6 grid grid-cols-2 gap-4">
+        <div>
+          <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Rol asignado</label>
+          <input 
+            type="text" 
+            value="Administrador" 
+            className={`w-full p-2 rounded ${
+              isDarkMode 
+                ? 'bg-gray-700 border-gray-600 text-white' 
+                : 'border-gray-300 bg-white text-gray-900'
+            } border`} 
+            readOnly 
+          />
+        </div>
+        <div>
+          <label className={`block text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Teléfono</label>
+          <input 
+            type="text" 
+            value={userData.telefono} 
+            onChange={(e) => setUserData({...userData, telefono: e.target.value})} 
+            className={`w-full p-2 rounded ${
+              isDarkMode 
+                ? 'bg-gray-700 border-gray-600 text-white focus:border-blue-500 focus:ring-blue-500' 
+                : 'border-gray-300 bg-white text-gray-900'
+            } border`} 
+          />
+        </div>
+      </div>
+
+      {/* Save Changes Button */}
+      <div className="mt-6 text-center">
+        <button onClick={handleSaveChanges} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Guardar cambios</button>
+      </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className={`${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} p-6 rounded-lg shadow-lg max-w-sm text-center`}>
+            <FiCheckCircle className="text-green-500 mx-auto text-5xl" />
+            <h3 className="text-lg font-semibold mt-2">¡Cambios guardados!</h3>
+            <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mt-2`}>Los cambios se han guardado correctamente.</p>
+            <div className="mt-4">
+              <button onClick={() => setShowConfirmModal(false)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Aceptar</button>
+            </div>
+          </div>
+        </div>
       )}
-      
-      {/* Modal para editar información */}
-      {showEditModal && (
-        <ModalOverlay>
-          <ModalContent>
-            <ModalHeader>
-              <ModalTitle>Editar Información</ModalTitle>
-              <CloseButton onClick={handleCancelClick}>&times;</CloseButton>
-            </ModalHeader>
-            
-            <FormGroup>
-              <Label>Nombre</Label>
-              <Input 
-                type="text" 
-                name="nombre" 
-                value={formData.nombre} 
-                onChange={handleChange}
-              />
-            </FormGroup>
-            
-            <FormGroup>
-              <Label>Apellidos</Label>
-              <Input 
-                type="text" 
-                name="apellidos" 
-                value={formData.apellidos} 
-                onChange={handleChange}
-              />
-            </FormGroup>
-            
-            <FormGroup>
-              <Label>Correo electrónico</Label>
-              <Input 
-                type="email" 
-                name="correo" 
-                value={formData.correo} 
-                onChange={handleChange}
-              />
-            </FormGroup>
-            
-            <FormGroup>
-              <Label>Número de teléfono</Label>
-              <Input 
-                type="tel" 
-                name="telefono" 
-                value={formData.telefono} 
-                onChange={handleChange}
-              />
-            </FormGroup>
-            
-            <FormGroup>
-              <Label>Rol en la empresa</Label>
-              <Input 
-                type="text" 
-                name="rol" 
-                value={formData.rol} 
-                onChange={handleChange}
-              />
-            </FormGroup>
-            
-            <ButtonGroup>
-              <CancelButton onClick={handleCancelClick}>Cancelar</CancelButton>
-              <SaveButton onClick={handleSaveClick}>Guardar</SaveButton>
-            </ButtonGroup>
-          </ModalContent>
-        </ModalOverlay>
-      )}
-      
-      {/* Modal para cambiar contraseña */}
-      {showPasswordModal && (
-        <ModalOverlay>
-          <ModalContent>
-            <ModalHeader>
-              <ModalTitle>Cambiar Contraseña</ModalTitle>
-              <CloseButton onClick={handleCloseModal}>&times;</CloseButton>
-            </ModalHeader>
-            
-            <FormGroup>
-              <Label>Contraseña Actual</Label>
-              <Input 
-                type="password" 
-                name="currentPassword" 
-                value={passwordData.currentPassword}
-                onChange={handlePasswordChange}
-              />
-            </FormGroup>
-            
-            <FormGroup>
-              <Label>Nueva Contraseña</Label>
-              <Input 
-                type="password" 
-                name="newPassword" 
-                value={passwordData.newPassword}
-                onChange={handlePasswordChange}
-              />
-            </FormGroup>
-            
-            <FormGroup>
-              <Label>Confirmar Nueva Contraseña</Label>
-              <Input 
-                type="password" 
-                name="confirmPassword" 
-                value={passwordData.confirmPassword}
-                onChange={handlePasswordChange}
-              />
-            </FormGroup>
-            
-            {passwordError && (
-              <div style={{ color: 'red', marginTop: '10px' }}>
-                {passwordError}
-              </div>
-            )}
-            
-            <ButtonGroup>
-              <CancelButton onClick={handleCloseModal}>Cancelar</CancelButton>
-              <SaveButton onClick={handleSavePassword}>Guardar</SaveButton>
-            </ButtonGroup>
-          </ModalContent>
-        </ModalOverlay>
-      )}
-    </Container>
+    </div>
   );
 }

@@ -159,6 +159,11 @@ const linksArray = [
     to: "/admin",
   },
   {
+    label: "Chat",
+    icon: <IoChatboxOutline />,
+    to: "/chat",
+  },
+  {
     label: "Compras",
     icon: <IoCartOutline />,
     to: "/compras",
@@ -449,4 +454,3 @@ const Divider = styled.div`
     margin: 15px 0;
   }
 `;
-//#endregion
