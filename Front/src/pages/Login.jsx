@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, Lock, Mail, MessageSquare } from "lucide-react";
 import styled from "styled-components";
+import { ThemeContext } from "../App"; // Importando el contexto correcto
 
+// Componentes estilizados para el formulario
 const RoundedInput = styled.input`
   border-radius: 12px;
   transition: all 0.3s ease;
@@ -23,12 +25,186 @@ const RoundedButton = styled.button`
   }
 `;
 
+// Componente para Light Mode
+const LightModeLogin = ({ handleSubmit, formData, setFormData, showPassword, setShowPassword }) => {
+  return (
+    <div className="w-1/2 bg-white flex flex-col justify-center h-screen">
+      <div className="mx-auto w-full max-w-md px-8">
+        {/* Logo */}
+        <div className="mb-8 text-center">
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+              <MessageSquare className="w-6 h-6 text-blue-600" />
+            </div>
+            <h1 className="text-2xl font-bold mt-2 text-gray-800">Welcome Back</h1>
+            <p className="text-gray-500">Sign in to your account</p>
+          </div>
+        </div>
+
+        {/* Formulario */}
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Mail className="h-5 w-5 text-blue-600" />
+              </div>
+              <RoundedInput
+                type="email"
+                className="block w-full pl-10 py-3 border border-blue-200 bg-blue-50 text-gray-800 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="you@example.com"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-blue-600" />
+              </div>
+              <RoundedInput
+                type={showPassword ? "text" : "password"}
+                className="block w-full pl-10 py-3 border border-blue-200 bg-blue-50 text-gray-800 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5 text-blue-600" />
+                ) : (
+                  <Eye className="h-5 w-5 text-blue-600" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <RoundedButton
+            type="submit"
+            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md border-0"
+          >
+            Sign in
+          </RoundedButton>
+
+          <div className="text-center mt-4">
+            <p className="text-gray-500">
+              Don't have an account?{" "}
+              <Link to="/home" className="text-blue-600 hover:text-blue-700">
+                Create account
+              </Link>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// Componente para Dark Mode
+const DarkModeLogin = ({ handleSubmit, formData, setFormData, showPassword, setShowPassword }) => {
+  return (
+    <div className="w-1/2 bg-gray-900 flex flex-col justify-center h-screen">
+      <div className="mx-auto w-full max-w-md px-8">
+        {/* Logo */}
+        <div className="mb-8 text-center">
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-12 h-12 rounded-xl bg-blue-900 flex items-center justify-center">
+              <MessageSquare className="w-6 h-6 text-blue-400" />
+            </div>
+            <h1 className="text-2xl font-bold mt-2 text-white">Welcome Back</h1>
+            <p className="text-gray-400">Sign in to your account</p>
+          </div>
+        </div>
+
+        {/* Formulario */}
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-300">
+              Email
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Mail className="h-5 w-5 text-blue-400" />
+              </div>
+              <RoundedInput
+                type="email"
+                className="block w-full pl-10 py-3 border border-blue-800 bg-blue-900/50 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="you@example.com"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-300">
+              Password
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-blue-400" />
+              </div>
+              <RoundedInput
+                type={showPassword ? "text" : "password"}
+                className="block w-full pl-10 py-3 border border-blue-800 bg-blue-900/50 text-white rounded-md focus:ring-blue-500 focus:border-blue-500"
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5 text-blue-400" />
+                ) : (
+                  <Eye className="h-5 w-5 text-blue-400" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <RoundedButton
+            type="submit"
+            className="w-full py-3 px-4 bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-md border-0"
+          >
+            Sign in
+          </RoundedButton>
+
+          <div className="text-center mt-4">
+            <p className="text-gray-400">
+              Don't have an account?{" "}
+              <Link to="/home" className="text-blue-400 hover:text-blue-300">
+                Create account
+              </Link>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+// Componente principal de Login
 export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const { theme } = useContext(ThemeContext); // Obteniendo el tema actual
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,95 +212,29 @@ export function LoginPage() {
     window.location.href = "/home"; // Redirige a la página de inicio después del login
   };
 
+  const props = {
+    handleSubmit,
+    formData,
+    setFormData,
+    showPassword, 
+    setShowPassword
+  };
+
   return (
-    <div className="h-screen flex">
-      {/* Lado Izquierdo - Formulario */}
-      <div className="w-1/2 flex flex-col justify-center items-center px-16 py-12">
-        <div className="max-w-md w-full space-y-8">
-          {/* Logo */}
-          <div className="mb-8 text-center">
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                <MessageSquare className="w-6 h-6 text-primary" />
-              </div>
-              <h1 className="text-2xl font-bold mt-2">Welcome Back</h1>
-              <p className="text-base-content/60">Sign in to your account</p>
-            </div>
-          </div>
+    <div className="flex h-screen w-screen overflow-hidden absolute inset-0 m-0 p-0">
+      {/* Panel izquierdo - cambia según el tema */}
+      {theme === 'light' ? (
+        <LightModeLogin {...props} />
+      ) : (
+        <DarkModeLogin {...props} />
+      )}
 
-          {/* Formulario */}
-          <form className="space-y-6 flex flex-col items-center" onSubmit={handleSubmit}>
-            <div className="form-control w-full max-w-sm">
-              <label className="label">
-                <span className="label-text font-medium">Email</span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                  <Mail className="h-5 w-5 text-base-content/40" />
-                </div>
-                <RoundedInput
-                  type="email"
-                  className="input input-bordered w-full h-14 pl-10"
-                  placeholder="you@example.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                />
-              </div>
-            </div>
-
-            <div className="form-control w-full max-w-sm">
-              <label className="label">
-                <span className="label-text font-medium">Password</span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                  <Lock className="h-5 w-5 text-base-content/40" />
-                </div>
-                <RoundedInput
-                  type={showPassword ? "text" : "password"}
-                  className="input input-bordered w-full h-14 pl-10"
-                  placeholder="••••••••"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-base-content/40" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-base-content/40" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <RoundedButton 
-              type="submit" 
-              className="btn btn-primary w-full max-w-sm h-14 bg-blue-500 hover:bg-blue-700 text-white"
-            >
-              Sign in
-            </RoundedButton>
-          </form>
-
-          <div className="text-center">
-            <p className="text-base-content/60">
-              Don&apos;t have an account?{" "}
-              <Link to="/home" className="link text-blue-500 hover:text-blue-700">
-                Create account
-              </Link>
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Lado Derecho - Mensaje de bienvenida */}
-      <div className="w-1/2 flex justify-center items-end bg-gray-100 px-16 py-12">
-        <div className="text-center min-w-md">
-          <h2 className="text-3xl font-bold">Welcome back!</h2>
-          <p className="mt-4 text-lg">
+      {/* Panel derecho - siempre negro con texto blanco */}
+      <div className="w-1/2 bg-gray-900 h-screen flex flex-col">
+        <div className="flex-grow"></div>
+        <div className="text-center pb-8">
+          <h2 className="text-3xl font-bold text-white">Welcome back!</h2>
+          <p className="mt-4 text-lg text-gray-300 max-w-md mx-auto">
             Sign in to continue your conversations and catch up with your messages.
           </p>
         </div>
