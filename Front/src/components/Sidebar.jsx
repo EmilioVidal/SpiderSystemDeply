@@ -7,11 +7,11 @@ import {
   AiOutlineSetting,
 } from "react-icons/ai";
 import { CiChat1 } from "react-icons/ci";
-import { MdOutlineAnalytics, MdLogout, MdOutlineInventory, MdOutlineQueryStats } from "react-icons/md";
+import { MdOutlineAnalytics, MdLogout, MdOutlineInventory, MdOutlineQueryStats, MdBusinessCenter, MdOutlineShoppingCart } from "react-icons/md";
 import { FiAlertTriangle } from "react-icons/fi";
 import { TbDeviceDesktopAnalytics, TbReportAnalytics } from "react-icons/tb";
 import { RiAdminLine } from "react-icons/ri";
-import { IoCartOutline, IoChatboxOutline  } from "react-icons/io5";
+import { IoCartOutline } from "react-icons/io5";
 import { VscMenu,VscAccount } from "react-icons/vsc";
 
 import { NavLink } from "react-router-dom";
@@ -159,14 +159,24 @@ const linksArray = [
     to: "/admin",
   },
   {
+    label: "Chat",
+    icon: <IoChatboxOutline />,
+    to: "/chat",
+  },
+  {
     label: "Compras",
     icon: <IoCartOutline />,
     to: "/compras",
   },
   {
-    label: "Compras",
-    icon: <IoChatboxOutline />,
-    to: "/chat",
+    label: "Gestión de Proveedores",
+    icon: <MdBusinessCenter />,
+    to: "/gestion_proveedores",
+  },
+  {
+    label: "Ordenes",
+    icon: <MdOutlineShoppingCart />,
+    to: "/ordenes",
   },
 ];
 const secondarylinksArray = [
@@ -192,7 +202,7 @@ const MenuButton = styled.button`
   background: transparent;
   border: none;
   cursor: pointer;
-  color: ${(props) => props.theme.text};
+  color: ${(props) => props.theme.textColor};
   font-size: 24px;
   z-index: 999;
   
@@ -203,7 +213,7 @@ const MenuButton = styled.button`
 `;
 
 const Container = styled.div`
-  color: ${(props) => props.theme.text};
+  color: ${(props) => props.theme.textColor};
   background: ${(props) => props.theme.bg};
   position: fixed;
   top: 0;
@@ -275,7 +285,7 @@ const Container = styled.div`
       align-items: center;
       text-decoration: none;
       padding: calc(${v.smSpacing}-2px) 0;
-      color: ${(props) => props.theme.text};
+      color: ${(props) => props.theme.textColor};
       height: 50px;
       
       @media (max-width: 768px) {
@@ -444,4 +454,3 @@ const Divider = styled.div`
     margin: 15px 0;
   }
 `;
-//#endregion

@@ -7,10 +7,12 @@ import { Analisis_Inv } from "../pages/Analisis_Inv";
 import { Metricas } from "../pages/Metricas";
 import { Admin } from "../pages/Admin";
 import { Compras } from "../pages/Compras";
+import { Gestion_de_Proveedores } from "../pages/Gestion_de_Proveedores";
+import { ComprasProveedor } from "../pages/ComprasProveedor";
 import { LoginPage } from "../pages/Login";
 import { Cuenta } from "../pages/Cuenta";
-import ChatPage from "../pages/ChatPage";
 import { Sidebar } from "../components/Sidebar";
+import ChatPage from "../pages/ChatPage";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 
@@ -84,6 +86,8 @@ function Layout() {
           <Route path="/metricas" element={<Metricas />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/compras" element={<Compras />} />
+          <Route path="/gestion_proveedores" element={<Gestion_de_Proveedores />} />
+          <Route path="/ordenes" element={<ComprasProveedor />} />
           <Route path="/cuenta" element={<Cuenta />} />
           <Route path="/chat" element={<ChatPage />} />
         </Routes>

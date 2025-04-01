@@ -28,7 +28,7 @@ const Container = styled.div`
   flex-direction: column;
   background: ${({ theme }) => theme.bgtotal};
   transition: all 0.3s;
-  color: ${({ theme }) => theme.text};
+  color: ${({ theme }) => theme.textColor};
   height: 100vh;
   width: 100%;
   position: relative;
