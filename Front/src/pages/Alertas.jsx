@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext, useCallback, useMemo } from "react";
+import { ThemeContext } from "../App";
 import {
   Container,
   PageHeader,
@@ -10,6 +11,7 @@ import {
   NavigationButton
 } from "../styles/Alertas/AlertasStyle";
 import UI5ThemeProvider from "../components/UI5ThemeProvider";
+import { MdSync } from "react-icons/md";
 
 // Theme icons
 const SunIcon = (
@@ -110,118 +112,271 @@ const ChevronDown = (
   </svg>
 );
 
-function AlertasContent({ isDarkTheme, toggleTheme }) {
+// Configuración de umbrales para alertas
+const STOCK_THRESHOLDS = {
+  CRITICAL: 5,  // Nivel crítico de stock
+  WARNING: 10,  // Nivel de advertencia de stock
+  REORDER: 15,  // Punto de reorden
+  HIGH_DEMAND: 20  // Umbral para alta demanda
+};
+
+// Configuración de actualización y paginación
+const UPDATE_INTERVAL = 30000; // 30 segundos
+const ALERTS_PER_PAGE = 10;
+const MAX_RESOLVED_ALERTS = 10;
+
+function AlertasContent() {
+  const { theme } = useContext(ThemeContext);
+  const isDarkTheme = theme === "dark";
   const alertsContainerRef = useRef(null);
   const [containerHeight, setContainerHeight] = useState(0);
-  const [estimatedAlertHeight, setEstimatedAlertHeight] = useState(100); // Default height estimation in pixels
-  
-  const [allAlerts, setAllAlerts] = useState([
-    {
-      id: 1,
-      title: "Stock bajo en Producto A",
-      type: "error",
-      status: "Crítico",
-      resolved: false,
-      productIcon: "stock"
-    },
-    {
-      id: 2,
-      title: "Alta demanda en Producto B",
-      type: "success",
-      status: "Resuelto",
-      resolved: true,
-      productIcon: "demand"
-    },
-    {
-      id: 3,
-      title: "Pedido retrasado de Proveedor X",
-      type: "warning",
-      status: "Advertencia",
-      resolved: false,
-      productIcon: "shipping"
-    },
-    {
-      id: 4,
-      title: "Actualización de inventario pendiente",
-      type: "warning",
-      status: "Advertencia",
-      resolved: false,
-      productIcon: "stock"
-    },
-    {
-      id: 5,
-      title: "Producto C sin stock",
-      type: "error",
-      status: "Crítico",
-      resolved: false,
-      productIcon: "stock"
-    },
-    {
-      id: 6,
-      title: "Reabastecimiento programado",
-      type: "success",
-      status: "Resuelto",
-      resolved: true,
-      productIcon: "stock"
-    },
-    {
-      id: 7,
-      title: "Entrega retrasada de Producto D",
-      type: "warning",
-      status: "Advertencia",
-      resolved: false,
-      productIcon: "shipping"
-    },
-    {
-      id: 8,
-      title: "Incremento de demanda Producto E",
-      type: "warning",
-      status: "Advertencia",
-      resolved: false,
-      productIcon: "demand"
-    },
-    {
-      id: 9,
-      title: "Producto F agotado en tienda principal",
-      type: "error",
-      status: "Crítico",
-      resolved: false,
-      productIcon: "stock"
-    },
-    {
-      id: 10,
-      title: "Reposición de Producto G completada",
-      type: "success",
-      status: "Resuelto",
-      resolved: true,
-      productIcon: "stock"
-    }
-  ]);
-
-  // Filtrado
+  const [estimatedAlertHeight, setEstimatedAlertHeight] = useState(100);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [allAlerts, setAllAlerts] = useState([]);
   const [activeFilters, setActiveFilters] = useState([]);
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const filterDropdownRef = useRef(null);
-  
+
   const availableFilters = [
-    { id: "error", label: "Crítico", color: "#bb0000" },
-    { id: "warning", label: "Advertencia", color: "#e9730c" },
-    { id: "success", label: "Resuelto", color: "#107e3e" }
+    { id: "error", label: "Stock Crítico/Agotado", color: "#bb0000" },
+    { id: "warning", label: "Advertencias", color: "#e9730c" },
+    { id: "success", label: "Resueltos", color: "#107e3e" }
   ];
-  
-  // Cierra el dropdown al hacer clic fuera de él
+
+  // Función para manejar los filtros
+  const toggleFilter = (filterId) => {
+    setActiveFilters(prev => {
+      const newFilters = prev.includes(filterId)
+        ? prev.filter(id => id !== filterId)
+        : [...prev, filterId];
+      
+      // Resetear a la primera página cuando cambian los filtros
+      setCurrentPage(1);
+      return newFilters;
+    });
+  };
+
+  // Filtrar las alertas según los filtros activos
+  const filteredAlerts = useMemo(() => {
+    if (activeFilters.length === 0) return allAlerts;
+    return allAlerts.filter(alert => activeFilters.includes(alert.type));
+  }, [allAlerts, activeFilters]);
+
+  // Cerrar el dropdown al hacer clic fuera
   useEffect(() => {
-    function handleClickOutside(event) {
+    const handleClickOutside = (event) => {
       if (filterDropdownRef.current && !filterDropdownRef.current.contains(event.target)) {
         setIsFilterDropdownOpen(false);
       }
-    }
-    
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
     };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Definir las funciones de generación de alertas primero
+  const generateStockAlert = useCallback((product) => {
+    if (!product) return null;
+    
+    if (product.cantidad === 0) {
+      return {
+        type: "error",
+        status: "Agotado",
+        title: `${product.producto} - Sin Stock`,
+        details: "0 unidades disponibles en todas las ubicaciones"
+      };
+    } else if (product.cantidad <= STOCK_THRESHOLDS.CRITICAL) {
+      return {
+        type: "error",
+        status: "Crítico",
+        title: `${product.producto} - Stock Crítico`,
+        details: `Stock actual: ${product.cantidad} unidades (Por debajo del umbral crítico de ${STOCK_THRESHOLDS.CRITICAL})`
+      };
+    } else if (product.cantidad <= STOCK_THRESHOLDS.WARNING) {
+      return {
+        type: "warning",
+        status: "Bajo Stock",
+        title: `${product.producto} - Stock Bajo`,
+        details: `Stock actual: ${product.cantidad} unidades (Por debajo del umbral de advertencia de ${STOCK_THRESHOLDS.WARNING})`
+      };
+    } else if (product.cantidad <= STOCK_THRESHOLDS.REORDER) {
+      return {
+        type: "warning",
+        status: "Punto de Reorden",
+        title: `${product.producto} - Punto de Reorden`,
+        details: `Stock actual: ${product.cantidad} unidades (Punto de reorden: ${STOCK_THRESHOLDS.REORDER})`
+      };
+    }
+    return null;
+  }, []);
+
+  const generateDemandAlert = useCallback((product) => {
+    if (!product) return null;
+    
+    if (product.ventas24h >= STOCK_THRESHOLDS.HIGH_DEMAND) {
+      return {
+        type: "warning",
+        status: "Alta Demanda",
+        title: `Alta demanda - ${product.producto}`,
+        details: `Ventas últimas 24h: ${product.ventas24h} unidades`
+      };
+    }
+    return null;
+  }, []);
+
+  // Función para calcular el número total de páginas
+  const calculateTotalPages = useCallback((alerts) => {
+    return Math.ceil(alerts.length / ALERTS_PER_PAGE);
+  }, []);
+
+  // Función para obtener las alertas de la página actual
+  const getCurrentPageAlerts = useCallback((alerts, page) => {
+    const startIndex = (page - 1) * ALERTS_PER_PAGE;
+    const endIndex = startIndex + ALERTS_PER_PAGE;
+    return alerts.slice(startIndex, endIndex);
+  }, []);
+
+  // Inicializar las alertas al montar el componente
+  useEffect(() => {
+    const initialProducts = [
+      {
+        producto: "Nike Air Max 270",
+        cantidad: 3,
+        proveedor: "Calzado Deportivo Premium",
+        ventas24h: 25,
+        ultimaActualizacion: new Date()
+      },
+      {
+        producto: "Adidas Ultraboost",
+        cantidad: 8,
+        proveedor: "Calzado Deportivo Premium",
+        ventas24h: 18,
+        ultimaActualizacion: new Date()
+      }
+    ];
+
+    const initialAlerts = [];
+    initialProducts.forEach(product => {
+      const stockAlert = generateStockAlert(product);
+      if (stockAlert) {
+        initialAlerts.push({
+          id: Date.now() + Math.random(),
+          ...stockAlert,
+          resolved: false,
+          productIcon: "stock",
+          timestamp: new Date()
+        });
+      }
+
+      const demandAlert = generateDemandAlert(product);
+      if (demandAlert) {
+        initialAlerts.push({
+          id: Date.now() + Math.random(),
+          ...demandAlert,
+          resolved: false,
+          productIcon: "demand",
+          timestamp: new Date()
+        });
+      }
+    });
+
+    setAllAlerts(initialAlerts);
+  }, [generateStockAlert, generateDemandAlert]);
+
+  // Efecto para actualizar las alertas periódicamente
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const updatedProducts = [
+        {
+          producto: "Nike Air Max 270",
+          cantidad: Math.floor(Math.random() * 20),
+          proveedor: "Calzado Deportivo Premium",
+          ventas24h: Math.floor(Math.random() * 30),
+          ultimaActualizacion: new Date()
+        },
+        {
+          producto: "Adidas Ultraboost",
+          cantidad: Math.floor(Math.random() * 20),
+          proveedor: "Calzado Deportivo Premium",
+          ventas24h: Math.floor(Math.random() * 30),
+          ultimaActualizacion: new Date()
+        }
+      ];
+
+      setAllAlerts(prevAlerts => {
+        const resolvedAlerts = prevAlerts.filter(alert => alert.resolved);
+        const existingAlerts = prevAlerts.filter(alert => !alert.resolved);
+        const newAlerts = [];
+
+        updatedProducts.forEach(product => {
+          const stockAlert = generateStockAlert(product);
+          if (stockAlert) {
+            const existingStockAlert = existingAlerts.find(
+              alert => alert.title.includes(product.producto) && 
+                      alert.type === stockAlert.type &&
+                      alert.status === stockAlert.status
+            );
+            
+            if (!existingStockAlert) {
+              newAlerts.push({
+                id: Date.now() + Math.random(),
+                ...stockAlert,
+                resolved: false,
+                productIcon: "stock",
+                timestamp: new Date()
+              });
+            }
+          }
+
+          const demandAlert = generateDemandAlert(product);
+          if (demandAlert) {
+            const existingDemandAlert = existingAlerts.find(
+              alert => alert.title.includes(product.producto) && 
+                      alert.type === demandAlert.type &&
+                      alert.status === demandAlert.status
+            );
+            
+            if (!existingDemandAlert) {
+              newAlerts.push({
+                id: Date.now() + Math.random(),
+                ...demandAlert,
+                resolved: false,
+                productIcon: "demand",
+                timestamp: new Date()
+              });
+            }
+          }
+        });
+
+        const allUpdatedAlerts = [
+          ...newAlerts,
+          ...existingAlerts,
+          ...resolvedAlerts.slice(0, MAX_RESOLVED_ALERTS)
+        ].sort((a, b) => {
+          if (a.resolved === b.resolved) {
+            return (b.timestamp || 0) - (a.timestamp || 0);
+          }
+          return a.resolved ? 1 : -1;
+        });
+
+        return allUpdatedAlerts;
+      });
+    }, UPDATE_INTERVAL);
+
+    return () => clearInterval(interval);
+  }, [generateStockAlert, generateDemandAlert]);
+
+  // Obtener alertas para la página actual usando las alertas filtradas
+  const currentAlerts = useMemo(() => {
+    const startIndex = (currentPage - 1) * ALERTS_PER_PAGE;
+    const endIndex = startIndex + ALERTS_PER_PAGE;
+    return filteredAlerts.slice(startIndex, endIndex);
+  }, [filteredAlerts, currentPage]);
+
+  // Calcular el total de páginas basado en las alertas filtradas
+  const totalPages = useMemo(() => {
+    return Math.ceil(filteredAlerts.length / ALERTS_PER_PAGE);
+  }, [filteredAlerts]);
 
   // Calcular altura del contenedor y de cada alerta para ajustar el número de alertas por página
   useEffect(() => {
@@ -264,121 +419,6 @@ function AlertasContent({ isDarkTheme, toggleTheme }) {
       resizeObserver.disconnect();
     };
   }, []);
-
-  const toggleFilter = (filterId) => {
-    setActiveFilters(prev => {
-      if (prev.includes(filterId)) {
-        return prev.filter(id => id !== filterId);
-      } else {
-        return [...prev, filterId];
-      }
-    });
-  };
-  
-  // Filtrar las alertas según los filtros activos
-  const filteredAlerts = activeFilters.length > 0
-    ? allAlerts.filter(alert => activeFilters.includes(alert.type))
-    : allAlerts;
-
-  // Paginación
-  const [currentPage, setCurrentPage] = useState(1);
-  
-  // Calcular cuántas alertas mostrar por página basado en el espacio disponible
-  const calculateItemsPerPage = () => {
-    if (containerHeight <= 0 || estimatedAlertHeight <= 0) {
-      return 5; // Valor predeterminado
-    }
-    
-    // Calcular cuántas alertas caben en el contenedor con un margen de seguridad
-    const safetyMargin = 20; // Píxeles extra para evitar overflow
-    const availableHeight = containerHeight - safetyMargin;
-    const calculatedItemsPerPage = Math.floor(availableHeight / estimatedAlertHeight);
-    
-    // Asegurar un mínimo de elementos por página y añadir uno más para aprovechar mejor el espacio
-    const baseItemsPerPage = Math.max(calculatedItemsPerPage, 4);
-    
-    // Para la segunda página, mostrar aproximadamente la mitad de elementos
-    if (filteredAlerts.length > baseItemsPerPage && currentPage > 1) {
-      return Math.ceil(baseItemsPerPage / 2);
-    }
-    
-    return baseItemsPerPage;
-  };
-  
-  const alertsPerPage = calculateItemsPerPage();
-  
-  // Recalcular el número total de páginas basado en si hay contenido para la segunda página
-  const calculateTotalPages = () => {
-    if (filteredAlerts.length === 0) return 0;
-    
-    const firstPageItemCount = Math.min(
-      Math.floor(containerHeight / estimatedAlertHeight) + 1,
-      filteredAlerts.length
-    );
-    
-    // Si todos los elementos caben en la primera página, solo hay una página
-    if (firstPageItemCount >= filteredAlerts.length) {
-      return 1;
-    }
-    
-    // Calcular cuántas páginas adicionales se necesitan para los elementos restantes
-    const remainingItems = filteredAlerts.length - firstPageItemCount;
-    const itemsPerSubsequentPage = Math.max(Math.ceil(firstPageItemCount / 2), 2);
-    return 1 + Math.ceil(remainingItems / itemsPerSubsequentPage);
-  };
-  
-  const totalPages = calculateTotalPages();
-  
-  // Resetear a la página 1 cuando cambian los filtros
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [activeFilters]);
-  
-  // Obtener alertas de la página actual
-  const getPageItems = (page) => {
-    // Para la primera página, mostrar más elementos
-    if (page === 1) {
-      const firstPageItemCount = Math.min(
-        Math.floor(containerHeight / estimatedAlertHeight) + 1, // Un elemento más de los que cabrían exactamente
-        filteredAlerts.length // No más del total disponible
-      );
-      return filteredAlerts.slice(0, firstPageItemCount);
-    } 
-    // Para las siguientes páginas, mostrar elementos restantes
-    else {
-      const firstPageItemCount = Math.min(
-        Math.floor(containerHeight / estimatedAlertHeight) + 1,
-        filteredAlerts.length
-      );
-      
-      // Asegurarse de que queden elementos para páginas siguientes
-      if (firstPageItemCount >= filteredAlerts.length) {
-        return []; // No hay más elementos para mostrar
-      }
-      
-      const itemsPerSubsequentPage = Math.max(Math.ceil(firstPageItemCount / 2), 2);
-      
-      const start = firstPageItemCount + (page - 2) * itemsPerSubsequentPage;
-      const end = Math.min(start + itemsPerSubsequentPage, filteredAlerts.length);
-      
-      return filteredAlerts.slice(start, end);
-    }
-  };
-  
-  const currentAlerts = getPageItems(currentPage);
-
-  // Actualizar si hay alertas en cada página para una mejor paginación
-  const hasAlertsInPage = (page) => {
-    if (page === 1) {
-      return filteredAlerts.length > 0;
-    } else {
-      const firstPageItemCount = Math.min(
-        Math.floor(containerHeight / estimatedAlertHeight) + 1,
-        filteredAlerts.length
-      );
-      return firstPageItemCount < filteredAlerts.length;
-    }
-  };
 
   const handleResolveAlert = (id) => {
     setAllAlerts(
@@ -433,29 +473,44 @@ function AlertasContent({ isDarkTheme, toggleTheme }) {
     minWidth: '200px'
   };
 
+  // Update styles for dark mode
+  const getStatusColor = (type) => {
+    if (isDarkTheme) {
+      return type === "success" ? "#107e3e" : type === "warning" ? "#e9730c" : "#bb0000";
+    }
+    return type === "success" ? "#107e3e" : type === "warning" ? "#e9730c" : "#bb0000";
+  };
+
+  const getStatusBackgroundColor = (type) => {
+    if (isDarkTheme) {
+      return type === "success" ? "#132f1e" : type === "warning" ? "#3a2806" : "#380000";
+    }
+    return type === "success" ? "#f5faf6" : type === "warning" ? "#fffaf0" : "#fff0f0";
+  };
+
   return (
     <Container>
       <PageHeader>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <PageTitle>Sistema de alertas</PageTitle>
-          <button 
-            onClick={toggleTheme}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              color: isDarkTheme ? '#fff' : '#32363a',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '8px',
-              borderRadius: '50%',
-              transition: 'background-color 0.2s ease'
-            }}
-            aria-label="Toggle theme"
-          >
-            {isDarkTheme ? SunIcon : MoonIcon}
-          </button>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          gap: '20px'  // Añadir espacio entre elementos
+        }}>
+          <PageTitle>Sistema de alertas de inventario</PageTitle>
+          <div style={{ 
+            fontSize: '0.85rem', 
+            color: 'var(--sapContent_LabelColor)',
+            backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+            padding: '4px 12px',
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}>
+            <MdSync size={14} />
+            Actualizando cada {UPDATE_INTERVAL / 1000} segundos
+          </div>
         </div>
       </PageHeader>
 
@@ -466,30 +521,41 @@ function AlertasContent({ isDarkTheme, toggleTheme }) {
               display: 'flex', 
               alignItems: 'center', 
               cursor: 'pointer',
-              padding: '4px 8px',
+              padding: '4px 12px',
               border: isDarkTheme ? '1px solid #4d5358' : '1px solid #d9d9d9',
               borderRadius: '4px',
               backgroundColor: activeFilters.length > 0 
                 ? (isDarkTheme ? '#3d4249' : '#f0f0f0') 
-                : 'transparent'
+                : 'transparent',
+              gap: '8px'
             }}
             onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
           >
             {FilterIcon}
-            <span style={{ marginLeft: '8px' }}>
-              Filtros ({activeFilters.length})
-            </span>
-            <span style={{ marginLeft: '4px', display: 'flex', alignItems: 'center' }}>
+            <span>Filtros ({activeFilters.length})</span>
+            <span style={{ display: 'flex', alignItems: 'center' }}>
               {ChevronDown}
             </span>
           </div>
           
           {isFilterDropdownOpen && (
-            <div style={filterDropdownStyle}>
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              marginTop: '4px',
+              backgroundColor: isDarkTheme ? '#2d3239' : 'white',
+              border: isDarkTheme ? '1px solid #4d5358' : '1px solid #d9d9d9',
+              borderRadius: '4px',
+              boxShadow: isDarkTheme ? '0 2px 8px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.15)',
+              zIndex: 10,
+              minWidth: '200px'
+            }}>
               <div style={{ 
                 padding: '8px 12px', 
-                borderBottom: isDarkTheme ? '1px solid #4d5358' : '1px solid #e5e5e5', 
-                fontWeight: 'bold' 
+                borderBottom: isDarkTheme ? '1px solid #4d5358' : '1px solid #e5e5e5',
+                fontWeight: 'bold',
+                color: isDarkTheme ? '#e5e5e5' : '#32363a'
               }}>
                 Filtrar por estado
               </div>
@@ -503,7 +569,9 @@ function AlertasContent({ isDarkTheme, toggleTheme }) {
                     cursor: 'pointer',
                     backgroundColor: activeFilters.includes(filter.id) 
                       ? (isDarkTheme ? '#3d4249' : '#f0f0f0') 
-                      : 'transparent'
+                      : 'transparent',
+                    color: isDarkTheme ? '#e5e5e5' : '#32363a',
+                    transition: 'background-color 0.2s'
                   }}
                   onClick={() => toggleFilter(filter.id)}
                 >
@@ -515,7 +583,7 @@ function AlertasContent({ isDarkTheme, toggleTheme }) {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: activeFilters.includes(filter.id) ? filter.color : (isDarkTheme ? '#2d3239' : 'white')
+                    backgroundColor: activeFilters.includes(filter.id) ? filter.color : 'transparent'
                   }}>
                     {activeFilters.includes(filter.id) && (
                       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -555,16 +623,18 @@ function AlertasContent({ isDarkTheme, toggleTheme }) {
         {currentAlerts.length > 0 ? (
           <div style={{ 
             width: "100%", 
-            backgroundColor: isDarkTheme ? "#1e2329" : "white", 
-            borderRadius: "8px", 
-            boxShadow: isDarkTheme ? "0 1px 4px rgba(0, 0, 0, 0.3)" : "0 1px 4px rgba(0, 0, 0, 0.1)" 
+            backgroundColor: isDarkTheme ? "var(--sapList_Background)" : "white",
+            borderRadius: "8px",
+            boxShadow: "var(--sapContent_Shadow0)",
+            display: 'flex',
+            flexDirection: 'column'
           }}>
             <div style={{ 
-              padding: "0.75rem 1rem", 
-              borderBottom: isDarkTheme ? "1px solid #4d5358" : "1px solid #e5e5e5", 
-              fontWeight: "bold", 
+              padding: "0.75rem 1rem",
+              borderBottom: "1px solid var(--sapContent_ForegroundBorderColor)",
+              fontWeight: "bold",
               fontSize: "1rem",
-              color: isDarkTheme ? "#e5e5e5" : "#32363a"
+              color: "var(--sapTextColor)"
             }}>
               Alertas
             </div>
@@ -574,45 +644,41 @@ function AlertasContent({ isDarkTheme, toggleTheme }) {
                   key={alert.id}
                   className="alert-item"
                   style={{ 
-                    padding: "1rem", 
-                    borderBottom: isDarkTheme ? "1px solid #2d3239" : "1px solid #f0f0f0",
-                    transition: "background-color 0.1s",
+                    padding: "1rem",
+                    borderBottom: "1px solid var(--sapContent_ForegroundBorderColor)",
+                    backgroundColor: getStatusBackgroundColor(alert.type),
+                    transition: "all 0.2s ease",
                     cursor: "pointer",
+                    position: "relative",
+                    "&:hover": {
+                      backgroundColor: isDarkTheme ? "var(--sapList_Hover_Background)" : "var(--sapList_Hover_Background)",
+                    }
                   }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <div style={{ color: alert.type === "error" ? "#bb0000" : alert.type === "warning" ? "#e9730c" : "#107e3e" }}>
+                      <div style={{ color: getStatusColor(alert.type) }}>
                         {AlertIcons[alert.type]}
                       </div>
                       <div>
                         <div style={{ 
-                          fontSize: "0.875rem", 
+                          fontSize: "0.875rem",
                           fontWeight: "500",
-                          color: isDarkTheme ? "#e5e5e5" : "#32363a"
+                          color: "var(--sapTextColor)"
                         }}>{alert.title}</div>
                         <div style={{ 
-                          display: "flex", 
-                          alignItems: "center", 
-                          gap: "4px", 
-                          fontSize: "0.8rem", 
-                          color: isDarkTheme ? "#a6a6a6" : "#6a6d70", 
-                          marginTop: "4px" 
-                        }}>
-                          {ProductIcons[alert.productIcon]} {alert.productIcon.charAt(0).toUpperCase() + alert.productIcon.slice(1)}
-                        </div>
+                          fontSize: "0.8rem",
+                          color: "var(--sapContent_LabelColor)",
+                          marginTop: "4px"
+                        }}>{alert.details}</div>
                       </div>
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                       <span style={{
                         padding: "0.25rem 0.5rem",
                         borderRadius: "4px",
-                        backgroundColor: alert.type === "error" 
-                          ? (isDarkTheme ? "#3a0000" : "#ffebeb") 
-                          : alert.type === "warning" 
-                            ? (isDarkTheme ? "#3a2806" : "#fff8d6") 
-                            : (isDarkTheme ? "#0d2e16" : "#ebf5cb"),
-                        color: alert.type === "error" ? "#bb0000" : alert.type === "warning" ? "#e9730c" : "#107e3e",
+                        backgroundColor: getStatusBackgroundColor(alert.type),
+                        color: getStatusColor(alert.type),
                         fontSize: "0.75rem",
                         fontWeight: "500"
                       }}>
@@ -620,7 +686,12 @@ function AlertasContent({ isDarkTheme, toggleTheme }) {
                       </span>
                       {!alert.resolved && (
                         <button 
-                          style={roundedButtonStyle}
+                          style={{
+                            ...roundedButtonStyle,
+                            backgroundColor: isDarkTheme ? "var(--sapButton_Background)" : "white",
+                            border: "1px solid var(--sapButton_BorderColor)",
+                            color: "var(--sapButton_TextColor)"
+                          }}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleResolveAlert(alert.id);
@@ -634,39 +705,76 @@ function AlertasContent({ isDarkTheme, toggleTheme }) {
                 </li>
               ))}
             </ul>
+            {/* Información de paginación integrada */}
+            <div style={{ 
+              padding: '0.5rem 2rem',
+              borderTop: '1px solid var(--sapContent_ForegroundBorderColor)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <span style={{ 
+                fontSize: '0.75rem',
+                color: 'var(--sapContent_LabelColor)'
+              }}>
+                Mostrando {currentAlerts ? currentAlerts.length : 0} de {filteredAlerts ? filteredAlerts.length : 0} alertas
+              </span>
+              
+              <PaginationContainer>
+                <NavigationButton disabled={currentPage === 1} onClick={() => handlePageChange(1)}>
+                  {ChevronDoubleLeft}
+                </NavigationButton>
+                
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <PaginationButton 
+                    key={page} 
+                    active={currentPage === page} 
+                    onClick={() => handlePageChange(page)}
+                  >
+                    {page}
+                  </PaginationButton>
+                ))}
+                
+                <NavigationButton disabled={currentPage === totalPages || totalPages === 0} onClick={() => handlePageChange(totalPages)}>
+                  {ChevronDoubleRight}
+                </NavigationButton>
+              </PaginationContainer>
+
+              <span style={{ 
+                fontSize: '0.75rem',
+                color: 'var(--sapContent_LabelColor)'
+              }}>
+                {currentPage === 1 ? 'Primera Página' : 
+                currentPage === 2 ? 'Segunda Página' : 
+                currentPage === 3 ? 'Tercera Página' : 
+                `Página ${currentPage}`}
+              </span>
+            </div>
           </div>
         ) : (
           <div style={{ 
-            padding: '2rem', 
-            textAlign: 'center', 
-            color: isDarkTheme ? '#a6a6a6' : '#666',
-            backgroundColor: isDarkTheme ? '#1e2329' : 'white',
+            padding: '2rem',
+            textAlign: 'center',
+            color: 'var(--sapContent_LabelColor)',
+            backgroundColor: isDarkTheme ? "var(--sapList_Background)" : "white",
             borderRadius: '4px',
-            boxShadow: isDarkTheme ? '0 1px 4px rgba(0, 0, 0, 0.3)' : '0 1px 4px rgba(0, 0, 0, 0.1)'
+            boxShadow: "var(--sapContent_Shadow0)"
           }}>
-            No se encontraron alertas con los filtros seleccionados
+            {activeFilters.length > 0 
+              ? "No se encontraron alertas con los filtros seleccionados"
+              : "No hay alertas disponibles"}
           </div>
         )}
       </AlertsContainer>
-      
-      {/* Panel de información sobre paginación */}
+
       <div style={{ 
-        padding: '0.5rem 2rem', 
-        fontSize: '0.75rem', 
-        color: isDarkTheme ? '#a6a6a6' : '#666',
-        display: 'flex',
-        justifyContent: 'space-between',
-        borderTop: isDarkTheme ? '1px solid #4d5358' : '1px solid #e5e5e5'
+        padding: '0.5rem 1rem',
+        fontSize: '0.8rem',
+        color: 'var(--sapContent_LabelColor)',
+        textAlign: 'right'
       }}>
-        <span>
-          Mostrando {currentAlerts ? currentAlerts.length : 0} de {filteredAlerts ? filteredAlerts.length : 0} alertas
-        </span>
-        <span>
-          {currentPage === 1 ? 'Primera Página' : 
-           currentPage === 2 ? 'Segunda Página' : 
-           currentPage === 3 ? 'Tercera Página' : 
-           `Página ${currentPage}`}
-        </span>
+        Mostrando {currentAlerts.length} de {allAlerts.length} alertas | 
+        Página {currentPage} de {totalPages}
       </div>
     </Container>
   );

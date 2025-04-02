@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import logo from "../assets/react.svg";
 import { v } from "../styles/Variables";
 import {
   AiOutlineHome,
@@ -18,6 +17,40 @@ import { VscMenu,VscAccount } from "react-icons/vsc";
 import { NavLink } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import { ThemeContext } from "../App";
+
+// Logo component
+const SpiderLogo = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="12" y1="8" x2="12" y2="12"/>
+    <line x1="12" y1="16" x2="12.01" y2="16"/>
+    <path d="M18 12h-6"/>
+    <path d="M6 12h4"/>
+    <path d="M12 6v12"/>
+  </svg>
+);
+
+// Sun icon for theme toggle
+const SunIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="5"></circle>
+    <line x1="12" y1="1" x2="12" y2="3"></line>
+    <line x1="12" y1="21" x2="12" y2="23"></line>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+    <line x1="1" y1="12" x2="3" y2="12"></line>
+    <line x1="21" y1="12" x2="23" y2="12"></line>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+  </svg>
+);
+
+// Moon icon for theme toggle
+const MoonIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+  </svg>
+);
 
 export function Sidebar({ onResize }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -57,7 +90,7 @@ export function Sidebar({ onResize }) {
   return (
     <Container
       isOpen={sidebarOpen}
-      themeUse={theme}
+      theme={theme}
       isMobile={isMobile}
       onMouseEnter={() => !isMobile && setSidebarOpen(true)}
       onMouseLeave={() => !isMobile && setSidebarOpen(false)}
@@ -68,7 +101,7 @@ export function Sidebar({ onResize }) {
       
       <div className="Logocontent">
         <div className="imgcontent">
-          <img src={logo} />
+          <SpiderLogo />
         </div>
         <h2>Spider System</h2>
       </div>
@@ -100,22 +133,8 @@ export function Sidebar({ onResize }) {
       <Divider />
       <div className="Themecontent">
         {sidebarOpen && <span className="titletheme">Dark mode</span>}
-        <div className="Togglecontent">
-          <div className="grid theme-container">
-            <div className="content">
-              <div className="demo">
-                <label className="switch" istheme={theme}>
-                  <input
-                    istheme={theme}
-                    type="checkbox"
-                    className="theme-swither"
-                    onClick={CambiarTheme}
-                  ></input>
-                  <span istheme={theme} className="slider round"></span>
-                </label>
-              </div>
-            </div>
-          </div>
+        <div className="Togglecontent" onClick={CambiarTheme}>
+          {theme === "light" ? <SunIcon /> : <MoonIcon />}
         </div>
       </div>
     </Container>
@@ -222,10 +241,9 @@ const Container = styled.div`
   height: 100vh;
   padding-top: 20px;
   width: ${({ isOpen }) => (isOpen ? '300px' : '80px')};
-  transition: all 0.3s ease;
-  z-index: 98; /* Reducido para no superponer sobre el contenido */
-  overflow-y: auto;
-  overflow-x: hidden;
+  transition: width 0.3s ease, left 0.3s ease;
+  z-index: 98;
+  overflow: hidden;
   
   /* Estilos responsivos */
   @media (max-width: 768px) {
@@ -239,7 +257,7 @@ const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-bottom: ${v.lgSpacing};
+    padding-bottom: 15px;
     
     @media (max-width: 768px) {
       flex-direction: column;
@@ -248,31 +266,38 @@ const Container = styled.div`
     
     .imgcontent {
       display: flex;
-      img {
-        max-width: 100%;
-        height: auto;
-      }
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      transition: all 0.3s;
-      transform: ${({ isOpen }) => (isOpen ? `scale(0.7)` : `scale(1.5)`)};
+      transform: ${({ isOpen }) => (isOpen ? `scale(1.2)` : `scale(1.5)`)};
+      
+      svg {
+        color: ${(props) => props.theme.textColor};
+        width: 35px;
+        height: 35px;
+      }
       
       @media (max-width: 768px) {
-        transform: ${({ isOpen }) => (isOpen ? `scale(0.8)` : `scale(0)`)};
+        transform: ${({ isOpen }) => (isOpen ? `scale(1.2)` : `scale(0)`)};
       }
     }
     h2 {
       display: ${({ isOpen }) => (isOpen ? `block` : `none`)};
-      font-size: 1.2rem;
+      font-size: 1.3rem;
+      margin: 0 0 0 10px;
+      color: ${(props) => props.theme.textColor};
       
       @media (max-width: 768px) {
-        font-size: 1rem;
-        margin-top: 5px;
+        font-size: 1.2rem;
+        margin-top: 8px;
       }
     }
   }
+
   .LinkContainer {
     margin: 8px 0;
     padding: 0 8%;
+    border-radius: 10px;
     
     @media (max-width: 768px) {
       padding: 0 5%;
@@ -280,35 +305,63 @@ const Container = styled.div`
     
     :hover {
       background: ${(props) => props.theme.bg3};
+      transform: translateX(5px);
+      
+      .Links {
+        .Linkicon {
+          svg {
+            transform: scale(1.1);
+            color: ${(props) => props.theme.bg4};
+          }
+        }
+        
+        span {
+          color: ${(props) => props.theme.bg4};
+          font-weight: 500;
+        }
+      }
     }
+    
     .Links {
       display: flex;
       align-items: center;
       text-decoration: none;
-      padding: calc(${v.smSpacing}-2px) 0;
+      padding: 10px 0;
       color: ${(props) => props.theme.textColor};
-      height: 50px;
+      height: 45px;
       
       @media (max-width: 768px) {
-        height: 45px;
+        height: 40px;
       }
       
       .Linkicon {
-        padding: ${v.smSpacing} ${v.mdSpacing};
+        padding: 0 ${v.mdSpacing};
         display: flex;
+        
         svg {
-          font-size: 22px;
+          font-size: 24px;
+          transition: transform 0.2s ease;
           
           @media (max-width: 768px) {
-            font-size: 20px;
+            font-size: 22px;
           }
         }
       }
+      
       &.active {
+        background: ${(props) => `${props.theme.bg4}15`};
+        border-radius: 8px;
+        
         .Linkicon {
           svg {
             color: ${(props) => props.theme.bg4};
+            transform: scale(1.1);
           }
+        }
+        
+        span {
+          color: ${(props) => props.theme.bg4};
+          font-weight: 500;
         }
       }
       
@@ -316,19 +369,22 @@ const Container = styled.div`
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
-        font-size: 0.9rem;
+        font-size: 1rem;
+        transition: color 0.2s ease;
         
         @media (max-width: 768px) {
-          font-size: 0.85rem;
+          font-size: 0.95rem;
         }
       }
     }
   }
+
   .Themecontent {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 8%;
+    margin-top: 10px;
     
     @media (max-width: 768px) {
       padding: 0 5%;
@@ -337,121 +393,48 @@ const Container = styled.div`
     
     .titletheme {
       display: block;
-      padding: 10px;
-      font-weight: 700;
+      padding: 8px;
+      font-weight: 600;
+      font-size: 1rem;
       opacity: ${({ isOpen }) => (isOpen ? `1` : `0`)};
-      transition: all 0.3s;
       white-space: nowrap;
       overflow: hidden;
       
       @media (max-width: 768px) {
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         padding: 5px;
       }
     }
+
     .Togglecontent {
-      margin: ${({ isOpen }) => (isOpen ? `auto 20px` : `auto 15px`)};
-      width: 36px;
-      height: 20px;
-      border-radius: 10px;
-      transition: all 0.3s;
       position: relative;
-      
-      @media (max-width: 768px) {
-        margin: ${({ isOpen }) => (isOpen ? `auto 10px` : `auto 10px`)};
-        width: 30px;
-      }
-      
-      .theme-container {
-        background-blend-mode: multiply, multiply;
-        transition: 0.4s;
-        .grid {
-          display: grid;
-          justify-items: center;
-          align-content: center;
-          height: 100vh;
-          width: 100vw;
-          font-family: "Lato", sans-serif;
-        }
-        .demo {
-          font-size: 32px;
-          
-          @media (max-width: 768px) {
-            font-size: 24px;
-          }
-          
-          .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-            
-            @media (max-width: 768px) {
-              width: 50px;
-              height: 28px;
-            }
-            
-            .theme-swither {
-              opacity: 0;
-              width: 0;
-              height: 0;
-              &:checked + .slider:before {
-                left: 4px;
-                content: "🌑";
-                transform: translateX(26px);
-                
-                @media (max-width: 768px) {
-                  transform: translateX(22px);
-                }
-              }
-            }
-            .slider {
-              position: absolute;
-              cursor: pointer;
-              top: 0;
-              left: 0;
-              right: 0;
-              bottom: 0;
-              background: ${({ themeUse }) =>
-                themeUse === "light" ? v.lightcheckbox : v.checkbox};
-              transition: 0.4s;
-              &::before {
-                position: absolute;
-                content: "☀️";
-                height: 0px;
-                width: 0px;
-                left: -10px;
-                top: 16px;
-                line-height: 0px;
-                transition: 0.4s;
-                
-                @media (max-width: 768px) {
-                  top: 14px;
-                  left: -8px;
-                  font-size: 0.8em;
-                }
-              }
-              &.round {
-                border-radius: 34px;
-                &::before {
-                  border-radius: 50%;
-                }
-              }
-            }
-          }
-        }
+      width: 45px;
+      height: 22px;
+      border-radius: 15px;
+      background-color: ${({ theme }) => theme === "light" ? "#E8E8E8" : "#4D4D4D"};
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+
+      svg {
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        color: ${({ theme }) => theme === "light" ? "#FFB800" : "#FFFFFF"};
       }
     }
   }
 `;
 
 const Divider = styled.div`
-  height: 1px;
+  height: 1.5px;
   width: 100%;
   background: ${(props) => props.theme.bg3};
-  margin: ${v.lgSpacing} 0;
+  margin: 12px 0;
   
   @media (max-width: 768px) {
-    margin: 15px 0;
+    margin: 10px 0;
   }
 `;

@@ -1,21 +1,22 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  height: 100vh;
-  overflow-y: auto;
   padding: 1rem;
-  box-sizing: border-box;
-  background-color: var(--sapBackgroundColor, #f7f7f7);
-  color: var(--sapTextColor, #32363a);
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
-export const PageHeader = styled.header`
+export const PageHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--sapContent_ForegroundBorderColor, #e5e5e5);
+  padding: 1rem;
+  background-color: var(--sapBackgroundColor);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const PageTitle = styled.h1`
@@ -86,28 +87,31 @@ export const TabButton = styled.button`
   }
 `;
 
-export const ContentArea = styled.main`
+export const ContentArea = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--sapBackgroundColor);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const AnalyticsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.25rem;
-  margin-bottom: 1.25rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
 `;
 
 export const AnalyticsCard = styled.div`
-  background-color: var(--sapTile_Background, #fff);
-  border-radius: 0.25rem;
-  box-shadow: var(--sapContent_Shadow0, 0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.1));
-  overflow: hidden;
-  
-  &:hover {
-    box-shadow: var(--sapContent_Shadow1, 0 0 0 1px rgba(0, 0, 0, 0.05), 0 4px 6px 0 rgba(0, 0, 0, 0.1));
-  }
+  background-color: var(--sapBackgroundColor);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 `;
 
 export const CardHeader = styled.div`
@@ -148,9 +152,12 @@ export const TrendIndicator = styled.div`
 `;
 
 export const ChartContainer = styled.div`
-  height: 100%;
+  width: 100%;
+  height: auto;
   min-height: 200px;
-  padding: 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
 export const ChartLegend = styled.div`
@@ -177,27 +184,22 @@ export const InfoText = styled.div`
 export const ProductTable = styled.table`
   width: 100%;
   border-collapse: collapse;
+  margin-top: 1rem;
   
   th, td {
     padding: 0.75rem;
     text-align: left;
-    border-bottom: 1px solid var(--sapContent_ForegroundBorderColor, #e5e5e5);
+    border-bottom: 1px solid var(--sapContent_ForegroundBorderColor);
   }
   
   th {
-    font-weight: 600;
-    font-size: 0.75rem;
-    color: var(--sapContent_LabelColor, #6a6d70);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-  
-  td {
-    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--sapTextColor);
+    background-color: var(--sapBackgroundColor);
   }
   
   tbody tr:hover {
-    background-color: var(--sapList_Hover_Background, #f5f5f5);
+    background-color: var(--sapList_Hover_Background);
   }
 `;
 
@@ -271,7 +273,8 @@ export const ActionButton = styled.button`
 export const LowStockList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
+  width: 100%;
 `;
 
 export const LowStockItem = styled.div`
@@ -308,7 +311,8 @@ export const LowStockAction = styled.div`
 export const MovementsList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
+  width: 100%;
 `;
 
 export const MovementItem = styled.div`
@@ -416,4 +420,33 @@ export const PerformanceLabel = styled.div`
   font-size: 0.75rem;
   color: var(--sapNeutralTextColor, #6a6d70);
   text-align: right;
+`;
+
+export const FilterActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+export const ResetButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--sapButton_Background);
+  color: var(--sapButton_TextColor);
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--sapButton_Hover_Background);
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
 `;

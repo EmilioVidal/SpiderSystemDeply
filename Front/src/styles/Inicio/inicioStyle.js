@@ -1,74 +1,72 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  height: 100vh;
-  overflow-y: auto;
+  min-height: 100vh;
+  background-color: var(--sapBackgroundColor);
+  color: var(--sapTextColor);
+  display: flex;
+  flex-direction: column;
   padding: 1rem;
   box-sizing: border-box;
-  background-color: var(--sapBackgroundColor, #f7f7f7);
-  color: var(--sapTextColor, #32363a);
 `;
 
 export const PageHeader = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--sapContent_ForegroundBorderColor, #e5e5e5);
+  border-bottom: 1px solid var(--sapContent_ForegroundBorderColor);
 `;
 
 export const PageTitle = styled.h1`
   font-size: 1.5rem;
   font-weight: 400;
   margin: 0;
-  color: var(--sapTitleColor, #32363a);
+  color: var(--sapTitleColor);
 `;
 
 export const MainContent = styled.main`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  padding: 0 1rem;
 `;
 
 export const MetricsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 `;
 
 export const MetricCard = styled.div`
-  background-color: var(--sapTile_Background, #fff);
-  border-radius: 0.25rem;
-  padding: 1.25rem;
-  box-shadow: var(--sapContent_Shadow0, 0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.1));
   display: flex;
   align-items: center;
   gap: 1rem;
-  
-  &:hover {
-    box-shadow: var(--sapContent_Shadow1, 0 0 0 1px rgba(0, 0, 0, 0.05), 0 4px 6px 0 rgba(0, 0, 0, 0.1));
-  }
+  padding: 1.5rem;
+  background-color: var(--sapTile_Background);
+  border-radius: 0.5rem;
+  box-shadow: var(--sapContent_Shadow0);
 `;
 
 export const MetricValue = styled.div`
   font-size: 1.5rem;
   font-weight: 600;
-  margin-bottom: 0.25rem;
-  color: var(--sapTitleColor, #32363a);
+  color: var(--sapTitleColor);
 `;
 
 export const MetricTitle = styled.div`
   font-size: 0.875rem;
-  color: var(--sapContent_LabelColor, #6a6d70);
+  color: var(--sapContent_LabelColor);
+  margin-top: 0.25rem;
 `;
 
 export const SectionTitle = styled.h2`
-  font-size: 1.125rem;
-  font-weight: 500;
-  margin: 1rem 0 0.75rem 0;
-  color: var(--sapTitleColor, #32363a);
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--sapTitleColor);
+  margin: 0 0 1rem 0;
 `;
 
 export const ChartContainer = styled.div`
@@ -82,57 +80,40 @@ export const ChartContainer = styled.div`
 export const RecentOrdersTable = styled.table`
   width: 100%;
   border-collapse: collapse;
-  background-color: var(--sapTile_Background, #fff);
-  border-radius: 0.25rem;
-  box-shadow: var(--sapContent_Shadow0, 0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.1));
-  
-  th, td {
-    padding: 0.75rem 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--sapContent_ForegroundBorderColor, #e5e5e5);
-  }
-  
+  background-color: var(--sapList_Background);
+  border-radius: 0.5rem;
+  box-shadow: var(--sapContent_Shadow0);
+
   th {
+    text-align: left;
+    padding: 1rem;
     font-weight: 600;
-    font-size: 0.85rem;
-    color: var(--sapContent_LabelColor, #6a6d70);
+    color: var(--sapTitleColor);
+    border-bottom: 1px solid var(--sapList_BorderColor);
   }
-  
+
   td {
-    font-size: 0.85rem;
-  }
-  
-  thead tr {
-    border-bottom: 2px solid var(--sapContent_ForegroundBorderColor, #e5e5e5);
-  }
-  
-  tbody tr:last-child td {
-    border-bottom: none;
+    padding: 1rem;
+    color: var(--sapTextColor);
+    border-bottom: 1px solid var(--sapList_BorderColor);
+
+    &.status {
+      font-weight: 500;
+    }
   }
 `;
 
 export const OrderRow = styled.tr`
   &:hover {
-    background-color: var(--sapList_Hover_Background, #f5f5f5);
+    background-color: var(--sapList_Hover_Background);
   }
-  
+
   td.status {
-    position: relative;
-    
-    &::before {
-      content: "";
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin-right: 6px;
-      background-color: ${props => 
-        props.status === 'warning' ? 'var(--sapCriticalColor, #e9730c)' :
-        props.status === 'info' ? 'var(--sapInformationColor, #0a6ed1)' :
-        props.status === 'success' ? 'var(--sapPositiveColor, #107e3e)' :
-        'var(--sapNeutralColor, #6a6d70)'
-      };
-    }
+    color: ${({ status }) => 
+      status === 'success' ? 'var(--sapSuccessColor)' :
+      status === 'warning' ? 'var(--sapWarningColor)' :
+      status === 'info' ? 'var(--sapInformationColor)' :
+      'var(--sapNeutralColor)'};
   }
 `;
 
@@ -212,52 +193,56 @@ export const InventoryLabel = styled.div`
 
 export const LocationsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
 `;
 
 export const LocationCard = styled.div`
-  background-color: var(--sapTile_Background, #fff);
-  border-radius: 0.25rem;
-  padding: 1rem;
-  box-shadow: var(--sapContent_Shadow0, 0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.1));
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 1rem;
-  transition: box-shadow 0.2s ease;
-  
-  &:hover {
-    box-shadow: var(--sapContent_Shadow1, 0 0 0 1px rgba(0, 0, 0, 0.05), 0 4px 6px 0 rgba(0, 0, 0, 0.1));
-  }
+  padding: 1.25rem;
+  background-color: var(--sapTile_Background);
+  border-radius: 0.5rem;
+  box-shadow: var(--sapContent_Shadow0);
 `;
 
-export const LocationName = styled.h3`
-  font-size: 0.9375rem;
-  font-weight: 600;
-  margin: 0 0 0.25rem 0;
-  color: var(--sapTitleColor, #32363a);
+export const LocationName = styled.div`
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--sapTitleColor);
+  margin-bottom: 0.25rem;
 `;
 
 export const LocationAddress = styled.div`
-  font-size: 0.8125rem;
-  color: var(--sapContent_LabelColor, #6a6d70);
+  font-size: 0.875rem;
+  color: var(--sapContent_LabelColor);
+  line-height: 1.4;
 `;
 
-export const ThemeToggle = styled.button`
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+export const StoreSelector = styled.div`
+  position: relative;
+  z-index: 100;
+`;
+
+export const StoreSelectorButton = styled.button`
   display: flex;
   align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  border: 1px solid var(--sapButton_BorderColor, #ababab);
-  color: var(--sapButton_TextColor, #32363a);
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: var(--sapTile_Background);
+  border: 1px solid var(--sapContent_ForegroundBorderColor);
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s;
-  
+  min-width: 320px;
+  transition: all 0.2s ease;
+
   &:hover {
-    background-color: var(--sapButton_Hover_Background, #e5e5e5);
+    background-color: var(--sapList_Hover_Background);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--sapContent_FocusColor);
   }
 `;
