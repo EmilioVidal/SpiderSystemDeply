@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import {
   Container,
@@ -7,9 +7,26 @@ import {
   ClearButton,
   ExportButton,
   ActionsContainer,
+  PageHeader,
+  PageTitle,
+  SearchContainer,
+  StatsContainer,
+  StatCard,
+  AlertBadge,
+  AlertsContainer,
+  RealTimeIndicator
 } from "../styles/Inventario/InventarioStyles";
-import { useContext } from "react";
 import { ThemeContext } from "../App";
+import { 
+  MdInventory, 
+  MdWarning, 
+  MdErrorOutline, 
+  MdSearch, 
+  MdFileDownload, 
+  MdStorefront,
+  MdSync,
+  MdNotifications
+} from 'react-icons/md';
 
 function convertArrayOfObjectsToCSV(array) {
   let result;
@@ -52,182 +69,255 @@ function downloadCSV(array) {
   link.click();
 }
 
-const Export = ({ onExport }) => (
-  <ExportButton onClick={onExport}>
-    📄 Excel
+const Export = ({ onExport, theme }) => (
+  <ExportButton onClick={onExport} theme={theme}>
+    <MdFileDownload size={20} />
+    Exportar CSV
   </ExportButton>
 );
 
-const FilterComponent = ({ filterText, onFilter, onClear }) => (
-  <div style={{ display: 'flex' }}>
+const FilterComponent = ({ filterText, onFilter, onClear, theme }) => (
+  <SearchContainer theme={theme}>
+    <MdSearch size={20} color={theme === 'dark' ? 'var(--sapContent_LabelColor)' : '#6b7280'} />
     <TextField
       id="search"
       type="text"
-      placeholder="Filtrar por Producto"
+      placeholder="Buscar producto..."
       aria-label="Search Input"
       value={filterText}
       onChange={onFilter}
+      theme={theme}
     />
-    <ClearButton type="button" onClick={onClear}>
-      X
-    </ClearButton>
-  </div>
+    {filterText && (
+      <ClearButton type="button" onClick={onClear} theme={theme}>
+        ✕
+      </ClearButton>
+    )}
+  </SearchContainer>
 );
 
-const data = [
+// Simulación de actualización en tiempo real
+const initialData = [
   {
     id: 1,
-    producto: "Martillo",
-    sku: "SKU-001",
-    categoria: "Herramientas",
+    producto: "Nike Air Max 270",
+    sku: "NK-270-001",
+    categoria: "Deportivos",
     cantidad: 15,
     ubicacion: "Almacén A",
-    proveedor: "ConstruMax",
+    proveedor: "Calzado Deportivo Premium",
     estado: "Disponible",
+    ultimaActualizacion: new Date()
   },
   {
     id: 2,
-    producto: "Destornillador",
-    sku: "SKU-002",
-    categoria: "Herramientas",
+    producto: "Adidas Ultraboost",
+    sku: "AD-UB-002",
+    categoria: "Deportivos",
     cantidad: 5,
     ubicacion: "Almacén B",
-    proveedor: "ToolTech",
+    proveedor: "Calzado Deportivo Premium",
     estado: "Bajo stock",
+    ultimaActualizacion: new Date()
   },
   {
     id: 3,
-    producto: "Clavos 2\"",
-    sku: "SKU-003",
-    categoria: "Ferretería",
+    producto: "Oxford Classic Brown",
+    sku: "OX-CL-003",
+    categoria: "Formales",
     cantidad: 0,
     ubicacion: "Almacén C",
-    proveedor: "MetalPro",
+    proveedor: "Distribuidora de Zapatos Elegance",
     estado: "Agotado",
+    ultimaActualizacion: new Date()
   },
   {
     id: 4,
-    producto: "Sierra Eléctrica",
-    sku: "SKU-004",
-    categoria: "Herramientas Eléctricas",
+    producto: "Puma RS-X",
+    sku: "PM-RSX-004",
+    categoria: "Deportivos",
     cantidad: 8,
     ubicacion: "Almacén A",
-    proveedor: "PowerTools",
+    proveedor: "Importadora Footwear Internacional",
     estado: "Disponible",
+    ultimaActualizacion: new Date()
   },
   {
     id: 5,
-    producto: "Taladro Inalámbrico",
-    sku: "SKU-005",
-    categoria: "Herramientas Eléctricas",
+    producto: "Vans Old Skool",
+    sku: "VN-OS-005",
+    categoria: "Casual",
     cantidad: 3,
     ubicacion: "Almacén B",
-    proveedor: "PowerTools",
+    proveedor: "Zapatos y Complementos Moda Total",
     estado: "Bajo stock",
+    ultimaActualizacion: new Date()
   },
   {
     id: 6,
-    producto: "Tornillos 3\"",
-    sku: "SKU-006",
-    categoria: "Ferretería",
-    cantidad: 150,
+    producto: "Converse Chuck 70",
+    sku: "CV-70-006",
+    categoria: "Casual",
+    cantidad: 12,
     ubicacion: "Almacén C",
-    proveedor: "MetalPro",
+    proveedor: "Importadora Footwear Internacional",
     estado: "Disponible",
+    ultimaActualizacion: new Date()
   },
   {
     id: 7,
-    producto: "Llave Inglesa",
-    sku: "SKU-007",
-    categoria: "Herramientas",
-    cantidad: 12,
+    producto: "New Balance 574",
+    sku: "NB-574-007",
+    categoria: "Deportivos",
+    cantidad: 4,
     ubicacion: "Almacén A",
-    proveedor: "ToolTech",
-    estado: "Disponible",
+    proveedor: "Calzado Deportivo Premium",
+    estado: "Bajo stock",
+    ultimaActualizacion: new Date()
   },
   {
     id: 8,
-    producto: "Cinta Métrica",
-    sku: "SKU-008",
-    categoria: "Herramientas",
+    producto: "Zapato Derby Negro",
+    sku: "DR-NG-008",
+    categoria: "Formales",
     cantidad: 20,
     ubicacion: "Almacén B",
-    proveedor: "ConstruMax",
+    proveedor: "Distribuidora de Zapatos Elegance",
     estado: "Disponible",
+    ultimaActualizacion: new Date()
   },
   {
     id: 9,
-    producto: "Nivel de Burbuja",
-    sku: "SKU-009",
-    categoria: "Herramientas",
-    cantidad: 4,
+    producto: "Nike Air Force 1",
+    sku: "NK-AF1-009",
+    categoria: "Deportivos",
+    cantidad: 2,
     ubicacion: "Almacén A",
-    proveedor: "ConstruMax",
+    proveedor: "Calzado Deportivo Premium",
     estado: "Bajo stock",
+    ultimaActualizacion: new Date()
   },
   {
     id: 10,
-    producto: "Pala",
-    sku: "SKU-010",
-    categoria: "Jardín",
+    producto: "Adidas Stan Smith",
+    sku: "AD-SS-010",
+    categoria: "Casual",
     cantidad: 0,
     ubicacion: "Almacén C",
-    proveedor: "GardenPro",
+    proveedor: "Calzado Deportivo Premium",
     estado: "Agotado",
+    ultimaActualizacion: new Date()
   },
   {
     id: 11,
-    producto: "Pintura Blanca 5L",
-    sku: "SKU-011",
-    categoria: "Pinturas",
-    cantidad: 25,
+    producto: "Reebok Classic Leather",
+    sku: "RB-CL-011",
+    categoria: "Casual",
+    cantidad: 6,
     ubicacion: "Almacén D",
-    proveedor: "ColorMax",
-    estado: "Disponible",
+    proveedor: "Zapatos y Complementos Moda Total",
+    estado: "Bajo stock",
+    ultimaActualizacion: new Date()
   },
   {
     id: 12,
-    producto: "Brocha 4\"",
-    sku: "SKU-012",
-    categoria: "Pinturas",
-    cantidad: 2,
+    producto: "Timberland Boot",
+    sku: "TM-BT-012",
+    categoria: "Casual",
+    cantidad: 15,
     ubicacion: "Almacén D",
-    proveedor: "ColorMax",
-    estado: "Bajo stock",
+    proveedor: "Importadora Footwear Internacional",
+    estado: "Disponible",
+    ultimaActualizacion: new Date()
   }
 ];
 
 export function Inventario() {
-  const [filterText, setFilterText] = React.useState("");
-  const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
+  const [filterText, setFilterText] = useState("");
+  const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
   const { theme } = useContext(ThemeContext);
+  const isDarkTheme = theme === 'dark';
+  const [data, setData] = useState(initialData);
+  const [lastUpdate, setLastUpdate] = useState(new Date());
+  const [alerts, setAlerts] = useState([]);
+
+  // Simulación de actualizaciones en tiempo real
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const updatedData = data.map(item => {
+        // Simulamos cambios aleatorios en el inventario
+        if (Math.random() > 0.8) {
+          const change = Math.floor(Math.random() * 3) - 1;
+          const newQuantity = Math.max(0, item.cantidad + change);
+          
+          // Actualizar estado basado en la nueva cantidad
+          let newStatus = "Disponible";
+          if (newQuantity === 0) newStatus = "Agotado";
+          else if (newQuantity <= 5) newStatus = "Bajo stock";
+
+          // Generar alerta si es necesario
+          if (newStatus !== item.estado) {
+            const newAlert = {
+              id: Date.now(),
+              producto: item.producto,
+              mensaje: `${item.producto} ha cambiado a estado: ${newStatus}`,
+              tipo: newStatus === "Agotado" ? "error" : "warning",
+              timestamp: new Date()
+            };
+            setAlerts(prev => [newAlert, ...prev].slice(0, 5));
+          }
+
+          return {
+            ...item,
+            cantidad: newQuantity,
+            estado: newStatus,
+            ultimaActualizacion: new Date()
+          };
+        }
+        return item;
+      });
+
+      setData(updatedData);
+      setLastUpdate(new Date());
+    }, 5000); // Actualizar cada 5 segundos
+
+    return () => clearInterval(interval);
+  }, [data]);
+
+  // Calcular estadísticas
+  const stats = {
+    total: data.length,
+    disponible: data.filter(item => item.estado === "Disponible").length,
+    bajoStock: data.filter(item => item.estado === "Bajo stock").length,
+    agotado: data.filter(item => item.estado === "Agotado").length
+  };
 
   const getLocationColor = (location, isDark) => {
     if (isDark) {
       switch (location) {
         case 'Almacén A':
-          return { bg: 'rgba(233, 30, 99, 0.2)', text: '#f48fb1' };
+          return { bg: 'rgba(233, 30, 99, 0.15)', text: '#f48fb1' };
         case 'Almacén B':
-          return { bg: 'rgba(33, 150, 243, 0.2)', text: '#90caf9' };
+          return { bg: 'rgba(33, 150, 243, 0.15)', text: '#90caf9' };
         case 'Almacén C':
-          return { bg: 'rgba(156, 39, 176, 0.2)', text: '#ce93d8' };
+          return { bg: 'rgba(156, 39, 176, 0.15)', text: '#ce93d8' };
         case 'Almacén D':
-          return { bg: 'rgba(255, 152, 0, 0.2)', text: '#ffcc80' };
+          return { bg: 'rgba(255, 152, 0, 0.15)', text: '#ffcc80' };
         default:
-          return { bg: 'rgba(158, 158, 158, 0.2)', text: '#e0e0e0' };
+          return { bg: 'rgba(158, 158, 158, 0.15)', text: '#e0e0e0' };
       }
     } else {
       switch (location) {
         case 'Almacén A':
-          return { bg: '#ffebee', text: '#333' };
+          return { bg: '#ffebee', text: '#c2185b' };
         case 'Almacén B':
-          return { bg: '#e8eaf6', text: '#333' };
+          return { bg: '#e3f2fd', text: '#1976d2' };
         case 'Almacén C':
-          return { bg: '#f3e5f5', text: '#333' };
+          return { bg: '#f3e5f5', text: '#7b1fa2' };
         case 'Almacén D':
-          return { bg: '#fff3e0', text: '#333' };
+          return { bg: '#fff3e0', text: '#f57c00' };
         default:
-          return { bg: '#f5f5f5', text: '#333' };
+          return { bg: '#f5f5f5', text: '#616161' };
       }
     }
   };
@@ -256,17 +346,27 @@ export function Inventario() {
       sortable: true,
     },
     {
-      name: "Cantidad Disponible",
+      name: "Cantidad",
       selector: (row) => row.cantidad,
       sortable: true,
       right: true,
+      cell: (row) => (
+        <div style={{
+          fontWeight: '500',
+          color: row.cantidad === 0 ? (isDarkTheme ? '#ef5350' : '#d32f2f') :
+                 row.cantidad <= 5 ? (isDarkTheme ? '#ffb74d' : '#ed6c02') :
+                 'inherit'
+        }}>
+          {row.cantidad}
+        </div>
+      ),
     },
     {
       name: "Ubicación",
       selector: (row) => row.ubicacion,
       sortable: true,
       cell: (row) => {
-        const colors = getLocationColor(row.ubicacion, theme === 'dark');
+        const colors = getLocationColor(row.ubicacion, isDarkTheme);
         return (
           <div
             style={{
@@ -276,9 +376,12 @@ export function Inventario() {
               fontSize: '14px',
               color: colors.text,
               fontWeight: 500,
-              boxShadow: theme === 'dark' ? '0 2px 4px rgba(0,0,0,0.2)' : 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
             }}
           >
+            <MdStorefront size={16} />
             {row.ubicacion}
           </div>
         );
@@ -294,43 +397,53 @@ export function Inventario() {
       selector: (row) => row.estado,
       sortable: true,
       cell: (row) => {
-        let color;
+        let color, bgColor;
         if (row.estado === "Disponible") {
-          color = theme === 'dark' ? '#81c784' : '#2e7d32';
+          color = isDarkTheme ? '#81c784' : '#2e7d32';
+          bgColor = isDarkTheme ? 'rgba(129, 199, 132, 0.15)' : '#e8f5e9';
         } else if (row.estado === "Bajo stock") {
-          color = theme === 'dark' ? '#ffb74d' : '#ed6c02';
+          color = isDarkTheme ? '#ffb74d' : '#ed6c02';
+          bgColor = isDarkTheme ? 'rgba(255, 183, 77, 0.15)' : '#fff3e0';
         } else {
-          color = theme === 'dark' ? '#ef5350' : '#d32f2f';
+          color = isDarkTheme ? '#ef5350' : '#d32f2f';
+          bgColor = isDarkTheme ? 'rgba(239, 83, 80, 0.15)' : '#ffebee';
         }
         
         return (
-          <span
+          <div
             style={{
-              color,
+              background: bgColor,
+              padding: '6px 12px',
+              borderRadius: '16px',
+              color: color,
               fontWeight: "500",
               fontSize: '14px',
             }}
           >
             {row.estado}
-          </span>
+          </div>
         );
       },
     },
+    {
+      name: "Última Actualización",
+      selector: (row) => row.ultimaActualizacion,
+      sortable: true,
+      cell: (row) => (
+        <div style={{ fontSize: '14px', color: 'var(--sapContent_LabelColor)' }}>
+          {row.ultimaActualizacion.toLocaleTimeString()}
+        </div>
+      ),
+    }
   ];
-
-  const filteredItems = data.filter(
-    (item) =>
-      item.producto &&
-      item.producto.toLowerCase().includes(filterText.toLowerCase())
-  );
 
   const customStyles = {
     table: {
       style: {
-        backgroundColor: 'transparent',
+        backgroundColor: isDarkTheme ? 'var(--sapList_Background)' : '#ffffff',
         borderCollapse: 'separate',
         borderSpacing: '0',
-        border: `1px solid ${theme === 'light' ? '#dfe3e8' : '#4a5568'}`,
+        border: `1px solid ${isDarkTheme ? 'var(--sapList_BorderColor)' : '#e5e7eb'}`,
         borderRadius: '8px',
         overflow: 'hidden',
       },
@@ -338,134 +451,59 @@ export function Inventario() {
     subHeader: {
       style: {
         backgroundColor: 'transparent',
-        padding: '0 0 8px 0',
-        marginBottom: '0',
-      },
-    },
-    tableWrapper: {
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        flex: '1 1 auto',
-        backgroundColor: 'transparent',
-        borderRadius: '8px',
-        border: 'none',
-        boxShadow: theme === 'dark' ? '0 4px 12px rgba(0, 0, 0, 0.3)' : 'none',
-      },
-    },
-    responsiveWrapper: {
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        flex: '1 1 auto',
-        minHeight: 'calc(100vh - 300px)',
-        backgroundColor: 'transparent',
+        padding: '16px',
+        marginBottom: '8px',
       },
     },
     head: {
       style: {
         fontSize: '14px',
-        color: theme === 'light' ? '#333' : '#e2e8f0',
+        color: isDarkTheme ? 'var(--sapContent_LabelColor)' : '#6b7280',
       }
     },
     headRow: {
       style: {
-        backgroundColor: theme === 'light' ? '#f1f3f5' : '#2d3748',
+        backgroundColor: isDarkTheme ? 'var(--sapList_HeaderBackground)' : '#f9fafb',
         minHeight: '52px',
-        borderBottom: `2px solid ${theme === 'light' ? '#dfe3e8' : '#4a5568'}`,
+        borderBottom: `2px solid ${isDarkTheme ? 'var(--sapList_BorderColor)' : '#e5e7eb'}`,
       },
     },
     headCells: {
       style: {
-        paddingLeft: '16px',
-        paddingRight: '16px',
+        padding: '16px',
         fontWeight: 600,
-        color: theme === 'light' ? '#333' : '#e2e8f0',
+        color: isDarkTheme ? 'var(--sapContent_LabelColor)' : '#374151',
       },
     },
     rows: {
       style: {
         fontSize: '14px',
-        minHeight: '52px',
-        backgroundColor: theme === 'light' ? '#ffffff' : '#1a202c',
+        backgroundColor: isDarkTheme ? 'var(--sapList_Background)' : '#ffffff',
         '&:nth-of-type(odd)': {
-          backgroundColor: theme === 'light' ? '#f8f9fa' : '#2d3748',
+          backgroundColor: isDarkTheme ? 'var(--sapList_AlternatingBackground)' : '#f9fafb',
         },
-        '&:nth-of-type(even)': {
-          backgroundColor: theme === 'light' ? '#ffffff' : '#1a202c',
-        },
+        minHeight: '52px',
         '&:hover': {
-          backgroundColor: theme === 'light' ? '#f1f3f5' : '#374151',
+          backgroundColor: isDarkTheme ? 'var(--sapList_Hover_Background)' : '#f3f4f6',
           cursor: 'pointer',
           transform: 'translateY(-1px)',
-          boxShadow: theme === 'dark' ? '0 4px 6px rgba(0, 0, 0, 0.3)' : '0 2px 4px rgba(0, 0, 0, 0.1)',
           transition: 'all 0.2s ease',
         },
-        borderBottom: `1px solid ${theme === 'light' ? '#edf0f2' : '#4a5568'}`,
-        color: theme === 'light' ? '#333' : '#e2e8f0',
       },
     },
     cells: {
       style: {
-        paddingLeft: '16px',
-        paddingRight: '16px',
-        color: theme === 'light' ? '#333' : '#e2e8f0',
-        transition: 'all 0.2s ease',
-        position: 'relative',
-        '&:hover::after': theme === 'dark' ? {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(255, 255, 255, 0.04)',
-          pointerEvents: 'none',
-        } : {},
+        padding: '16px',
+        color: isDarkTheme ? 'var(--sapContent_LabelColor)' : '#374151',
       },
     },
     pagination: {
       style: {
-        borderTop: `2px solid ${theme === 'light' ? '#dfe3e8' : '#4a5568'}`,
-        backgroundColor: theme === 'light' ? '#f8f9fa' : '#2d3748',
-        borderBottomLeftRadius: '8px',
-        borderBottomRightRadius: '8px',
-        color: theme === 'light' ? '#333' : '#e2e8f0',
-        padding: '12px 16px',
-      },
-      pageButtonsStyle: {
-        borderRadius: '4px',
-        height: '32px',
-        padding: '0 8px',
-        margin: '0 4px',
-        cursor: 'pointer',
-        transition: 'all .2s ease',
-        backgroundColor: theme === 'light' ? '#ffffff' : '#1a202c',
-        border: `1px solid ${theme === 'light' ? '#dfe3e8' : '#4a5568'}`,
-        color: theme === 'light' ? '#333' : '#e2e8f0',
-        '&:hover:not(:disabled)': {
-          backgroundColor: theme === 'light' ? '#f1f3f5' : '#374151',
-          borderColor: theme === 'light' ? '#cfd6de' : '#4a5568',
-          transform: 'translateY(-1px)',
-          boxShadow: theme === 'dark' ? '0 2px 4px rgba(0, 0, 0, 0.2)' : 'none',
-        },
-        '&:disabled': {
-          opacity: '0.4',
-        },
-        '&:active': {
-          transform: 'translateY(0)',
-          boxShadow: 'none',
-        },
-      },
-    },
-    noData: {
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '400px',
-        color: theme === 'light' ? '#666' : '#a0aec0',
-        backgroundColor: theme === 'light' ? '#f8f9fa' : '#2d3748',
+        backgroundColor: isDarkTheme ? 'var(--sapList_Background)' : '#ffffff',
+        border: 'none',
+        borderTop: `2px solid ${isDarkTheme ? 'var(--sapList_BorderColor)' : '#e5e7eb'}`,
+        color: isDarkTheme ? 'var(--sapContent_LabelColor)' : '#374151',
+        padding: '16px',
       },
     },
   };
@@ -479,26 +517,93 @@ export function Inventario() {
     };
 
     return (
-      <ActionsContainer>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <Export onExport={() => downloadCSV(data)} />
-          <FilterComponent
-            onFilter={(e) => setFilterText(e.target.value)}
-            onClear={handleClear}
-            filterText={filterText}
-          />
-        </div>
+      <ActionsContainer theme={theme}>
+        <FilterComponent
+          onFilter={(e) => setFilterText(e.target.value)}
+          onClear={handleClear}
+          filterText={filterText}
+          theme={theme}
+        />
+        <Export onExport={() => downloadCSV(data)} theme={theme} />
       </ActionsContainer>
     );
-  }, [filterText, resetPaginationToggle]);
+  }, [filterText, resetPaginationToggle, theme]);
 
   return (
-    <Container>
-      <h1>Tabla de Productos</h1>
-      <TableWrapper>
+    <Container theme={theme}>
+      <PageHeader theme={theme}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <MdInventory size={28} />
+          <PageTitle theme={theme}>Inventario de Productos</PageTitle>
+        </div>
+        <RealTimeIndicator theme={theme}>
+          <MdSync size={16} />
+          Última actualización: {lastUpdate.toLocaleTimeString()}
+        </RealTimeIndicator>
+      </PageHeader>
+
+      {alerts.length > 0 && (
+        <AlertsContainer theme={theme}>
+          {alerts.map(alert => (
+            <AlertBadge key={alert.id} tipo={alert.tipo} theme={theme}>
+              <MdNotifications size={20} />
+              {alert.mensaje}
+              <span style={{ marginLeft: 'auto', fontSize: '12px' }}>
+                {alert.timestamp.toLocaleTimeString()}
+              </span>
+            </AlertBadge>
+          ))}
+        </AlertsContainer>
+      )}
+
+      <StatsContainer theme={theme}>
+        <StatCard theme={theme}>
+          <div className="icon-container total">
+            <MdInventory size={24} />
+          </div>
+          <div className="stat-info">
+            <div className="stat-value">{stats.total}</div>
+            <div className="stat-label">Total Productos</div>
+          </div>
+        </StatCard>
+        
+        <StatCard theme={theme}>
+          <div className="icon-container available">
+            <MdInventory size={24} />
+          </div>
+          <div className="stat-info">
+            <div className="stat-value">{stats.disponible}</div>
+            <div className="stat-label">Disponibles</div>
+          </div>
+        </StatCard>
+
+        <StatCard theme={theme}>
+          <div className="icon-container warning">
+            <MdWarning size={24} />
+          </div>
+          <div className="stat-info">
+            <div className="stat-value">{stats.bajoStock}</div>
+            <div className="stat-label">Bajo Stock</div>
+          </div>
+        </StatCard>
+
+        <StatCard theme={theme}>
+          <div className="icon-container danger">
+            <MdErrorOutline size={24} />
+          </div>
+          <div className="stat-info">
+            <div className="stat-value">{stats.agotado}</div>
+            <div className="stat-label">Agotados</div>
+          </div>
+        </StatCard>
+      </StatsContainer>
+
+      <TableWrapper theme={theme}>
         <DataTable
           columns={columns}
-          data={filteredItems}
+          data={data.filter(item =>
+            item.producto.toLowerCase().includes(filterText.toLowerCase())
+          )}
           pagination
           paginationResetDefaultPage={resetPaginationToggle}
           subHeader
@@ -507,12 +612,16 @@ export function Inventario() {
           customStyles={customStyles}
           paginationPerPage={10}
           paginationRowsPerPageOptions={[10, 20, 30, 50]}
-          fixedHeader
           noDataComponent={
-            <div style={{ padding: '24px', textAlign: 'center' }}>
-              No se encontraron registros para mostrar
+            <div style={{ 
+              padding: '24px', 
+              textAlign: 'center',
+              color: isDarkTheme ? 'var(--sapContent_LabelColor)' : '#6b7280'
+            }}>
+              No se encontraron productos
             </div>
           }
+          theme={theme}
         />
       </TableWrapper>
     </Container>

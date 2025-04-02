@@ -1,51 +1,42 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  height: 100%;
-  width: 100%;
+  min-height: 100vh;
+  background-color: var(--sapBackgroundColor);
+  color: var(--sapTextColor);
   display: flex;
   flex-direction: column;
-  background: ${({ theme }) => theme.bgtotal};
-  color: ${({ theme }) => theme.textColor};
-  font-family: "72", "72full", Arial, Helvetica, sans-serif;
-  transition: all 0.3s ease;
+  padding: 1rem;
+  box-sizing: border-box;
 `;
 
-export const PageHeader = styled.div`
-  margin-bottom: 1rem;
+export const PageHeader = styled.header`
   display: flex;
-  flex-direction: column;
-  padding: 1rem 2rem;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--sapContent_ForegroundBorderColor);
 `;
 
 export const PageTitle = styled.h1`
-  font-size: 1.625rem;
+  font-size: 1.5rem;
   font-weight: 400;
-  margin-bottom: 1rem;
-  color: ${({ theme }) => theme.textColor};
+  margin: 0;
+  color: var(--sapTitleColor);
 `;
 
 export const AlertsContainer = styled.div`
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  padding: 1rem 2rem;
-  background-color: ${({ theme }) => theme.bgtotal};
+  padding: 0 2rem;
+  background-color: var(--sapBackgroundColor);
   
-  /* Custom scrollbar that adapts to theme */
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: ${({ theme }) => theme.name === 'dark' ? '#2d3239' : '#f0f0f0'};
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.name === 'dark' ? '#6a6d70' : '#c4c4c4'};
-    border-radius: 4px;
+  .alert-item {
+    &:hover {
+      background-color: var(--sapList_Hover_Background) !important;
+    }
   }
 `;
 
@@ -56,16 +47,12 @@ export const AlertItem = styled.div`
   padding: 1rem 1.5rem;
   width: 100%;
   border-radius: 0.25rem;
-  background-color: ${({ theme, type }) => 
-    type === "success" ? (theme.name === 'dark' ? '#132f1e' : '#f5faf6') : 
-    type === "warning" ? (theme.name === 'dark' ? '#3a2806' : '#fffaf0') : 
-    (theme.name === 'dark' ? '#380000' : '#fff0f0')};
+  background-color: var(--sapList_Background);
   border-left: 4px solid ${({ type }) => 
-    type === "success" ? "#107e3e" : 
-    type === "warning" ? "#e9730c" : 
-    "#bb0000"};
-  box-shadow: 0 0 0 1px ${({ theme }) => theme.name === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'}, 
-              0 1px 3px ${({ theme }) => theme.name === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.1)'};
+    type === "success" ? "var(--sapSuccessColor)" : 
+    type === "warning" ? "var(--sapWarningColor)" : 
+    "var(--sapErrorColor)"};
+  box-shadow: var(--sapContent_Shadow0);
   transition: background-color 0.3s ease;
 `;
 
@@ -82,9 +69,9 @@ export const AlertIcon = styled.div`
   align-items: center;
   justify-content: center;
   color: ${({ type }) => 
-    type === "success" ? "#107e3e" : 
-    type === "warning" ? "#e9730c" : 
-    "#bb0000"};
+    type === "success" ? "var(--sapSuccessColor)" : 
+    type === "warning" ? "var(--sapWarningColor)" : 
+    "var(--sapErrorColor)"};
 `;
 
 export const AlertContent = styled.div`
@@ -149,11 +136,10 @@ export const FilterToolbar = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 2rem;
-  background-color: ${({ theme }) => theme.bgtotal};
-  border-bottom: 1px solid ${({ theme }) => theme.name === 'dark' ? '#4d5358' : '#e5e5e5'};
-  color: ${({ theme }) => theme.textColor};
+  background-color: var(--sapToolbar_Background);
+  border-bottom: 1px solid var(--sapContent_ForegroundBorderColor);
+  color: var(--sapTextColor);
   font-size: 0.875rem;
-  transition: all 0.3s ease;
 `;
 
 export const PaginationContainer = styled.div`
@@ -161,9 +147,7 @@ export const PaginationContainer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 0.25rem;
-  margin-top: auto;
-  padding: 1rem;
-  background-color: ${({ theme }) => theme.name === 'dark' ? '#1c2228' : '#f5f5f5'};
+  padding: 0.5rem;
 `;
 
 export const PaginationButton = styled.button`
@@ -173,23 +157,18 @@ export const PaginationButton = styled.button`
   width: 2rem;
   height: 2rem;
   border-radius: 0.25rem;
-  background-color: ${({ active, theme }) => active 
-    ? (theme.name === 'dark' ? '#0a6ed1' : '#0854a0') 
-    : (theme.name === 'dark' ? 'transparent' : 'transparent')};
-  color: ${({ active, theme }) => active 
-    ? 'white' 
-    : theme.textColor};
-  border: ${({ active, theme }) => active 
-    ? 'none' 
-    : `1px solid ${theme.name === 'dark' ? '#4d5358' : '#d9d9d9'}`};
+  background-color: ${({ active }) => active 
+    ? 'var(--sapButton_Selected_Background)'
+    : 'var(--sapButton_Background)'};
+  color: ${({ active }) => active 
+    ? 'var(--sapButton_Selected_TextColor)'
+    : 'var(--sapButton_TextColor)'};
+  border: 1px solid var(--sapButton_BorderColor);
   cursor: pointer;
   font-size: 0.875rem;
-  transition: background-color 0.1s ease-in-out;
   
   &:hover {
-    background-color: ${({ active, theme }) => active 
-      ? (theme.name === 'dark' ? '#0a6ed1' : '#0854a0') 
-      : (theme.name === 'dark' ? '#2d3239' : '#f5f5f5')};
+    background-color: var(--sapButton_Hover_Background);
   }
   
   &:disabled {
@@ -205,19 +184,18 @@ export const NavigationButton = styled.button`
   width: 2rem;
   height: 2rem;
   border-radius: 0.25rem;
-  background-color: transparent;
-  border: 1px solid ${({ theme }) => theme.name === 'dark' ? '#4d5358' : '#d9d9d9'};
-  color: ${({ theme }) => theme.textColor};
+  background-color: var(--sapButton_Background);
+  border: 1px solid var(--sapButton_BorderColor);
+  color: var(--sapButton_TextColor);
   cursor: pointer;
-  transition: background-color 0.1s ease-in-out;
   
   &:hover {
-    background-color: ${({ theme }) => theme.name === 'dark' ? '#2d3239' : '#f5f5f5'};
+    background-color: var(--sapButton_Hover_Background);
   }
   
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    color: ${({ theme }) => theme.name === 'dark' ? '#6a6d70' : '#a6a6a6'};
+    color: var(--sapContent_DisabledTextColor);
   }
 `;

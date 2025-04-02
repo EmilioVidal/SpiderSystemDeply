@@ -754,7 +754,7 @@
     "@lit-labs/ssr-dom-shim" "^1.1.2"
     lit-html "^2.0.1"
 
-"@ui5/webcomponents-fiori@~2.8.0":
+"@ui5/webcomponents-fiori@^2.8.0", "@ui5/webcomponents-fiori@~2.8.0":
   version "2.8.0"
   resolved "https://registry.npmjs.org/@ui5/webcomponents-fiori/-/webcomponents-fiori-2.8.0.tgz"
   integrity sha512-yY4VWmBmMTTSCbteQrCzrNX5Wr/Gr81+yTGBLy6UN0vQEJ+tKrfFYHTcbtdUfqp5QvNAsJFk3wvBcjOaTcvtrg==
@@ -779,7 +779,7 @@
   dependencies:
     "@ui5/webcomponents-base" "2.8.0"
 
-"@ui5/webcomponents-icons@~2.8.0", "@ui5/webcomponents-icons@2.8.0":
+"@ui5/webcomponents-icons@^2.8.0", "@ui5/webcomponents-icons@~2.8.0", "@ui5/webcomponents-icons@2.8.0":
   version "2.8.0"
   resolved "https://registry.npmjs.org/@ui5/webcomponents-icons/-/webcomponents-icons-2.8.0.tgz"
   integrity sha512-NNPwZpKzdkS5Yu903mIT87fsepOymAb16LrULjNj95vHzSbZCa0tfFKb6GJIVyE8DSn1uUhUhT8zA4Z79jnm0g==
@@ -826,7 +826,7 @@
     "@sap-theming/theming-base-content" "11.24.0"
     "@ui5/webcomponents-base" "2.8.0"
 
-"@ui5/webcomponents@~2.8.0", "@ui5/webcomponents@2.8.0":
+"@ui5/webcomponents@^2.8.0", "@ui5/webcomponents@~2.8.0", "@ui5/webcomponents@2.8.0":
   version "2.8.0"
   resolved "https://registry.npmjs.org/@ui5/webcomponents/-/webcomponents-2.8.0.tgz"
   integrity sha512-uQf8NAG+UaaCJNyLSaLlQ9E2QnIAzg9SQ9bP/8FVzN64k8GlIpCQsbrcWLwUtSS1uw9vA7dKPZd/EMgBOJzmtQ==
@@ -1888,7 +1888,7 @@ recharts-scale@^0.4.4:
   dependencies:
     decimal.js-light "^2.4.1"
 
-recharts@2.15.1:
+recharts@^2.15.1, recharts@2.15.1:
   version "2.15.1"
   resolved "https://registry.npmjs.org/recharts/-/recharts-2.15.1.tgz"
   integrity sha512-v8PUTUlyiDe56qUj82w/EDVuzEFXwEHp9/xOowGAZwfLjB9uAy3GllQVIYMWF6nU+qibx85WF75zD7AjqoT54Q==

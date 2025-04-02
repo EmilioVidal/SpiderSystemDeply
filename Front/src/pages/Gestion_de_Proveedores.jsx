@@ -141,6 +141,23 @@ const MoonIcon = () => (
   </svg>
 );
 
+// Helper function to format date to Mexican Spanish format
+const formatDateToMexican = (dateString) => {
+  try {
+    // If the date is already in DD/MM/YYYY format, return it as is
+    if (dateString.includes('/')) {
+      return dateString;
+    }
+    
+    // If it's in YYYY-MM-DD format, convert it
+    const [year, month, day] = dateString.split('-');
+    return `${day}/${month}/${year}`;
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return dateString; // Return original string if there's an error
+  }
+};
+
 // Sample data for suppliers
 const suppliersData = [
   { 
@@ -151,13 +168,13 @@ const suppliersData = [
     phone: "+52 55 1234 5678",
     type: "fabricante",
     products: 24,
-    lastOrder: "2023-10-15",
+    lastOrder: "15/10/2023",
     address: "Calle Industria 123, Ciudad de México",
     paymentTerms: "credito",
     orders: [
-      { id: 101, date: "2023-10-15", status: "entregado", amount: 12500, items: 18 },
-      { id: 102, date: "2023-09-02", status: "entregado", amount: 8700, items: 12 },
-      { id: 103, date: "2023-07-22", status: "entregado", amount: 15000, items: 22 }
+      { id: 101, date: "15/10/2023", status: "entregado", amount: 12500, items: 18 },
+      { id: 102, date: "02/09/2023", status: "entregado", amount: 8700, items: 12 },
+      { id: 103, date: "22/07/2023", status: "entregado", amount: 15000, items: 22 }
     ]
   },
   { 
@@ -168,12 +185,12 @@ const suppliersData = [
     phone: "+52 33 9876 5432",
     type: "distribuidor",
     products: 36,
-    lastOrder: "2023-10-02",
+    lastOrder: "02/10/2023",
     address: "Av. Revolución 456, Guadalajara",
     paymentTerms: "factura",
     orders: [
-      { id: 104, date: "2023-10-02", status: "entregado", amount: 22000, items: 30 },
-      { id: 105, date: "2023-08-15", status: "entregado", amount: 14500, items: 25 }
+      { id: 104, date: "02/10/2023", status: "entregado", amount: 22000, items: 30 },
+      { id: 105, date: "15/08/2023", status: "entregado", amount: 14500, items: 25 }
     ]
   },
   { 
@@ -184,12 +201,12 @@ const suppliersData = [
     phone: "+52 55 2468 1357",
     type: "importador",
     products: 18,
-    lastOrder: "2023-08-20",
+    lastOrder: "20/08/2023",
     address: "Blvd. Insurgentes 789, Ciudad de México",
     paymentTerms: "anticipado",
     orders: [
-      { id: 106, date: "2023-08-20", status: "cancelado", amount: 10000, items: 15 },
-      { id: 107, date: "2023-07-05", status: "entregado", amount: 8200, items: 12 }
+      { id: 106, date: "20/08/2023", status: "cancelado", amount: 10000, items: 15 },
+      { id: 107, date: "05/07/2023", status: "entregado", amount: 8200, items: 12 }
     ]
   },
   { 
@@ -200,13 +217,13 @@ const suppliersData = [
     phone: "+52 81 1357 2468",
     type: "mayorista",
     products: 42,
-    lastOrder: "2023-09-28",
+    lastOrder: "28/09/2023",
     address: "Calle Hidalgo 321, Monterrey",
     paymentTerms: "transferencia",
     orders: [
-      { id: 108, date: "2023-09-28", status: "pendiente", amount: 32000, items: 45 },
-      { id: 109, date: "2023-08-10", status: "entregado", amount: 18500, items: 28 },
-      { id: 110, date: "2023-06-22", status: "entregado", amount: 16000, items: 24 }
+      { id: 108, date: "28/09/2023", status: "pendiente", amount: 32000, items: 45 },
+      { id: 109, date: "10/08/2023", status: "entregado", amount: 18500, items: 28 },
+      { id: 110, date: "22/06/2023", status: "entregado", amount: 16000, items: 24 }
     ]
   }
 ];
@@ -331,9 +348,8 @@ const paymentMethods = [
 
 // Component for supplier management
 const Gestion_de_Proveedores = () => {
-  const { theme, setTheme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
   const isDarkTheme = theme === "dark";
-  const toggleTheme = () => setTheme(isDarkTheme ? "light" : "dark");
   const location = useLocation();
   const isOrdersPage = location.pathname === "/ordenes";
   
@@ -456,23 +472,6 @@ const Gestion_de_Proveedores = () => {
     }
   };
 
-  // Handle input change for new supplier form
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewSupplier(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    
-    // Clear error for this field when user types
-    if (formErrors[name]) {
-      setFormErrors(prev => ({
-        ...prev,
-        [name]: null
-      }));
-    }
-  };
-  
   // Validate form before submission
   const validateForm = () => {
     const errors = {};
@@ -485,14 +484,24 @@ const Gestion_de_Proveedores = () => {
       errors.contact = "El nombre de contacto es obligatorio";
     }
     
+    // Email validation with specific domains
     if (!newSupplier.email.trim()) {
-      errors.email = "El email es obligatorio";
-    } else if (!/\S+@\S+\.\S+/.test(newSupplier.email)) {
-      errors.email = "Email inválido";
+      errors.email = "El correo electrónico es obligatorio";
+    } else {
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.(com|com\.mx|mx|org|net|edu\.mx)$/;
+      if (!emailRegex.test(newSupplier.email)) {
+        errors.email = "Formato de correo inválido. Use dominios: .com, .com.mx, .mx, .org, .net, .edu.mx";
+      }
     }
     
+    // Phone validation for Mexican numbers
     if (!newSupplier.phone.trim()) {
       errors.phone = "El teléfono es obligatorio";
+    } else {
+      const phoneRegex = /^\+52\s[1-9]\d\s\d{4}\s\d{4}$/;
+      if (!phoneRegex.test(newSupplier.phone)) {
+        errors.phone = "Formato de teléfono inválido. Use: +52 XX XXXX XXXX";
+      }
     }
     
     if (!newSupplier.address.trim()) {
@@ -504,6 +513,61 @@ const Gestion_de_Proveedores = () => {
     }
     
     return errors;
+  };
+  
+  // Handle input change for new supplier form
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    
+    // Format phone number as user types
+    if (name === 'phone') {
+      // Si el valor es menor o igual a "+52", mantener solo "+52"
+      if (value.length <= 3) {
+        setNewSupplier(prev => ({
+          ...prev,
+          [name]: "+52"
+        }));
+        return;
+      }
+
+      let formattedPhone = value.replace(/[^\d+]/g, ''); // Remove all non-digits except '+'
+      
+      if (!formattedPhone.startsWith('+52')) {
+        formattedPhone = '+52' + formattedPhone;
+      }
+      
+      // Format the number with spaces
+      if (formattedPhone.length > 3) {
+        formattedPhone = formattedPhone.slice(0, 3) + ' ' + formattedPhone.slice(3);
+        if (formattedPhone.length > 6) {
+          formattedPhone = formattedPhone.slice(0, 6) + ' ' + formattedPhone.slice(6);
+          if (formattedPhone.length > 11) {
+            formattedPhone = formattedPhone.slice(0, 11) + ' ' + formattedPhone.slice(11);
+          }
+        }
+      }
+      
+      // Limit to correct length
+      formattedPhone = formattedPhone.slice(0, 16);
+      
+      setNewSupplier(prev => ({
+        ...prev,
+        [name]: formattedPhone
+      }));
+    } else {
+      setNewSupplier(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+    
+    // Clear error for this field when user types
+    if (formErrors[name]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: null
+      }));
+    }
   };
   
   // Handle checkbox change for shoe types
@@ -584,11 +648,6 @@ const Gestion_de_Proveedores = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               {isOrdersPage ? <MdOutlineShoppingCart size={24} /> : <MdBusinessCenter size={24} />}
               <PageTitle>{isOrdersPage ? "Órdenes de Compra" : "Gestión de Proveedores"}</PageTitle>
-            </div>
-            <div>
-              <ThemeToggle onClick={toggleTheme} title={isDarkTheme ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}>
-                {isDarkTheme ? <SunIcon /> : <MoonIcon />}
-              </ThemeToggle>
             </div>
           </PageHeader>
           
@@ -684,7 +743,7 @@ const Gestion_de_Proveedores = () => {
                       <td>
                         <div style={{ fontWeight: 600 }}>{supplier.name}</div>
                         <div style={{ fontSize: '0.75rem', color: 'var(--sapContent_LabelColor, #6a6d70)', marginTop: '0.25rem' }}>
-                          Último pedido: {new Date(supplier.lastOrder).toLocaleDateString()}
+                          Último pedido: {formatDateToMexican(supplier.lastOrder)}
                         </div>
                       </td>
                       <td>{supplier.contact}</td>
@@ -908,14 +967,14 @@ const Gestion_de_Proveedores = () => {
                     <FormGroup>
                       <FormLabel>Información de Contacto</FormLabel>
                       <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '0.5rem 1rem' }}>
-                        <div>Contacto:</div>
-                        <div><strong>{currentSupplier.contact}</strong></div>
-                        <div>Email:</div>
-                        <div><strong>{currentSupplier.email}</strong></div>
-                        <div>Teléfono:</div>
-                        <div><strong>{currentSupplier.phone}</strong></div>
-                        <div>Dirección:</div>
-                        <div><strong>{currentSupplier.address}</strong></div>
+                        <div style={{ fontWeight: 'bold' }}>Contacto:</div>
+                        <div>{currentSupplier.contact}</div>
+                        <div style={{ fontWeight: 'bold' }}>Email:</div>
+                        <div>{currentSupplier.email}</div>
+                        <div style={{ fontWeight: 'bold' }}>Teléfono:</div>
+                        <div>{currentSupplier.phone}</div>
+                        <div style={{ fontWeight: 'bold' }}>Dirección:</div>
+                        <div>{currentSupplier.address}</div>
                       </div>
                     </FormGroup>
                     
@@ -938,7 +997,7 @@ const Gestion_de_Proveedores = () => {
                     <FormGroup>
                       <FormLabel>Última Orden</FormLabel>
                       <div style={{ fontWeight: 600, fontSize: '1.125rem' }}>
-                        {new Date(currentSupplier.lastOrder).toLocaleDateString()}
+                        {formatDateToMexican(currentSupplier.lastOrder)}
                       </div>
                     </FormGroup>
                     
@@ -967,7 +1026,7 @@ const Gestion_de_Proveedores = () => {
                     <Table>
                       <thead>
                         <tr>
-                          <th>Pedido #</th>
+                          <th>Número de Pedido</th>
                           <th>Fecha</th>
                           <th>Productos</th>
                           <th>Monto</th>
@@ -978,7 +1037,7 @@ const Gestion_de_Proveedores = () => {
                         {currentSupplier.orders.map(order => (
                           <tr key={order.id}>
                             <td>{order.id}</td>
-                            <td>{new Date(order.date).toLocaleDateString()}</td>
+                            <td>{order.date}</td>
                             <td>{order.items}</td>
                             <td>${order.amount.toLocaleString()}</td>
                             <td>

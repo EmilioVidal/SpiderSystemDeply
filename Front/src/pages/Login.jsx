@@ -36,8 +36,8 @@ const LightModeLogin = ({ handleSubmit, formData, setFormData, showPassword, set
             <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
               <MessageSquare className="w-6 h-6 text-blue-600" />
             </div>
-            <h1 className="text-2xl font-bold mt-2 text-gray-800">Welcome Back</h1>
-            <p className="text-gray-500">Sign in to your account</p>
+            <h1 className="text-2xl font-bold mt-2 text-gray-800">Bienvenido de Nuevo</h1>
+            <p className="text-gray-500">Inicia sesión en tu cuenta</p>
           </div>
         </div>
 
@@ -45,7 +45,7 @@ const LightModeLogin = ({ handleSubmit, formData, setFormData, showPassword, set
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              Email
+              Correo Electrónico
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -63,7 +63,7 @@ const LightModeLogin = ({ handleSubmit, formData, setFormData, showPassword, set
 
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              Password
+              Contraseña
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -94,14 +94,14 @@ const LightModeLogin = ({ handleSubmit, formData, setFormData, showPassword, set
             type="submit"
             className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md border-0"
           >
-            Sign in
+            Iniciar Sesión
           </RoundedButton>
 
           <div className="text-center mt-4">
             <p className="text-gray-500">
-              Don't have an account?{" "}
+              ¿No tienes una cuenta?{" "}
               <Link to="/home" className="text-blue-600 hover:text-blue-700">
-                Create account
+                Crear cuenta
               </Link>
             </p>
           </div>
@@ -122,8 +122,8 @@ const DarkModeLogin = ({ handleSubmit, formData, setFormData, showPassword, setS
             <div className="w-12 h-12 rounded-xl bg-blue-900 flex items-center justify-center">
               <MessageSquare className="w-6 h-6 text-blue-400" />
             </div>
-            <h1 className="text-2xl font-bold mt-2 text-white">Welcome Back</h1>
-            <p className="text-gray-400">Sign in to your account</p>
+            <h1 className="text-2xl font-bold mt-2 text-white">Bienvenido de Nuevo</h1>
+            <p className="text-gray-400">Inicia sesión en tu cuenta</p>
           </div>
         </div>
 
@@ -131,7 +131,7 @@ const DarkModeLogin = ({ handleSubmit, formData, setFormData, showPassword, setS
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-300">
-              Email
+              Correo Electrónico
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -149,7 +149,7 @@ const DarkModeLogin = ({ handleSubmit, formData, setFormData, showPassword, setS
 
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-300">
-              Password
+              Contraseña
             </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -180,14 +180,14 @@ const DarkModeLogin = ({ handleSubmit, formData, setFormData, showPassword, setS
             type="submit"
             className="w-full py-3 px-4 bg-blue-700 hover:bg-blue-800 text-white font-medium rounded-md border-0"
           >
-            Sign in
+            Iniciar Sesión
           </RoundedButton>
 
           <div className="text-center mt-4">
             <p className="text-gray-400">
-              Don't have an account?{" "}
+              ¿No tienes una cuenta?{" "}
               <Link to="/home" className="text-blue-400 hover:text-blue-300">
-                Create account
+                Crear cuenta
               </Link>
             </p>
           </div>
@@ -233,9 +233,9 @@ export function LoginPage() {
       <div className="w-1/2 bg-gray-900 h-screen flex flex-col">
         <div className="flex-grow"></div>
         <div className="text-center pb-8">
-          <h2 className="text-3xl font-bold text-white">Welcome back!</h2>
+          <h2 className="text-3xl font-bold text-white">¡Bienvenido de nuevo!</h2>
           <p className="mt-4 text-lg text-gray-300 max-w-md mx-auto">
-            Sign in to continue your conversations and catch up with your messages.
+            Inicia sesión para continuar tus conversaciones y ponerte al día con tus mensajes.
           </p>
         </div>
       </div>
