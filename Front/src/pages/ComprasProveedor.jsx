@@ -532,11 +532,6 @@ export function ComprasProveedor() {
               <MdOutlineShoppingCart size={24} />
               <PageTitle>Órdenes de Compra - Super Shoes</PageTitle>
             </div>
-            <div>
-              <ThemeToggle onClick={toggleTheme} title={isDarkTheme ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}>
-                {isDarkTheme ? <SunIcon /> : <MoonIcon />}
-              </ThemeToggle>
-            </div>
           </PageHeader>
 
           <Card>
