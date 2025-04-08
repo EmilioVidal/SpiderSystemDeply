@@ -24,11 +24,9 @@ import {
   ProductAmount,
   InventoryBar,
   InventoryLabel,
-  OrderRow,
-  StoreSelector,
-  StoreSelectorButton
+  OrderRow
 } from "../styles/Inicio/inicioStyle";
-import { MdOutlineShoppingCart, MdStorefront, MdInventory, MdAttachMoney, MdShoppingBag, MdTrendingUp, MdKeyboardArrowDown } from 'react-icons/md';
+import { MdOutlineShoppingCart, MdStorefront, MdInventory, MdAttachMoney, MdShoppingBag, MdTrendingUp } from 'react-icons/md';
 
 // Sample data for recent orders
 const recentOrders = [
@@ -535,8 +533,7 @@ const formatStatus = (status) => {
 export function Inicio() {
   const { theme } = useContext(ThemeContext);
   const isDarkTheme = theme === "dark";
-  const [selectedStore, setSelectedStore] = useState(stores[0]);
-  const [isStoreDropdownOpen, setIsStoreDropdownOpen] = useState(false);
+  const [selectedStore] = useState(stores[0]);
 
   return (
     <UI5ThemeProvider>
@@ -546,77 +543,19 @@ export function Inicio() {
             <MdStorefront size={28} />
             <PageTitle>Dashboard Super Shoes</PageTitle>
           </div>
-          <StoreSelector>
-            <StoreSelectorButton 
-              onClick={() => setIsStoreDropdownOpen(!isStoreDropdownOpen)}
-              isDarkTheme={isDarkTheme}
-            >
-              <MdStorefront size={20} />
-              <div style={{ marginLeft: '8px' }}>
-                <div style={{ fontWeight: '500' }}>{selectedStore.name}</div>
-                <div style={{ 
-                  fontSize: '0.75rem', 
-                  color: 'var(--sapContent_LabelColor)',
-                  marginTop: '2px' 
-                }}>
-                  {selectedStore.address}
-                </div>
-              </div>
-              <MdKeyboardArrowDown 
-                size={20} 
-                style={{ marginLeft: 'auto' }}
-              />
-            </StoreSelectorButton>
-            
-            {isStoreDropdownOpen && (
-              <div style={{
-                position: 'absolute',
-                top: '100%',
-                right: 0,
-                marginTop: '4px',
-                backgroundColor: 'var(--sapList_Background)',
-                borderRadius: '4px',
-                boxShadow: 'var(--sapContent_Shadow0)',
-                width: '320px',
-                zIndex: 100
-              }}>
-                {stores.map(store => (
-                  <div
-                    key={store.id}
-                    style={{
-                      padding: '12px 16px',
-                      cursor: 'pointer',
-                      borderBottom: '1px solid var(--sapContent_ForegroundBorderColor)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      backgroundColor: selectedStore.id === store.id ? 
-                        'var(--sapList_SelectionBackgroundColor)' : 'transparent',
-                      '&:hover': {
-                        backgroundColor: 'var(--sapList_Hover_Background)'
-                      }
-                    }}
-                    onClick={() => {
-                      setSelectedStore(store);
-                      setIsStoreDropdownOpen(false);
-                    }}
-                  >
-                    <MdStorefront size={20} />
-          <div>
-                      <div style={{ fontWeight: '500' }}>{store.name}</div>
-                      <div style={{ 
-                        fontSize: '0.75rem', 
-                        color: 'var(--sapContent_LabelColor)',
-                        marginTop: '2px'
-                      }}>
-                        {store.address}
-                      </div>
-                    </div>
-                  </div>
-                ))}
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px',
+            color: 'var(--sapContent_LabelColor)',
+            fontSize: '0.875rem'
+          }}>
+            <MdStorefront size={20} />
+            <div>
+              <div style={{ fontWeight: '500' }}>{selectedStore.name}</div>
+              <div style={{ marginTop: '2px' }}>{selectedStore.address}</div>
+            </div>
           </div>
-            )}
-          </StoreSelector>
         </PageHeader>
 
         <MainContent>

@@ -162,21 +162,6 @@ const locations = [
     id: 1, 
     name: "Super Shoes - Tienda Principal", 
     address: "Plaza Comercial Reforma, Local 42B, CDMX" 
-  },
-  { 
-    id: 2, 
-    name: "Super Shoes - Polanco", 
-    address: "Av. Presidente Masaryk 228, Polanco, CDMX" 
-  },
-  { 
-    id: 3, 
-    name: "Super Shoes - Santa Fe", 
-    address: "Centro Comercial Santa Fe, Nivel 2, Local 257" 
-  },
-  { 
-    id: 4, 
-    name: "Super Shoes - Outlet Perisur", 
-    address: "Centro Comercial Perisur, Planta Baja, Local A15" 
   }
 ];
 
@@ -219,7 +204,7 @@ export function Compras() {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedSupplier, setSelectedSupplier] = useState(4);
   const [cartItems, setCartItems] = useState([{ productId: 1, quantity: 1 }]);
-  const [selectedLocation, setSelectedLocation] = useState(2);
+  const [selectedLocation] = useState(1);
   const [selectedPayment, setSelectedPayment] = useState(1);
   const [orderData, setOrderData] = useState({
     orderNumber: "OC-2025-015",
@@ -442,23 +427,15 @@ export function Compras() {
           <Card>
             <CardHeader>Entrega</CardHeader>
             <CardContent>
-              <h3 style={{ marginTop: 0, marginBottom: "1rem", fontSize: "1rem" }}>Selecciona una tienda para la entrega</h3>
-              {locations.map(location => (
-                <LocationItem 
-                  key={location.id} 
-                  selected={selectedLocation === location.id}
-                  onClick={() => setSelectedLocation(location.id)}
-                >
-                  <LocationIcon>{MapIcon}</LocationIcon>
-                  <LocationInfo>
-                    <LocationTitle>{location.name}</LocationTitle>
-                    <LocationAddress>{location.address}</LocationAddress>
-                  </LocationInfo>
-                  {selectedLocation === location.id && (
-                    <StatusIndicator>{CheckIcon}</StatusIndicator>
-                  )}
-                </LocationItem>
-              ))}
+              <h3 style={{ marginTop: 0, marginBottom: "1rem", fontSize: "1rem" }}>Punto de entrega asignado</h3>
+              <LocationItem selected={true}>
+                <LocationIcon>{MapIcon}</LocationIcon>
+                <LocationInfo>
+                  <LocationTitle>{locations[0].name}</LocationTitle>
+                  <LocationAddress>{locations[0].address}</LocationAddress>
+                </LocationInfo>
+                <StatusIndicator>{CheckIcon}</StatusIndicator>
+              </LocationItem>
             </CardContent>
           </Card>
         );
@@ -491,7 +468,6 @@ export function Compras() {
           </Card>
         );
       case 5:
-        const selectedLocationData = locations.find(l => l.id === selectedLocation);
         return (
           <Card>
             <CardHeader>Resumen del Pedido</CardHeader>
@@ -514,10 +490,10 @@ export function Compras() {
                   <strong>Método de Envío:</strong> {orderData.shippingMethod}
                 </div>
                 <div style={{ fontSize: "0.875rem", marginBottom: "0.5rem" }}>
-                  <strong>Punto de Entrega:</strong> {selectedLocationData.name}
+                  <strong>Punto de Entrega:</strong> {locations[0].name}
                 </div>
                 <div style={{ fontSize: "0.875rem", marginBottom: "0.5rem" }}>
-                  <strong>Dirección de Entrega:</strong> {selectedLocationData.address}
+                  <strong>Dirección de Entrega:</strong> {locations[0].address}
                 </div>
               </div>
               

@@ -10,20 +10,18 @@ export const Container = styled.div`
   box-sizing: border-box;
 `;
 
-export const PageHeader = styled.header`
+export const PageHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--sapContent_ForegroundBorderColor);
+  margin-bottom: 24px;
 `;
 
 export const PageTitle = styled.h1`
   font-size: 1.5rem;
-  font-weight: 400;
+  font-weight: 600;
+  color: var(--sapTextColor);
   margin: 0;
-  color: var(--sapTitleColor);
 `;
 
 export const MainContent = styled.main`
@@ -218,31 +216,4 @@ export const LocationAddress = styled.div`
   font-size: 0.875rem;
   color: var(--sapContent_LabelColor);
   line-height: 1.4;
-`;
-
-export const StoreSelector = styled.div`
-  position: relative;
-  z-index: 100;
-`;
-
-export const StoreSelectorButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background-color: var(--sapTile_Background);
-  border: 1px solid var(--sapContent_ForegroundBorderColor);
-  border-radius: 8px;
-  cursor: pointer;
-  min-width: 320px;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background-color: var(--sapList_Hover_Background);
-  }
-
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px var(--sapContent_FocusColor);
-  }
 `;
