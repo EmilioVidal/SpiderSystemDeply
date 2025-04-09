@@ -19,52 +19,15 @@ import {
   MetricLabel,
   ChartContainer,
   ProductTable,
-  StatusBadge,
   CategoryPill,
-  TableActions,
   TrendIndicator,
-  TabsContainer,
-  TabButton,
-  LowStockList,
-  LowStockItem,
-  LowStockName,
-  LowStockDetails,
-  LowStockAction,
   InfoText,
-  MovementsList,
-  MovementItem,
-  MovementIcon,
-  MovementDetails,
-  MovementType,
-  MovementInfo,
-  MovementDate,
-  PerformanceBar,
-  PerformanceLabel,
   ChartLegend,
   LegendItem,
-  FilterActions,
-  ResetButton
+  ResetButton,
+  ActionButton
 } from "../styles/Inventario/Analisis_InvStyle.js";
 import { MdTrendingUp, MdTrendingDown, MdOutlineInventory2, MdOutlineShoppingCart, MdLocalShipping, MdWarning, MdOutlineStorefront, MdTimer, MdCalendarToday, MdFilterList, MdOutlineRefresh } from "react-icons/md";
-
-// Define el componente ActionButton localmente para evitar problemas de importación
-const ActionButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 0.25rem;
-  background-color: var(--sapButton_Background, #0854a0);
-  color: var(--sapButton_TextColor, #fff);
-  font-size: 0.8125rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  
-  &:hover {
-    background-color: var(--sapButton_Hover_Background, #066bbf);
-  }
-`;
 
 // Datos de ejemplo para diferentes períodos y categorías
 const inventoryDataByPeriod = {
@@ -716,10 +679,8 @@ export function Analisis_Inv() {
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [timeRange, setTimeRange] = useState("mesActual");
-  const [selectedLocation, setSelectedLocation] = useState("all");
 
   const handleResetFilters = () => {
-    setSelectedLocation("all");
     setSelectedCategory("all");
     setTimeRange("mesActual");
   };
@@ -764,12 +725,8 @@ export function Analisis_Inv() {
 
   // Función para renderizar las métricas de inventario específicas de una sucursal
   const renderLocationInventoryMetrics = () => {
-    if (selectedLocation === "all") {
-      return null;
-    }
-
     // Obtener datos de la ubicación para el período seleccionado
-    const locationData = locationDataByPeriod[selectedLocation]?.[timeRange];
+    const locationData = locationDataByPeriod["Tienda Principal"]?.[timeRange];
     if (!locationData) return null;
 
     // Filtrar datos por categoría si está seleccionada
@@ -801,27 +758,10 @@ export function Analisis_Inv() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <MdOutlineStorefront size={24} />
             <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '500' }}>
-              Análisis de Inventario: {selectedLocation}
+              Análisis de Inventario: Tienda Principal
               {selectedCategory !== 'all' && ` - ${getCategoryName(selectedCategory)}`}
             </h2>
           </div>
-          <button 
-            onClick={() => setSelectedLocation("all")}
-            style={{
-              background: 'transparent',
-              border: '1px solid white',
-              borderRadius: '0.25rem',
-              padding: '0.5rem 0.75rem',
-              color: 'white',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              fontSize: '0.875rem'
-            }}
-          >
-            Volver a Vista General
-          </button>
         </div>
 
         <AnalyticsGrid>
@@ -1226,6 +1166,19 @@ export function Analisis_Inv() {
             <MdOutlineInventory2 size={28} />
             <PageTitle>Análisis de Inventario</PageTitle>
           </div>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px',
+            color: 'var(--sapContent_LabelColor)',
+            fontSize: '0.875rem'
+          }}>
+            <MdOutlineStorefront size={20} />
+            <div>
+              <div style={{ fontWeight: '500' }}>Super Shoes - Tienda Principal</div>
+              <div style={{ marginTop: '2px' }}>Plaza Comercial Reforma, Local 42B, CDMX</div>
+            </div>
+          </div>
         </PageHeader>
 
         <FiltersArea>
@@ -1248,364 +1201,193 @@ export function Analisis_Inv() {
               <option value="añoPasado">Año Pasado</option>
             </FilterSelect>
           </FilterItem>
-          <FilterItem>
-            <span><MdOutlineStorefront /> Sucursal:</span>
-            <FilterSelect 
-              value={selectedLocation} 
-              onChange={(e) => setSelectedLocation(e.target.value)}
-              style={{
-                minWidth: '200px'
-              }}
-            >
-              <option value="all">Todas las sucursales</option>
-              {locationPerformance.map(location => (
-                <option key={location.name} value={location.name}>{location.name}</option>
-              ))}
-            </FilterSelect>
-          </FilterItem>
           <ResetButton onClick={handleResetFilters}>
             <MdOutlineRefresh />
             Reiniciar Filtros
           </ResetButton>
         </FiltersArea>
 
-        {selectedLocation !== 'all' ? (
-          <ContentArea>
-            {renderLocationInventoryMetrics()}
-          </ContentArea>
-        ) : (
-          <>
-            <TabsContainer>
-              <TabButton 
-                active={activeTab === "overview"}
-                onClick={() => setActiveTab("overview")}
-              >
-                Visión General
-              </TabButton>
-              <TabButton
-                active={activeTab === "lowStock"}
-                onClick={() => setActiveTab("lowStock")}
-              >
-                Productos Bajo Stock
-              </TabButton>
-              <TabButton
-                active={activeTab === "movements"}
-                onClick={() => setActiveTab("movements")}
-              >
-                Movimientos Recientes
-              </TabButton>
-              <TabButton
-                active={activeTab === "performance"}
-                onClick={() => setActiveTab("performance")}
-              >
-                Rendimiento
-              </TabButton>
-            </TabsContainer>
-
-            <ContentArea>
-              {activeTab === "overview" && (
-                <>
-                  <AnalyticsGrid>
-                    {/* Valor Total de Inventario */}
-                    <AnalyticsCard>
-                      <CardHeader>
-                        <CardTitle>Valor Total del Inventario</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <MetricValue>${getCurrentInventoryData().inventoryValue.toLocaleString()}</MetricValue>
-                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
-                          <TrendIndicator positive={getCurrentInventoryData().trend.direction === 'up'}>
-                            {getCurrentInventoryData().trend.direction === 'up' ? <MdTrendingUp /> : <MdTrendingDown />}
-                            {getCurrentInventoryData().trend.value}%
-                          </TrendIndicator>
-                          <MetricLabel>vs. período anterior</MetricLabel>
-                        </div>
-                      </CardContent>
-                    </AnalyticsCard>
-
-                    {/* Rotación de Inventario */}
-                    <AnalyticsCard>
-                      <CardHeader>
-                        <CardTitle>Índice de Rotación</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <MetricValue>{getCurrentInventoryData().rotationIndex}</MetricValue>
-                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
-                          <TrendIndicator positive>
-                            <MdTrendingUp />
-                            +0.3
-                          </TrendIndicator>
-                          <MetricLabel>vs. período anterior</MetricLabel>
-                        </div>
-                      </CardContent>
-                    </AnalyticsCard>
-
-                    {/* Promedio de Días en Inventario */}
-                    <AnalyticsCard>
-                      <CardHeader>
-                        <CardTitle>Días Promedio en Inventario</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <MetricValue>{getCurrentInventoryData().avgDaysInStock} días</MetricValue>
-                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
-                          <TrendIndicator positive={false}>
-                            <MdTrendingDown />
-                            -2.5
-                          </TrendIndicator>
-                          <MetricLabel>vs. período anterior</MetricLabel>
-                        </div>
-                      </CardContent>
-                    </AnalyticsCard>
-
-                    {/* Productos Bajo Mínimos */}
-                    <AnalyticsCard>
-                      <CardHeader>
-                        <CardTitle>Productos Bajo Mínimos</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <MetricValue>{getCurrentInventoryData().lowStockProducts}</MetricValue>
-                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
-                          <TrendIndicator positive={false}>
-                            <MdTrendingUp />
-                            +12
-                          </TrendIndicator>
-                          <MetricLabel>vs. período anterior</MetricLabel>
-                        </div>
-                      </CardContent>
-                    </AnalyticsCard>
-                  </AnalyticsGrid>
-
-                  {/* Segunda fila de métricas */}
-                  <AnalyticsGrid>
-                    <AnalyticsCard>
-                      <CardHeader>
-                        <CardTitle>Precisión de Inventario</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <MetricValue>{getCurrentInventoryData().stockAccuracy}%</MetricValue>
-                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
-                          <TrendIndicator positive>
-                            <MdTrendingUp />
-                            +0.8%
-                          </TrendIndicator>
-                          <MetricLabel>vs. período anterior</MetricLabel>
-                        </div>
-                      </CardContent>
-                    </AnalyticsCard>
-
-                    <AnalyticsCard>
-                      <CardHeader>
-                        <CardTitle>Precisión de Pronóstico</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <MetricValue>{getCurrentInventoryData().forecastAccuracy}%</MetricValue>
-                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
-                          <TrendIndicator positive>
-                            <MdTrendingUp />
-                            +2.3%
-                          </TrendIndicator>
-                          <MetricLabel>vs. período anterior</MetricLabel>
-                        </div>
-                      </CardContent>
-                    </AnalyticsCard>
-
-                    <AnalyticsCard>
-                      <CardHeader>
-                        <CardTitle>Tasa de Cumplimiento</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <MetricValue>{getCurrentInventoryData().orderFulfillment}%</MetricValue>
-                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
-                          <TrendIndicator positive>
-                            <MdTrendingUp />
-                            +1.5%
-                          </TrendIndicator>
-                          <MetricLabel>vs. período anterior</MetricLabel>
-                        </div>
-                      </CardContent>
-                    </AnalyticsCard>
-
-                    <AnalyticsCard>
-                      <CardHeader>
-                        <CardTitle>Costo de Mantenimiento</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <MetricValue>${getCurrentInventoryData().carryCost.toLocaleString()}</MetricValue>
-                        <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
-                          <TrendIndicator positive={false}>
-                            <MdTrendingUp />
-                            +3.1%
-                          </TrendIndicator>
-                          <MetricLabel>vs. período anterior</MetricLabel>
-                        </div>
-                      </CardContent>
-                    </AnalyticsCard>
-                  </AnalyticsGrid>
-
-                  {/* Gráficos y datos adicionales */}
-                  <AnalyticsGrid style={{ gridTemplateColumns: '1fr 1fr' }}>
-                    {/* Distribución por Categoría */}
-                    <AnalyticsCard>
-                      <CardHeader>
-                        <CardTitle>Distribución por Categoría</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ChartContainer>
-                          {renderCategoryChart()}
-                        </ChartContainer>
-                      </CardContent>
-                    </AnalyticsCard>
-
-                    {/* Estado del Inventario */}
-                    <AnalyticsCard>
-                      <CardHeader>
-                        <CardTitle>Estado del Inventario</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ChartContainer>
-                          {renderInventoryStatus()}
-                        </ChartContainer>
-                      </CardContent>
-                    </AnalyticsCard>
-                  </AnalyticsGrid>
-
-                  {/* Métricas por categoría */}
-                  <AnalyticsCard>
-                    <CardHeader>
-                      <CardTitle>Métricas por Categoría</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {renderCategoryMetrics()}
-                    </CardContent>
-                  </AnalyticsCard>
-                </>
-              )}
-
-              {activeTab === "lowStock" && (
-                <AnalyticsCard style={{ marginBottom: '20px' }}>
+        <ContentArea>
+          {selectedCategory === "all" ? (
+            <>
+              <AnalyticsGrid>
+                {/* Valor Total de Inventario */}
+                <AnalyticsCard>
                   <CardHeader>
-                    <CardTitle>Productos con Stock Bajo</CardTitle>
+                    <CardTitle>Valor Total del Inventario</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <LowStockList>
-                      {lowStockProducts.map(product => (
-                        <LowStockItem key={product.id}>
-                          <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <MdWarning size={18} color="#f57c00" style={{ marginRight: '12px' }} />
-                            <div>
-                              <LowStockName>{product.name}</LowStockName>
-                              <LowStockDetails>
-                                <span>SKU: {product.sku}</span>
-                                <CategoryPill>{product.category}</CategoryPill>
-                              </LowStockDetails>
-                            </div>
-                          </div>
-                          <LowStockDetails style={{ textAlign: 'center' }}>
-                            <div>Stock Actual</div>
-                            <div style={{ fontWeight: 'bold', color: product.stock < product.reorderPoint ? 'var(--sapErrorColor, #bb0000)' : 'var(--sapWarningColor, #e9730c)' }}>
-                              {product.stock}
-                            </div>
-                          </LowStockDetails>
-                          <LowStockDetails style={{ textAlign: 'center' }}>
-                            <div>Stock Mínimo</div>
-                            <div>{product.minStock}</div>
-                          </LowStockDetails>
-                          <LowStockDetails style={{ textAlign: 'center' }}>
-                            <div>Punto de Reorden</div>
-                            <div>{product.reorderPoint}</div>
-                          </LowStockDetails>
-                          <LowStockAction>
-                            <ActionButton>
-                              <MdOutlineShoppingCart size={16} style={{ marginRight: '4px' }} /> Crear Pedido
-                            </ActionButton>
-                          </LowStockAction>
-                        </LowStockItem>
-                      ))}
-                    </LowStockList>
+                    <MetricValue>${getCurrentInventoryData().inventoryValue.toLocaleString()}</MetricValue>
+                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+                      <TrendIndicator positive={getCurrentInventoryData().trend.direction === 'up'}>
+                        {getCurrentInventoryData().trend.direction === 'up' ? <MdTrendingUp /> : <MdTrendingDown />}
+                        {getCurrentInventoryData().trend.value}%
+                      </TrendIndicator>
+                      <MetricLabel>vs. período anterior</MetricLabel>
+                    </div>
                   </CardContent>
                 </AnalyticsCard>
-              )}
 
-              {activeTab === "movements" && (
-                <AnalyticsCard style={{ marginBottom: '20px' }}>
+                {/* Rotación de Inventario */}
+                <AnalyticsCard>
                   <CardHeader>
-                    <CardTitle>Movimientos Recientes de Inventario</CardTitle>
+                    <CardTitle>Índice de Rotación</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <MovementsList>
-                      {recentMovements.map(movement => (
-                        <MovementItem key={movement.id}>
-                          <MovementIcon type={movement.type}>
-                            {movement.type === 'entrada' && <MdOutlineInventory2 size={18} />}
-                            {movement.type === 'salida' && <MdOutlineShoppingCart size={18} />}
-                            {movement.type === 'traslado' && <MdLocalShipping size={18} />}
-                          </MovementIcon>
-                          <MovementDetails>
-                            <MovementType type={movement.type}>
-                              {movement.type === 'entrada' ? 'Entrada' : 
-                               movement.type === 'salida' ? 'Salida' : 'Traslado'}
-                            </MovementType>
-                            <div>{movement.product}</div>
-                          </MovementDetails>
-                          <MovementInfo>
-                            <div>Cantidad: <strong>{movement.quantity}</strong></div>
-                            <div>Ubicación: {movement.location}</div>
-                          </MovementInfo>
-                          <MovementDate>
-                            <MdTimer size={14} style={{ marginRight: '4px' }} />
-                            {new Date(movement.date).toLocaleDateString()}
-                          </MovementDate>
-                        </MovementItem>
-                      ))}
-                    </MovementsList>
+                    <MetricValue>{getCurrentInventoryData().rotationIndex}</MetricValue>
+                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+                      <TrendIndicator positive>
+                        <MdTrendingUp />
+                        +0.3
+                      </TrendIndicator>
+                      <MetricLabel>vs. período anterior</MetricLabel>
+                    </div>
                   </CardContent>
                 </AnalyticsCard>
-              )}
 
-              {activeTab === "performance" && (
-                <AnalyticsCard style={{ marginBottom: '20px' }}>
+                {/* Promedio de Días en Inventario */}
+                <AnalyticsCard>
                   <CardHeader>
-                    <CardTitle>Rendimiento de Inventario por Ubicación</CardTitle>
+                    <CardTitle>Días Promedio en Inventario</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <ProductTable>
-                      <thead>
-                        <tr>
-                          <th>Ubicación</th>
-                          <th>Rotación de Inventario</th>
-                          <th>Días en Inventario</th>
-                          <th>Eficiencia</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {locationPerformance.map(location => (
-                          <tr key={location.name}>
-                            <td>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <MdOutlineStorefront size={18} color={isDarkTheme ? "#61dafb" : "#0854a0"} />
-                                {location.name}
-                              </div>
-                            </td>
-                            <td>{location.stockTurnover}</td>
-                            <td>{location.daysInStock}</td>
-                            <td>
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                <PerformanceBar>
-                                  <div style={{ width: `${location.efficiency}%` }}></div>
-                                </PerformanceBar>
-                                <PerformanceLabel>{location.efficiency}%</PerformanceLabel>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </ProductTable>
+                    <MetricValue>{getCurrentInventoryData().avgDaysInStock} días</MetricValue>
+                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+                      <TrendIndicator positive={false}>
+                        <MdTrendingDown />
+                        -2.5
+                      </TrendIndicator>
+                      <MetricLabel>vs. período anterior</MetricLabel>
+                    </div>
                   </CardContent>
                 </AnalyticsCard>
-              )}
-            </ContentArea>
-          </>
-        )}
+
+                {/* Productos Bajo Mínimos */}
+                <AnalyticsCard>
+                  <CardHeader>
+                    <CardTitle>Productos Bajo Mínimos</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <MetricValue>{getCurrentInventoryData().lowStockProducts}</MetricValue>
+                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+                      <TrendIndicator positive={false}>
+                        <MdTrendingUp />
+                        +12
+                      </TrendIndicator>
+                      <MetricLabel>vs. período anterior</MetricLabel>
+                    </div>
+                  </CardContent>
+                </AnalyticsCard>
+              </AnalyticsGrid>
+
+              {/* Segunda fila de métricas */}
+              <AnalyticsGrid>
+                <AnalyticsCard>
+                  <CardHeader>
+                    <CardTitle>Precisión de Inventario</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <MetricValue>{getCurrentInventoryData().stockAccuracy}%</MetricValue>
+                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+                      <TrendIndicator positive>
+                        <MdTrendingUp />
+                        +0.8%
+                      </TrendIndicator>
+                      <MetricLabel>vs. período anterior</MetricLabel>
+                    </div>
+                  </CardContent>
+                </AnalyticsCard>
+
+                <AnalyticsCard>
+                  <CardHeader>
+                    <CardTitle>Precisión de Pronóstico</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <MetricValue>{getCurrentInventoryData().forecastAccuracy}%</MetricValue>
+                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+                      <TrendIndicator positive>
+                        <MdTrendingUp />
+                        +2.3%
+                      </TrendIndicator>
+                      <MetricLabel>vs. período anterior</MetricLabel>
+                    </div>
+                  </CardContent>
+                </AnalyticsCard>
+
+                <AnalyticsCard>
+                  <CardHeader>
+                    <CardTitle>Tasa de Cumplimiento</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <MetricValue>{getCurrentInventoryData().orderFulfillment}%</MetricValue>
+                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+                      <TrendIndicator positive>
+                        <MdTrendingUp />
+                        +1.5%
+                      </TrendIndicator>
+                      <MetricLabel>vs. período anterior</MetricLabel>
+                    </div>
+                  </CardContent>
+                </AnalyticsCard>
+
+                <AnalyticsCard>
+                  <CardHeader>
+                    <CardTitle>Costo de Mantenimiento</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <MetricValue>${getCurrentInventoryData().carryCost.toLocaleString()}</MetricValue>
+                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '8px' }}>
+                      <TrendIndicator positive={false}>
+                        <MdTrendingUp />
+                        +3.1%
+                      </TrendIndicator>
+                      <MetricLabel>vs. período anterior</MetricLabel>
+                    </div>
+                  </CardContent>
+                </AnalyticsCard>
+              </AnalyticsGrid>
+
+              {/* Gráficos y datos adicionales */}
+              <AnalyticsGrid style={{ gridTemplateColumns: '1fr 1fr' }}>
+                {/* Distribución por Categoría */}
+                <AnalyticsCard>
+                  <CardHeader>
+                    <CardTitle>Distribución por Categoría</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer>
+                      {renderCategoryChart()}
+                    </ChartContainer>
+                  </CardContent>
+                </AnalyticsCard>
+
+                {/* Estado del Inventario */}
+                <AnalyticsCard>
+                  <CardHeader>
+                    <CardTitle>Estado del Inventario</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer>
+                      {renderInventoryStatus()}
+                    </ChartContainer>
+                  </CardContent>
+                </AnalyticsCard>
+              </AnalyticsGrid>
+
+              {/* Métricas por categoría */}
+              <AnalyticsCard>
+                <CardHeader>
+                  <CardTitle>Métricas por Categoría</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {renderCategoryMetrics()}
+                </CardContent>
+              </AnalyticsCard>
+            </>
+          ) : (
+            renderLocationInventoryMetrics()
+          )}
+        </ContentArea>
       </Container>
     </UI5ThemeProvider>
   );

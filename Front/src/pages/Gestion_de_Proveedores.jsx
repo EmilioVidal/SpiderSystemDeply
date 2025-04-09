@@ -230,38 +230,70 @@ const suppliersData = [
 
 // Sample data for product categories
 const categories = [
-  { id: 1, name: "Calzado Deportivo" },
-  { id: 2, name: "Calzado Formal" },
-  { id: 3, name: "Calzado Casual" },
-  { id: 4, name: "Botas" },
-  { id: 5, name: "Sandalias" }
+  { id: 1, name: "Calzado Deportivo", description: "Zapatillas y calzado para actividades deportivas" },
+  { id: 2, name: "Calzado Formal", description: "Zapatos de vestir y calzado elegante" },
+  { id: 3, name: "Calzado Casual", description: "Calzado para uso diario y casual" },
+  { id: 4, name: "Botas", description: "Botas de trabajo y botas de moda" },
+  { id: 5, name: "Sandalias", description: "Sandalias y calzado de temporada" }
 ];
 
-// Generate consistent inventory stats
+// Generate consistent inventory stats with more details
 const generateStats = () => {
   return [
-    87, // Calzado Deportivo
-    40, // Calzado Formal
-    63, // Calzado Casual
-    14, // Botas
-    94  // Sandalias
+    { count: 87, providers: 3, lowStock: 5, value: 125000 }, // Calzado Deportivo
+    { count: 40, providers: 4, lowStock: 8, value: 82000 }, // Calzado Formal
+    { count: 63, providers: 2, lowStock: 3, value: 94500 }, // Calzado Casual
+    { count: 14, providers: 1, lowStock: 4, value: 35000 }, // Botas
+    { count: 94, providers: 5, lowStock: 2, value: 108000 }  // Sandalias
   ];
 };
 
 // Sample data for suppliers by type instead of status
 const suppliersByType = [
-  { id: 1, name: "Fabricantes", count: 5, color: "success" },
-  { id: 2, name: "Distribuidores", count: 3, color: "info" },
-  { id: 3, name: "Importadores", count: 2, color: "warning" },
-  { id: 4, name: "Mayoristas", count: 3, color: "error" }
+  { id: 1, name: "Fabricantes Nacionales", count: 5, color: "success", description: "Fabricantes locales de calzado" },
+  { id: 2, name: "Distribuidores Autorizados", count: 3, color: "info", description: "Distribuidores oficiales de marcas" },
+  { id: 3, name: "Importadores Directos", count: 2, color: "warning", description: "Importadores de calzado internacional" },
+  { id: 4, name: "Mayoristas", count: 3, color: "error", description: "Proveedores de grandes volúmenes" }
 ];
 
-// Sample data for inventory age
+// Sample data for inventory age with more details
 const inventoryByAge = [
-  { id: 1, name: "Recibido < 30 días", count: 157, color: "success" },
-  { id: 2, name: "Recibido 30-60 días", count: 92, color: "info" },
-  { id: 3, name: "Recibido 60-90 días", count: 35, color: "warning" },
-  { id: 4, name: "Recibido > 90 días", count: 14, color: "error" }
+  { 
+    id: 1, 
+    name: "Inventario Nuevo", 
+    subtitle: "Menos de 30 días",
+    count: 157, 
+    value: 235000,
+    color: "success",
+    description: "Productos recién recibidos en óptimas condiciones"
+  },
+  { 
+    id: 2, 
+    name: "Inventario Regular", 
+    subtitle: "30-60 días",
+    count: 92, 
+    value: 138000,
+    color: "info",
+    description: "Productos con rotación normal"
+  },
+  { 
+    id: 3, 
+    name: "Inventario en Observación", 
+    subtitle: "60-90 días",
+    count: 35, 
+    value: 52500,
+    color: "warning",
+    description: "Productos que requieren atención en ventas"
+  },
+  { 
+    id: 4, 
+    name: "Inventario Crítico", 
+    subtitle: "Más de 90 días",
+    count: 14, 
+    value: 21000,
+    color: "error",
+    description: "Productos que necesitan acción inmediata"
+  }
 ];
 
 // SVG Icons for payment methods
@@ -803,128 +835,218 @@ const Gestion_de_Proveedores = () => {
                   active={activeCategory === 0} 
                   onClick={() => setActiveCategory(0)}
                 >
-                  Por Categoría
+                  Por Categoría de Producto
                 </Tab>
                 <Tab 
                   active={activeCategory === 1} 
                   onClick={() => setActiveCategory(1)}
                 >
-                  Por Tipo
+                  Por Tipo de Proveedor
                 </Tab>
                 <Tab 
                   active={activeCategory === 2} 
                   onClick={() => setActiveCategory(2)}
                 >
-                  Por Antigüedad
+                  Por Antigüedad de Inventario
                 </Tab>
               </Tabs>
               
               {activeCategory === 0 && (
-                <div style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(18rem, 1fr))', gap: '1rem' }}>
-                  {categories.map((category, index) => (
-                    <div 
-                      key={category.id} 
-                      style={{ 
-                        padding: '1.5rem', 
-                        borderRadius: '0.25rem',
-                        backgroundColor: 'var(--sapTile_Background, #ffffff)',
-                        border: '1px solid var(--sapGroup_ContentBorderColor, #d9d9d9)',
-                        boxShadow: '0 0 0.25rem rgba(0, 0, 0, 0.1)'
-                      }}
-                    >
-                      <div style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '0.5rem' }}>
-                        {category.name}
-                      </div>
-                      <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--sapIndicator, #0854a0)', marginBottom: '0.5rem' }}>
-                        {categoryStats[index]}
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--sapContent_LabelColor, #6a6d70)' }}>
-                          {index === 0 ? 3 : 
-                            index === 1 ? 4 : 
-                            index === 2 ? 2 : 
-                            index === 3 ? 1 : 5} proveedores
+                <div style={{ marginTop: '1.5rem' }}>
+                  <div style={{ marginBottom: '1rem', color: 'var(--sapContent_LabelColor)', fontSize: '0.875rem' }}>
+                    Vista general del inventario por categoría de producto
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(20rem, 1fr))', gap: '1.5rem' }}>
+                    {categories.map((category, index) => {
+                      const stats = categoryStats[index];
+                      return (
+                        <div 
+                          key={category.id} 
+                          style={{ 
+                            padding: '1.5rem',
+                            borderRadius: '0.5rem',
+                            backgroundColor: 'var(--sapTile_Background)',
+                            border: '1px solid var(--sapGroup_ContentBorderColor)',
+                            boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                          }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                            <div style={{ fontWeight: 600, fontSize: '1.125rem' }}>
+                              {category.name}
+                            </div>
+                            <Badge color={
+                              stats.count > 80 ? "success" : 
+                              stats.count > 50 ? "info" : 
+                              stats.count > 20 ? "warning" : "error"
+                            }>
+                              {stats.count} unidades
+                            </Badge>
+                          </div>
+                          
+                          <div style={{ fontSize: '0.875rem', color: 'var(--sapContent_LabelColor)', marginBottom: '1rem' }}>
+                            {category.description}
+                          </div>
+                          
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            <div>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--sapContent_LabelColor)' }}>
+                                Proveedores
+                              </div>
+                              <div style={{ fontWeight: 600, color: 'var(--sapIndicator)' }}>
+                                {stats.providers}
+                              </div>
+                            </div>
+                            <div>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--sapContent_LabelColor)' }}>
+                                Stock Bajo
+                              </div>
+                              <div style={{ fontWeight: 600, color: stats.lowStock > 5 ? 'var(--sapNegativeColor)' : 'var(--sapIndicator)' }}>
+                                {stats.lowStock} productos
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--sapGroup_ContentBorderColor)' }}>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--sapContent_LabelColor)' }}>
+                              Valor de Inventario
+                            </div>
+                            <div style={{ fontWeight: 600, fontSize: '1.125rem', color: 'var(--sapIndicator)' }}>
+                              ${stats.value.toLocaleString()}
+                            </div>
+                          </div>
                         </div>
-                        <Badge color={
-                          categoryStats[index] > 80 ? "success" : 
-                          categoryStats[index] > 50 ? "info" : 
-                          categoryStats[index] > 20 ? "warning" : "error"
-                        }>
-                          {categoryStats[index] > 80 ? "Alto" : 
-                          categoryStats[index] > 50 ? "Medio" : 
-                          categoryStats[index] > 20 ? "Bajo" : "Crítico"}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
+                      );
+                    })}
+                  </div>
                 </div>
               )}
               
               {activeCategory === 1 && (
-                <div style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(18rem, 1fr))', gap: '1rem' }}>
-                  {suppliersByType.map((item) => (
-                    <div 
-                      key={item.id} 
-                      style={{ 
-                        padding: '1.5rem', 
-                        borderRadius: '0.25rem',
-                        backgroundColor: 'var(--sapTile_Background, #ffffff)',
-                        border: '1px solid var(--sapGroup_ContentBorderColor, #d9d9d9)',
-                        boxShadow: '0 0 0.25rem rgba(0, 0, 0, 0.1)'
-                      }}
-                    >
-                      <div style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '0.5rem' }}>
-                        {item.name}
-                      </div>
-                      <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--sapIndicator, #0854a0)', marginBottom: '0.5rem' }}>
-                        {item.count}
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--sapContent_LabelColor, #6a6d70)' }}>
-                          {Math.round(item.count / 13 * 100)}% del total
+                <div style={{ marginTop: '1.5rem' }}>
+                  <div style={{ marginBottom: '1rem', color: 'var(--sapContent_LabelColor)', fontSize: '0.875rem' }}>
+                    Distribución de proveedores por tipo y su participación en el inventario
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(20rem, 1fr))', gap: '1.5rem' }}>
+                    {suppliersByType.map((type) => (
+                      <div 
+                        key={type.id} 
+                        style={{ 
+                          padding: '1.5rem',
+                          borderRadius: '0.5rem',
+                          backgroundColor: 'var(--sapTile_Background)',
+                          border: '1px solid var(--sapGroup_ContentBorderColor)',
+                          boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                          <div style={{ fontWeight: 600, fontSize: '1.125rem' }}>
+                            {type.name}
+                          </div>
+                          <StatusIndicator status={type.color}>
+                            {type.count} proveedores
+                          </StatusIndicator>
                         </div>
-                        <Badge color={item.color}>
-                          {item.id === 1 ? "Nacional" : 
-                           item.id === 2 ? "Nacional" : 
-                           item.id === 3 ? "Importado" : "Variado"}
-                        </Badge>
+                        
+                        <div style={{ fontSize: '0.875rem', color: 'var(--sapContent_LabelColor)', marginBottom: '1rem' }}>
+                          {type.description}
+                        </div>
+                        
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '1rem' }}>
+                          <div style={{ flex: 1, height: '0.5rem', backgroundColor: 'var(--sapGroup_ContentBorderColor)', borderRadius: '0.25rem' }}>
+                            <div 
+                              style={{ 
+                                width: `${(type.count / 13) * 100}%`,
+                                height: '100%',
+                                backgroundColor: `var(--sap${type.color.charAt(0).toUpperCase() + type.color.slice(1)}Color)`,
+                                borderRadius: '0.25rem'
+                              }}
+                            />
+                          </div>
+                          <div style={{ fontSize: '0.875rem', fontWeight: 600 }}>
+                            {Math.round((type.count / 13) * 100)}%
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
               
               {activeCategory === 2 && (
-                <div style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(18rem, 1fr))', gap: '1rem' }}>
-                  {inventoryByAge.map((item) => (
-                    <div 
-                      key={item.id} 
-                      style={{ 
-                        padding: '1.5rem', 
-                        borderRadius: '0.25rem',
-                        backgroundColor: 'var(--sapTile_Background, #ffffff)',
-                        border: '1px solid var(--sapGroup_ContentBorderColor, #d9d9d9)',
-                        boxShadow: '0 0 0.25rem rgba(0, 0, 0, 0.1)'
-                      }}
-                    >
-                      <div style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '0.5rem' }}>
-                        {item.name}
-                      </div>
-                      <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--sapIndicator, #0854a0)', marginBottom: '0.5rem' }}>
-                        {item.count}
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--sapContent_LabelColor, #6a6d70)' }}>
-                          {Math.round(item.count / 298 * 100)}% del inventario
+                <div style={{ marginTop: '1.5rem' }}>
+                  <div style={{ marginBottom: '1rem', color: 'var(--sapContent_LabelColor)', fontSize: '0.875rem' }}>
+                    Análisis del inventario por tiempo de permanencia en almacén
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(20rem, 1fr))', gap: '1.5rem' }}>
+                    {inventoryByAge.map((item) => (
+                      <div 
+                        key={item.id} 
+                        style={{ 
+                          padding: '1.5rem',
+                          borderRadius: '0.5rem',
+                          backgroundColor: 'var(--sapTile_Background)',
+                          border: '1px solid var(--sapGroup_ContentBorderColor)',
+                          boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                          <div style={{ fontWeight: 600, fontSize: '1.125rem' }}>
+                            {item.name}
+                          </div>
+                          <Badge color={item.color}>
+                            {item.subtitle}
+                          </Badge>
                         </div>
-                        <Badge color={item.color}>
-                          {item.color === "success" ? "Reciente" : 
-                           item.color === "info" ? "Normal" : 
-                           item.color === "warning" ? "Revisar" : "Liquidar"}
-                        </Badge>
+                        
+                        <div style={{ fontSize: '0.875rem', color: 'var(--sapContent_LabelColor)', marginBottom: '1rem' }}>
+                          {item.description}
+                        </div>
+                        
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1rem' }}>
+                          <div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--sapContent_LabelColor)' }}>
+                              Cantidad
+                            </div>
+                            <div style={{ fontWeight: 600, fontSize: '1.25rem', color: 'var(--sapIndicator)' }}>
+                              {item.count}
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--sapContent_LabelColor)' }}>
+                              productos
+                            </div>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--sapContent_LabelColor)' }}>
+                              Valor
+                            </div>
+                            <div style={{ fontWeight: 600, fontSize: '1.25rem', color: 'var(--sapIndicator)' }}>
+                              ${item.value.toLocaleString()}
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--sapContent_LabelColor)' }}>
+                              en inventario
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div style={{ marginTop: '1rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <div style={{ flex: 1, height: '0.5rem', backgroundColor: 'var(--sapGroup_ContentBorderColor)', borderRadius: '0.25rem' }}>
+                              <div 
+                                style={{ 
+                                  width: `${(item.count / 298) * 100}%`,
+                                  height: '100%',
+                                  backgroundColor: `var(--sap${item.color.charAt(0).toUpperCase() + item.color.slice(1)}Color)`,
+                                  borderRadius: '0.25rem'
+                                }}
+                              />
+                            </div>
+                            <div style={{ fontSize: '0.875rem', fontWeight: 600 }}>
+                              {Math.round((item.count / 298) * 100)}%
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
             </CardContent>

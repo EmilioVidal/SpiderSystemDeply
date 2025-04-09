@@ -154,7 +154,7 @@ const ordersData = [
     dueDate: "2025-02-22",
     notes: "-",
     shippingMethod: "Transportadora ABC",
-    deliveryAddress: "Super Shoes - Polanco, Av. Presidente Masaryk 228, Polanco, CDMX",
+    deliveryAddress: "Super Shoes - Tienda Principal, Plaza Comercial Reforma, Local 42B, CDMX",
     provider: "Distribuidora de Zapatos Elegance"
   },
   {
@@ -167,7 +167,7 @@ const ordersData = [
     dueDate: "2025-02-25",
     notes: "-",
     shippingMethod: "Transportadora LMN",
-    deliveryAddress: "Super Shoes - Santa Fe, Centro Comercial Santa Fe, Nivel 2, Local 257",
+    deliveryAddress: "Super Shoes - Tienda Principal, Plaza Comercial Reforma, Local 42B, CDMX",
     provider: "Importadora Footwear Internacional"
   },
   {
@@ -180,7 +180,7 @@ const ordersData = [
     dueDate: "2025-02-18",
     notes: "Cliente corporativo",
     shippingMethod: "DHL Express",
-    deliveryAddress: "Super Shoes - Outlet Perisur, Centro Comercial Perisur, Planta Baja, Local A15",
+    deliveryAddress: "Super Shoes - Tienda Principal, Plaza Comercial Reforma, Local 42B, CDMX",
     provider: "Zapatos y Complementos Moda Total"
   },
   {
@@ -206,7 +206,7 @@ const ordersData = [
     dueDate: "2025-02-15",
     notes: "Factura enviada",
     shippingMethod: "Transportadora ABC",
-    deliveryAddress: "Super Shoes - Santa Fe, Centro Comercial Santa Fe, Nivel 2, Local 257",
+    deliveryAddress: "Super Shoes - Tienda Principal, Plaza Comercial Reforma, Local 42B, CDMX",
     provider: "Importadora Footwear Internacional"
   },
   {
@@ -219,7 +219,7 @@ const ordersData = [
     dueDate: "2025-02-21",
     notes: "Temporada escolar",
     shippingMethod: "UPS",
-    deliveryAddress: "Super Shoes - Polanco, Av. Presidente Masaryk 228, Polanco, CDMX",
+    deliveryAddress: "Super Shoes - Tienda Principal, Plaza Comercial Reforma, Local 42B, CDMX",
     provider: "Distribuidora de Zapatos Elegance"
   },
   {
@@ -232,7 +232,7 @@ const ordersData = [
     dueDate: "2025-02-19",
     notes: "Urgente - Stock bajo",
     shippingMethod: "Transportadora LMN",
-    deliveryAddress: "Super Shoes - Outlet Perisur, Centro Comercial Perisur, Planta Baja, Local A15",
+    deliveryAddress: "Super Shoes - Tienda Principal, Plaza Comercial Reforma, Local 42B, CDMX",
     provider: "Zapatos y Complementos Moda Total"
   },
   {
@@ -245,7 +245,7 @@ const ordersData = [
     dueDate: "2025-02-12",
     notes: "Enviado a tienda",
     shippingMethod: "DHL Express",
-    deliveryAddress: "Super Shoes - Polanco, Av. Presidente Masaryk 228, Polanco, CDMX",
+    deliveryAddress: "Super Shoes - Tienda Principal, Plaza Comercial Reforma, Local 42B, CDMX",
     provider: "Importadora Footwear Internacional"
   },
   {
@@ -271,7 +271,7 @@ const ordersData = [
     dueDate: "2025-02-18",
     notes: "Cliente frecuente",
     shippingMethod: "Transportadora ABC",
-    deliveryAddress: "Super Shoes - Santa Fe, Centro Comercial Santa Fe, Nivel 2, Local 257",
+    deliveryAddress: "Super Shoes - Tienda Principal, Plaza Comercial Reforma, Local 42B, CDMX",
     provider: "Distribuidora de Zapatos Elegance"
   },
   {
@@ -284,7 +284,7 @@ const ordersData = [
     dueDate: "2025-02-22",
     notes: "Temporada eventos",
     shippingMethod: "UPS",
-    deliveryAddress: "Super Shoes - Outlet Perisur, Centro Comercial Perisur, Planta Baja, Local A15",
+    deliveryAddress: "Super Shoes - Tienda Principal, Plaza Comercial Reforma, Local 42B, CDMX",
     provider: "Zapatos y Complementos Moda Total"
   },
   {
@@ -297,9 +297,9 @@ const ordersData = [
     dueDate: "2025-02-25",
     notes: "Factura enviada",
     shippingMethod: "Transportadora LMN",
-    deliveryAddress: "Super Shoes - Polanco, Av. Presidente Masaryk 228, Polanco, CDMX",
+    deliveryAddress: "Super Shoes - Tienda Principal, Plaza Comercial Reforma, Local 42B, CDMX",
     provider: "Calzado Deportivo Premium"
-  },
+  }
 ];
 
 // Add some shoe store themed styling
