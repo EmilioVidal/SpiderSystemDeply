@@ -28,6 +28,7 @@ import "@ui5/webcomponents-icons/dist/email.js";
 import "@ui5/webcomponents-icons/dist/key.js";
 import "@ui5/webcomponents-icons/dist/show.js";
 import "@ui5/webcomponents-icons/dist/hide.js";
+import "@ui5/webcomponents-fiori/dist/illustrations/AllIllustrations.js";
 import { AuthImagePattern } from "../components/AuthImagePattern";
 
 export default function Login() {
@@ -40,21 +41,43 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validación básica
+    setError(""); // limpia error anterior
+  
     if (!formData.email || !formData.password) {
       setError("Por favor complete todos los campos");
       return;
     }
+  
+    try {
+      const res = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        setError(data.message || "Error en el servidor");
+        return;
+      }
+  
+      // Guarda el token (puedes usar localStorage o context)
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      console.log(localStorage.getItem("token"));
+      console.log(localStorage.getItem("user"));
+      console.log(JSON.parse(localStorage.getItem("user")).name);
 
-    // En un caso real, aquí iría la autenticación con el backend
-    // Por ahora, simplemente navegamos al dashboard
-    setTimeout(() => {
+      // Redirecciona al dashboard
       navigate("/home");
-    }, 1000);
-  };
+    } catch (err) {
+      console.error("Error al conectar con el servidor:", err);
+      setError("No se pudo conectar al servidor");
+    }
+  };  
 
   const backgroundStyle = {
     backgroundImage: isDarkMode 

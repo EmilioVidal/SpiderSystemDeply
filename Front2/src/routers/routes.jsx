@@ -18,7 +18,6 @@ const LazyComprasProveedor = React.lazy(() => import("../pages/ComprasProveedor"
 const LazyCuenta = React.lazy(() => import("../pages/Cuenta"));
 const LazyChatPage = React.lazy(() => import("../pages/ChatPage"));
 
-// Estilos CSS para el spinner
 const spinnerStyles = `
   @keyframes spin {
     0% { transform: rotate(0deg); }
@@ -34,78 +33,41 @@ const spinnerStyles = `
   }
 `;
 
-// Componente de carga
 const Loading = () => (
-  <div style={{
-    height: "100vh",
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "var(--sapBackgroundColor)"
-  }}>
+  <div style={{ height: "100vh", width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", backgroundColor: "var(--sapBackgroundColor)" }}>
     <style>{spinnerStyles}</style>
     <div className="custom-spinner" />
   </div>
 );
 
-// Wrapper para las páginas con lazy loading
-const PageWrapper = ({ component: Component }) => {
-  return (
-    <React.Suspense fallback={<Loading />}>
-      <Component />
-    </React.Suspense>
-  );
-};
+const PageWrapper = ({ component: Component }) => (
+  <React.Suspense fallback={<Loading />}>
+    <Component />
+  </React.Suspense>
+);
 
-// Layout principal que incluye Sidebar y Content
 function Layout() {
   const location = useLocation();
   const { theme } = useUI5Theme();
   const [sidebarWidth, setSidebarWidth] = useState(64);
   const [isMobile, setIsMobile] = useState(false);
-  
+
   const isLoginPage = location.pathname === "/login" || location.pathname === "/";
-  
+
   useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    
+    const checkIfMobile = () => setIsMobile(window.innerWidth <= 768);
     checkIfMobile();
     window.addEventListener("resize", checkIfMobile);
-    
-    return () => {
-      window.removeEventListener("resize", checkIfMobile);
-    };
+    return () => window.removeEventListener("resize", checkIfMobile);
   }, []);
 
-  const handleSidebarResize = (width) => {
-    setSidebarWidth(width);
-  };
+  const handleSidebarResize = (width) => setSidebarWidth(width);
 
-  // Layout para páginas que no son login
   if (!isLoginPage) {
     return (
-      <div style={{ 
-        height: "100vh", 
-        width: "100%", 
-        position: "relative",
-        display: "flex" 
-      }}>
+      <div style={{ height: "100vh", width: "100%", position: "relative", display: "flex" }}>
         <Sidebar onResize={handleSidebarResize} />
-        <div
-          style={{
-            flex: 1,
-            marginLeft: isMobile ? 0 : sidebarWidth,
-            transition: "margin-left 0.3s ease",
-            height: "100%",
-            overflowY: "auto",
-            paddingTop: isMobile ? "2.75rem" : 0,
-            backgroundColor: "var(--sapBackgroundColor)"
-          }}
-        >
+        <div style={{ flex: 1, marginLeft: isMobile ? 0 : sidebarWidth, transition: "margin-left 0.3s ease", height: "100%", overflowY: "auto", paddingTop: isMobile ? "2.75rem" : 0, backgroundColor: "var(--sapBackgroundColor)" }}>
           <Routes>
             <Route path="/home" element={<PageWrapper component={LazyInicio} />} />
             <Route path="/sistema_de_alertas" element={<PageWrapper component={LazyAlertas} />} />
@@ -125,7 +87,6 @@ function Layout() {
     );
   }
 
-  // Layout para la página de login
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
@@ -140,4 +101,4 @@ export function MyRoutes() {
       <Layout />
     </BrowserRouter>
   );
-} 
+}

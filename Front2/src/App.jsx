@@ -8,20 +8,14 @@ import { Toaster } from "react-hot-toast";
 function App() {
   return (
     <ErrorBoundary>
-      <UI5ThemeProvider>
-        <Page 
-          style={{ 
-            height: "100vh",
-            width: "100%"
-          }}
-          backgroundDesign="Transparent"
-        >
-          <MyRoutes />
-          <Toaster position="top-right" />
-        </Page>
-      </UI5ThemeProvider>
+        <UI5ThemeProvider>
+          <Page style={{ height: "100vh", width: "100%" }} backgroundDesign="Transparent">
+            <MyRoutes />
+            <Toaster position="top-right" />
+          </Page>
+        </UI5ThemeProvider>
     </ErrorBoundary>
   );
 }
 
-export default App; 
+export default App;

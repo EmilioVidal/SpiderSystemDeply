@@ -20,12 +20,19 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 const Cuenta = () => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const userName = storedUser.name;
+    const userEmail = storedUser.email;
+    const userRol = storedUser.role;
+    const userRolN = userRol === 1 ? "Administrador" : "Usuario";
+
   const navigate = useNavigate();
   const [showDialog, setShowDialog] = useState(false);
+
   const [userData, setUserData] = useState({
-    nombre: 'Juan Pérez',
-    email: 'juan.perez@empresa.com',
-    rol: 'Administrador',
+    nombre: userName,
+    email: userEmail,
+    rol: userRolN,
     telefono: '555-0101',
     departamento: 'TI',
     ultimoAcceso: '2024-03-15 14:30:00'
