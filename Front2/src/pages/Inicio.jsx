@@ -1,29 +1,22 @@
 import React, { useState, useEffect } from "react";
 import {
-  DynamicPageHeader,
   DynamicPageTitle,
   FlexBox,
   FlexBoxDirection,
   FlexBoxAlignItems,
   FlexBoxJustifyContent,
-  FlexBoxWrap,
   Title,
   Text,
   Card,
   CardHeader,
   ObjectStatus,
   AnalyticalTable,
-  Grid,
   IllustratedMessage,
   IllustrationMessageType,
-  Icon,
-  ValueState,
-  ProgressIndicator,
-  Bar,
-  Avatar
+  Icon
 } from "@ui5/webcomponents-react";
 import "@ui5/webcomponents-icons/dist/AllIcons.js";
-import { spacing } from "@ui5/webcomponents-react-base";
+import { styles } from "../Styles/InicioStyle";
 
 const Inicio = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -42,8 +35,7 @@ const Inicio = () => {
       subtitle: "Órdenes Pendientes",
       icon: "cart",
       state: "Warning",
-      trend: "up",
-      trendValue: "+12%"
+      trend: "+12% vs mes anterior"
     },
     {
       title: "Ventas del Mes",
@@ -51,8 +43,7 @@ const Inicio = () => {
       subtitle: "Ventas del Mes",
       icon: "sales-order",
       state: "Success",
-      trend: "up",
-      trendValue: "+15.2%"
+      trend: "+15.2% vs mes anterior"
     },
     {
       title: "Productos en Inventario",
@@ -60,8 +51,7 @@ const Inicio = () => {
       subtitle: "Productos en Inventario",
       icon: "product",
       state: "Information",
-      trend: "down",
-      trendValue: "-3%"
+      trend: "-3% vs mes anterior"
     },
     {
       title: "Crecimiento en Ventas",
@@ -69,77 +59,7 @@ const Inicio = () => {
       subtitle: "vs Mes Anterior",
       icon: "trend-up",
       state: "Success",
-      trend: "up",
-      trendValue: "+2.3%"
-    }
-  ];
-
-  const recentOrders = [
-    {
-      id: "OC-2025-001",
-      fecha: "15/02/2025",
-      producto: "Nike Air Max 2024",
-      cantidad: 50,
-      estado: "Pendiente",
-      total: 6000
-    },
-    {
-      id: "OC-2025-002",
-      fecha: "14/02/2025",
-      producto: "Adidas Ultraboost",
-      cantidad: 30,
-      estado: "En proceso",
-      total: 4500
-    },
-    {
-      id: "OC-2025-003",
-      fecha: "13/02/2025",
-      producto: "Puma RS-X",
-      cantidad: 25,
-      estado: "Completada",
-      total: 5250
-    },
-    {
-      id: "OC-2025-004",
-      fecha: "12/02/2025",
-      producto: "Nike Zoom Elite",
-      cantidad: 40,
-      estado: "En tránsito",
-      total: 7200
-    }
-  ];
-
-  const ventasPorCategoria = [
-    { categoria: "Calzado Deportivo", valor: 18500, porcentaje: 38 },
-    { categoria: "Calzado Casual", valor: 12000, porcentaje: 25 },
-    { categoria: "Calzado Formal", valor: 10500, porcentaje: 22 },
-    { categoria: "Calzado para Playa", valor: 7500, porcentaje: 15 }
-  ];
-
-  const productosDestacados = [
-    {
-      nombre: "Nike Air Max 2024",
-      precio: "$2,499",
-      vendidos: 145,
-      stock: 80,
-      estado: "Stock Alto",
-      imagen: "https://images.pexels.com/photos/19090/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-    },
-    {
-      nombre: "Adidas Ultraboost",
-      precio: "$2,899",
-      vendidos: 128,
-      stock: 65,
-      estado: "Stock Alto",
-      imagen: "https://images.pexels.com/photos/267202/pexels-photo-267202.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-    },
-    {
-      nombre: "Puma RS-X",
-      precio: "$1,999",
-      vendidos: 112,
-      stock: 45,
-      estado: "Stock Normal",
-      imagen: "https://images.pexels.com/photos/267242/pexels-photo-267242.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+      trend: "+2.3% vs mes anterior"
     }
   ];
 
@@ -149,7 +69,7 @@ const Inicio = () => {
         direction={FlexBoxDirection.Column}
         justifyContent={FlexBoxJustifyContent.Center}
         alignItems={FlexBoxAlignItems.Center}
-        style={{ height: "100vh" }}
+        style={{ height: "100%" }}
       >
         <IllustratedMessage
           name={IllustrationMessageType.SapLogo}
@@ -161,234 +81,305 @@ const Inicio = () => {
   }
 
   return (
-    <div className="dashboard-container" style={{ padding: "1rem" }}>
-      <DynamicPageTitle
-        header={
-          <Title
-            level="H1"
-            style={{ fontSize: "1.75rem", marginBottom: "0.5rem" }}
-          >
+    <div style={{ 
+      width: "100%",
+      minHeight: "100%",
+      padding: "1rem",
+      display: "flex",
+      flexDirection: "column",
+      gap: "1rem",
+      paddingTop: "2rem"
+    }}>
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        backgroundColor: "var(--sapBackgroundColor)",
+        padding: "1.25rem",
+        borderRadius: "0.5rem",
+        boxShadow: "var(--sapContent_Shadow0)",
+        marginTop: "0.5rem",
+        minHeight: "72px"
+      }}>
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.75rem"
+        }}>
+          <Icon 
+            name="retail-store" 
+            style={{
+              fontSize: "1.75rem",
+              color: "var(--sapContent_IconColor)"
+            }}
+          />
+          <Title level="H1" style={{
+            margin: 0,
+            fontSize: "1.75rem",
+            color: "var(--sapTextColor)",
+            padding: "0.25rem 0"
+          }}>
             Dashboard Super Shoes
           </Title>
-        }
-        subHeader={
-          <FlexBox
-            justifyContent={FlexBoxJustifyContent.SpaceBetween}
-            alignItems={FlexBoxAlignItems.Center}
-            style={{ width: "100%" }}
-          >
-            <Text>Tienda Principal</Text>
-            <Text>Plaza Comercial Reforma, Local 42B, CDMX</Text>
-          </FlexBox>
-        }
-      />
-
-      {/* KPI Cards */}
-      <Grid defaultSpan="XL3 L3 M6 S12" style={{ marginBottom: "1rem" }}>
-        {kpiCards.map((card, index) => (
-          <Card
-            key={index}
-            style={{
-              ...spacing.sapUiContentPadding,
-              height: "100%"
-            }}
-          >
-            <FlexBox
-              direction={FlexBoxDirection.Column}
-              style={{ height: "100%" }}
-            >
-              <FlexBox
-                justifyContent={FlexBoxJustifyContent.SpaceBetween}
-                alignItems={FlexBoxAlignItems.Center}
-                style={{ marginBottom: "1rem" }}
-              >
-                <Icon
-                  name={card.icon}
-                  style={{
-                    width: "2rem",
-                    height: "2rem",
-                    color: `var(--sapIndicationColor_${card.state})`
-                  }}
-                />
-                <ObjectStatus state={card.state}>{card.trend}</ObjectStatus>
-              </FlexBox>
-              <Title level="H2" style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>
-                {card.value}
-              </Title>
-              <Text style={{ color: "var(--sapContent_LabelColor)" }}>
-                {card.subtitle}
-              </Text>
-              <Text
-                style={{
-                  color: `var(--sapIndicationColor_${card.state})`,
-                  marginTop: "0.5rem"
-                }}
-              >
-                {card.trendValue} vs mes anterior
-              </Text>
-            </FlexBox>
-          </Card>
-        ))}
-      </Grid>
-
-      {/* Recent Orders */}
-      <Card
-        header={
-          <CardHeader
-            titleText="Órdenes Recientes"
-            subtitleText="Últimas órdenes registradas"
-            avatar={<Icon name="sales-order" />}
-            style={{ padding: "1rem" }}
-          />
-        }
-        style={{ marginBottom: "1rem" }}
-      >
-        <AnalyticalTable
-          data={recentOrders}
-          columns={[
-            {
-              Header: "Orden #",
-              accessor: "id",
-              width: 120
-            },
-            {
-              Header: "Fecha",
-              accessor: "fecha",
-              width: 100
-            },
-            {
-              Header: "Producto",
-              accessor: "producto"
-            },
-            {
-              Header: "Cantidad",
-              accessor: "cantidad",
-              width: 100
-            },
-            {
-              Header: "Estado",
-              accessor: "estado",
-              Cell: ({ value }) => {
-                let state = "None";
-                switch (value) {
-                  case "Pendiente":
-                    state = "Warning";
-                    break;
-                  case "En proceso":
-                    state = "Information";
-                    break;
-                  case "Completada":
-                    state = "Success";
-                    break;
-                  case "En tránsito":
-                    state = "Information";
-                    break;
-                  default:
-                    state = "None";
-                }
-                return <ObjectStatus state={state}>{value}</ObjectStatus>;
-              }
-            },
-            {
-              Header: "Total",
-              accessor: "total",
-              Cell: ({ value }) => `$${value.toLocaleString()}`
-            }
-          ]}
-          visibleRows={4}
-          minRows={4}
-          alternateRowColor
-          scaleWidthMode="Smart"
-          selectionMode="None"
-        />
-      </Card>
-
-      {/* Ventas por Categoría */}
-      <Card
-        header={
-          <CardHeader
-            titleText="Ventas por Categoría"
-            subtitleText="Distribución actual"
-            avatar={<Icon name="pie-chart" />}
-          />
-        }
-        style={{ marginBottom: "1rem" }}
-      >
-        <div style={{ padding: "1rem" }}>
-          {ventasPorCategoria.map((categoria, index) => (
-            <div key={index} style={{ marginBottom: "1rem" }}>
-              <FlexBox
-                justifyContent={FlexBoxJustifyContent.SpaceBetween}
-                alignItems={FlexBoxAlignItems.Center}
-                style={{ marginBottom: "0.5rem" }}
-              >
-                <Text>{categoria.categoria}</Text>
-                <Text>${categoria.valor.toLocaleString()}</Text>
-              </FlexBox>
-              <ProgressIndicator
-                value={categoria.porcentaje}
-                valueState={index === 0 ? "Success" : index === 1 ? "Information" : "None"}
-                style={{ height: "0.5rem" }}
-              />
-              <Text style={{ fontSize: "0.875rem", color: "var(--sapContent_LabelColor)" }}>
-                {categoria.porcentaje}% del total
-              </Text>
-            </div>
-          ))}
         </div>
-      </Card>
-
-      {/* Productos Más Vendidos */}
-      <Card
-        header={
-          <CardHeader
-            titleText="Productos Más Vendidos"
-            subtitleText="Top productos del mes"
-            avatar={<Icon name="product" />}
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem"
+        }}>
+          <Icon 
+            name="map" 
+            style={{
+              fontSize: "1rem",
+              color: "var(--sapContent_IconColor)"
+            }}
           />
-        }
-      >
-        <Grid defaultSpan="XL4 L4 M6 S12" style={{ padding: "1rem" }}>
-          {productosDestacados.map((producto, index) => (
-            <Card
-              key={index}
-              style={{
-                ...spacing.sapUiContentPadding,
-                height: "100%"
-              }}
-            >
-              <div
-                style={{
-                  backgroundImage: `url(${producto.imagen})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  height: "200px",
-                  borderRadius: "0.5rem",
-                  marginBottom: "1rem"
-                }}
+          <Text style={{
+            fontSize: "0.875rem",
+            color: "var(--sapContent_LabelColor)"
+          }}>
+            Plaza Comercial Reforma, Local 42B, CDMX
+          </Text>
+        </div>
+      </div>
+
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "1rem",
+        width: "100%"
+      }}>
+        <div style={styles.mainContent}>
+          <div style={styles.kpiSection}>
+            {kpiCards.map((card, index) => (
+              <div key={index} style={styles.kpiCard}>
+                <div style={styles.kpiHeader}>
+                  <Icon 
+                    name={card.icon} 
+                    style={{ 
+                      color: `var(--sapIndicationColor_${card.state})`,
+                      fontSize: "1.5rem"
+                    }} 
+                  />
+                  <ObjectStatus state={card.state}>
+                    {card.trend}
+                  </ObjectStatus>
+                </div>
+                <Text style={styles.kpiValue}>{card.value}</Text>
+                <Text style={styles.kpiLabel}>{card.subtitle}</Text>
+              </div>
+            ))}
+          </div>
+
+          <Card
+            style={styles.ordersCard}
+            header={
+              <CardHeader
+                titleText="Órdenes Recientes"
+                subtitleText="Últimas órdenes registradas"
+                avatar={<Icon name="sales-order" />}
               />
-              <Title level="H3" style={{ marginBottom: "0.5rem" }}>
-                {producto.nombre}
-              </Title>
-              <FlexBox
-                justifyContent={FlexBoxJustifyContent.SpaceBetween}
-                style={{ marginBottom: "0.5rem" }}
-              >
-                <Text style={{ fontWeight: "bold" }}>{producto.precio}</Text>
-                <ObjectStatus
-                  state={producto.estado === "Stock Alto" ? "Success" : "Warning"}
-                >
-                  {producto.estado}
-                </ObjectStatus>
-              </FlexBox>
-              <FlexBox justifyContent={FlexBoxJustifyContent.SpaceBetween}>
-                <Text>Vendidos: {producto.vendidos}</Text>
-                <Text>Stock: {producto.stock}</Text>
-              </FlexBox>
-            </Card>
-          ))}
-        </Grid>
-      </Card>
+            }
+          >
+            <AnalyticalTable
+              data={[
+                {
+                  id: "OC-2025-001",
+                  fecha: "15/02/2025",
+                  producto: "Nike Air Max 2024",
+                  cantidad: 50,
+                  estado: "Pendiente",
+                  total: "$6,000"
+                },
+                {
+                  id: "OC-2025-002",
+                  fecha: "14/02/2025",
+                  producto: "Adidas Ultraboost",
+                  cantidad: 30,
+                  estado: "En proceso",
+                  total: "$4,500"
+                },
+                {
+                  id: "OC-2025-003",
+                  fecha: "13/02/2025",
+                  producto: "Puma RS-X",
+                  cantidad: 25,
+                  estado: "Completada",
+                  total: "$5,250"
+                },
+                {
+                  id: "OC-2025-004",
+                  fecha: "12/02/2025",
+                  producto: "Nike Zoom Elite",
+                  cantidad: 40,
+                  estado: "En tránsito",
+                  total: "$7,200"
+                }
+              ]}
+              columns={[
+                {
+                  Header: "Orden #",
+                  accessor: "id",
+                  width: 120
+                },
+                {
+                  Header: "Fecha",
+                  accessor: "fecha",
+                  width: 100
+                },
+                {
+                  Header: "Producto",
+                  accessor: "producto"
+                },
+                {
+                  Header: "Cantidad",
+                  accessor: "cantidad",
+                  width: 100
+                },
+                {
+                  Header: "Estado",
+                  accessor: "estado",
+                  Cell: ({ value }) => {
+                    const getStatusStyle = (status) => {
+                      switch (status) {
+                        case "Pendiente":
+                          return styles.pendiente;
+                        case "En proceso":
+                          return styles.enProceso;
+                        case "Completada":
+                          return styles.completada;
+                        case "En tránsito":
+                          return styles.enTransito;
+                        default:
+                          return {};
+                      }
+                    };
+                    return (
+                      <span style={{ ...styles.statusBadge, ...getStatusStyle(value) }}>
+                        {value}
+                      </span>
+                    );
+                  }
+                },
+                {
+                  Header: "Total",
+                  accessor: "total"
+                }
+              ]}
+              visibleRows={4}
+              minRows={4}
+              alternateRowColor
+              scaleWidthMode="Smart"
+              selectionMode="None"
+            />
+          </Card>
+
+          <Card style={styles.categoryCard}>
+            <CardHeader
+              titleText="Ventas por Categoría"
+              subtitleText="Distribución actual"
+              avatar={<Icon name="pie-chart" />}
+            />
+            {[
+              { categoria: "Calzado Deportivo", valor: 18500, porcentaje: 38 },
+              { categoria: "Calzado Casual", valor: 12000, porcentaje: 25 },
+              { categoria: "Calzado Formal", valor: 10500, porcentaje: 22 },
+              { categoria: "Calzado para Playa", valor: 7500, porcentaje: 15 }
+            ].map((categoria, index) => (
+              <div key={index} style={styles.categoryItem}>
+                <FlexBox style={styles.categoryHeader}>
+                  <Text style={styles.categoryName}>{categoria.categoria}</Text>
+                  <Text style={styles.categoryValue}>
+                    ${categoria.valor.toLocaleString()}
+                  </Text>
+                </FlexBox>
+                <div style={styles.progressBar}>
+                  <div
+                    style={{
+                      ...styles.progressFill,
+                      width: `${categoria.porcentaje}%`,
+                      backgroundColor: `var(--sapIndicationColor_${
+                        index === 0 ? "1" : index === 1 ? "2" : index === 2 ? "3" : "4"
+                      })`
+                    }}
+                  />
+                </div>
+                <Text style={styles.progressLabel}>{categoria.porcentaje}% del total</Text>
+              </div>
+            ))}
+          </Card>
+
+          <Title level="H4" style={styles.productsHeader}>Productos Más Vendidos</Title>
+          <div style={styles.productsGrid}>
+            {[
+              {
+                nombre: "Nike Air Max 2024",
+                precio: "$2,499",
+                vendidos: 145,
+                stock: 80,
+                estado: "Stock Alto",
+                imagen: "https://images.pexels.com/photos/19090/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+              },
+              {
+                nombre: "Adidas Ultraboost",
+                precio: "$2,899",
+                vendidos: 128,
+                stock: 65,
+                estado: "Stock Alto",
+                imagen: "https://images.pexels.com/photos/267202/pexels-photo-267202.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+              },
+              {
+                nombre: "Puma RS-X",
+                precio: "$1,999",
+                vendidos: 112,
+                stock: 45,
+                estado: "Stock Normal",
+                imagen: "https://images.pexels.com/photos/267242/pexels-photo-267242.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+              }
+            ].map((producto, index) => (
+              <Card key={index} style={styles.productCard}>
+                <div style={styles.productImageContainer}>
+                  <img
+                    src={producto.imagen}
+                    alt={producto.nombre}
+                    style={styles.productImage}
+                  />
+                </div>
+                <div style={styles.productInfo}>
+                  <div style={styles.productHeader}>
+                    <div>
+                      <Text style={styles.productName}>{producto.nombre}</Text>
+                      <Text style={styles.productPrice}>{producto.precio}</Text>
+                    </div>
+                  </div>
+                  <div style={styles.productMetrics}>
+                    <div style={styles.metricRow}>
+                      <Text style={styles.metricLabel}>Vendidos</Text>
+                      <Text style={styles.metricValue}>{producto.vendidos} unidades</Text>
+                    </div>
+                    <div style={styles.metricRow}>
+                      <Text style={styles.metricLabel}>Disponibles</Text>
+                      <Text style={styles.metricValue}>{producto.stock} unidades</Text>
+                    </div>
+                    <div style={styles.stockIndicator}>
+                      <div 
+                        style={{
+                          ...styles.stockDot,
+                          backgroundColor: producto.estado === "Stock Alto" 
+                            ? "var(--sapIndicationColor_1)"
+                            : "var(--sapIndicationColor_2)"
+                        }}
+                      />
+                      <Text style={styles.stockText}>{producto.estado}</Text>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
