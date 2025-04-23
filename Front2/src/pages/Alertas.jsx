@@ -40,7 +40,6 @@ import { useUI5Theme } from "../components/UI5ThemeProvider";
 import "@ui5/webcomponents-icons/dist/alert.js";
 import "@ui5/webcomponents-icons/dist/filter.js";
 import "@ui5/webcomponents-icons/dist/refresh.js";
-import "@ui5/webcomponents-icons/dist/download.js";
 import "@ui5/webcomponents-icons/dist/decline.js";
 import "@ui5/webcomponents-icons/dist/message-success.js";
 import "@ui5/webcomponents-icons/dist/message-warning.js";
@@ -53,6 +52,8 @@ import "@ui5/webcomponents-icons/dist/line-chart.js";
 import "@ui5/webcomponents-icons/dist/shipping-status.js";
 import "@ui5/webcomponents-icons/dist/check-availability.js";
 import "@ui5/webcomponents-icons/dist/circle-task.js";
+import { styles } from "../Styles/AlertasStyle";
+import "@ui5/webcomponents-icons/dist/AllIcons.js";
 
 // Configuración de umbrales para alertas
 const STOCK_THRESHOLDS = {
@@ -270,10 +271,8 @@ export default function Alertas() {
     // Aplicar filtro
     if (selectedFilter !== "all") {
       filtered = filtered.filter(alert => {
-        if (selectedFilter === "resolved") {
+        if (selectedFilter === "success") {
           return alert.isResolved;
-        } else if (selectedFilter === "unresolved") {
-          return !alert.isResolved;
         } else {
           return alert.type === selectedFilter && !alert.isResolved;
         }
@@ -354,13 +353,29 @@ export default function Alertas() {
   };
   
   return (
-    <>
-      <DynamicPageTitle
-        header={<Title>Sistema de Alertas</Title>}
-        subHeader={<Text>Monitoreo y gestión de alertas del sistema</Text>}
-      />
-      
-      <DynamicPageHeader>
+    <div style={styles.mainContent}>
+      <div style={styles.header}>
+        <div style={styles.headerLeft}>
+          <Icon 
+            name="alert" 
+            style={styles.headerIcon}
+          />
+          <Title level="H1" style={styles.headerTitle}>
+            Sistema de Alertas
+          </Title>
+        </div>
+        <div style={styles.headerLocation}>
+          <Icon 
+            name="map" 
+            style={styles.locationIcon}
+          />
+          <Text style={styles.locationText}>
+            Plaza Comercial Reforma, Local 42B, CDMX
+          </Text>
+        </div>
+      </div>
+
+      <div style={styles.filterBar}>
         <FlexBox 
           justifyContent={FlexBoxJustifyContent.SpaceBetween}
           alignItems={FlexBoxAlignItems.Center}
@@ -391,21 +406,14 @@ export default function Alertas() {
               icon="refresh" 
               onClick={handleRefresh}
               tooltip="Actualizar alertas"
-              style={{ marginRight: "0.5rem" }}
             >
               Actualizar
             </Button>
-            <Button 
-              icon="download"
-              tooltip="Exportar alertas"
-            >
-              Exportar
-            </Button>
           </FlexBox>
         </FlexBox>
-      </DynamicPageHeader>
-      
-      <div style={{ padding: "1rem" }}>
+      </div>
+
+      <div style={styles.alertList}>
         {isLoading ? (
           <FlexBox 
             direction={FlexBoxDirection.Column}
@@ -440,9 +448,10 @@ export default function Alertas() {
                   info={alert.status}
                   infoState={getValueState(alert.type)}
                   style={{ 
-                    borderLeft: `4px solid var(--sapIndicationColor_${getValueState(alert.type)})`,
-                    marginBottom: "0.5rem",
-                    cursor: "pointer",
+                    ...styles.alertItem,
+                    ...(alert.type === "error" ? styles.alertItemError : 
+                       alert.type === "warning" ? styles.alertItemWarning : 
+                       alert.type === "success" ? styles.alertItemSuccess : {}),
                     opacity: alert.isResolved ? 0.7 : 1
                   }}
                   onClick={() => handleAlertClick(alert)}
@@ -453,11 +462,13 @@ export default function Alertas() {
             </List>
             
             {totalPages > 1 && (
-              <PaginationBar
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
+              <div style={styles.paginationBar}>
+                <PaginationBar
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              </div>
             )}
           </>
         )}
@@ -470,12 +481,38 @@ export default function Alertas() {
           headerText={selectedAlert.title}
           className="alert-detail-dialog"
           style={{ width: "600px" }}
+          footer={
+            <Bar 
+              design={BarDesign.Footer}
+              endContent={
+                <FlexBox>
+                  {!selectedAlert.isResolved && (
+                    <Button 
+                      design="Emphasized" 
+                      onClick={() => handleResolveAlert(selectedAlert.id)}
+                      style={{ marginRight: "0.5rem" }}
+                    >
+                      Marcar como resuelto
+                    </Button>
+                  )}
+                  <Button 
+                    onClick={() => setIsDetailDialogOpen(false)}
+                  >
+                    Cerrar
+                  </Button>
+                </FlexBox>
+              }
+            />
+          }
         >
           <FlexBox direction={FlexBoxDirection.Column} style={{ padding: "1rem" }}>
             <MessageStrip
               design={getValueState(selectedAlert.type)}
               icon={selectedAlert.type === "error" ? "error" : selectedAlert.type === "warning" ? "warning" : "sys-enter-2"}
-              style={{ marginBottom: "1rem" }}
+              style={{ 
+                marginBottom: "1rem",
+                ...styles[`statusBadge${selectedAlert.type.charAt(0).toUpperCase() + selectedAlert.type.slice(1)}`]
+              }}
               hideCloseButton
             >
               {selectedAlert.status}
@@ -500,20 +537,9 @@ export default function Alertas() {
                 </Text>
               )}
             </FlexBox>
-            
-            {!selectedAlert.isResolved && (
-              <FlexBox justifyContent={FlexBoxJustifyContent.End} style={{ marginTop: "1rem" }}>
-                <Button 
-                  design="Emphasized" 
-                  onClick={() => handleResolveAlert(selectedAlert.id)}
-                >
-                  Marcar como resuelto
-                </Button>
-              </FlexBox>
-            )}
           </FlexBox>
         </Dialog>
       )}
-    </>
+    </div>
   );
 } 
