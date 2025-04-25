@@ -159,27 +159,7 @@ export const InfoText = styled.div`
   font-weight: 500;
 `;
 
-export const ProductTable = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-  
-  th, td {
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid var(--sapContent_ForegroundBorderColor);
-  }
-  
-  th {
-    font-weight: 500;
-    color: var(--sapTextColor);
-    background-color: var(--sapBackgroundColor);
-  }
-  
-  tbody tr:hover {
-    background-color: var(--sapList_Hover_Background);
-  }
-`;
+
 
 export const CategoryPill = styled.span`
   display: inline-flex;

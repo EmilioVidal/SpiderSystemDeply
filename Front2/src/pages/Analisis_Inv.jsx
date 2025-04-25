@@ -515,39 +515,27 @@ const Analisis_Inv = () => {
                         alignItems: "center",
                         gap: "0.5rem"
                       }}>
-                        <span style={{
-                          width: "10px",
-                          height: "10px",
-                          borderRadius: "50%",
-                          backgroundColor: "var(--sapPositiveColor)"
-                        }} />
-                        <span>En stock: {status.inStock}</span>
+                        <ObjectStatus state="Success">
+                          En Stock: {status.inStock}
+                        </ObjectStatus>
                       </div>
                       <div style={{
                         display: "flex",
                         alignItems: "center",
                         gap: "0.5rem"
                       }}>
-                        <span style={{
-                          width: "10px",
-                          height: "10px",
-                          borderRadius: "50%",
-                          backgroundColor: "var(--sapWarningColor)"
-                        }} />
-                        <span>Stock bajo: {status.lowStock}</span>
+                        <ObjectStatus state="Warning">
+                          Stock Bajo: {status.lowStock}
+                        </ObjectStatus>
                       </div>
                       <div style={{
                         display: "flex",
                         alignItems: "center",
                         gap: "0.5rem"
                       }}>
-                        <span style={{
-                          width: "10px",
-                          height: "10px",
-                          borderRadius: "50%",
-                          backgroundColor: "var(--sapNegativeColor)"
-                        }} />
-                        <span>Sin stock: {status.outOfStock}</span>
+                        <ObjectStatus state="Error">
+                          Agotado: {status.outOfStock}
+                        </ObjectStatus>
                       </div>
                     </div>
 

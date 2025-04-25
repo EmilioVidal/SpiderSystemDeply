@@ -310,16 +310,16 @@ export default function Inventario() {
         switch (value) {
           case "Agotado":
             state = ValueState.Error;
-            icon = "alert";
+            //icon = "alert";
             break;
           case "Bajo stock":
             state = ValueState.Warning;
-            icon = "warning";
+            //icon = "warning";
             break;
           case "Disponible":
           default:
             state = ValueState.Success;
-            icon = "message-success";
+            //icon = "message-success";
             break;
         }
         
