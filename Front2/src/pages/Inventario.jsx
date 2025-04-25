@@ -333,7 +333,7 @@ export default function Inventario() {
           >
             <ObjectStatus
               state={state}
-              icon={icon}
+             // icon={icon}
               style={{
                 display: "inline",
               }}
