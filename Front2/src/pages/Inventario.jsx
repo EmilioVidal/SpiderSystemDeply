@@ -266,6 +266,8 @@ export default function Inventario() {
   const [lastUpdateTime, setLastUpdateTime] = useState(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+
   
   // Estadísticas de inventario
   const totalProducts = inventoryData.length;
@@ -406,45 +408,47 @@ export default function Inventario() {
   // Efecto para simular actualizaciones periódicas
   useEffect(() => {
     const interval = setInterval(() => {
-      // Simular una actualización de datos - por ejemplo, cambiar algunas cantidades
-      const updatedData = inventoryData.map(item => {
-        // 20% de probabilidad de actualizar un elemento
-        if (Math.random() < 0.2) {
-          const randomChange = Math.floor(Math.random() * 3) - 1; // -1, 0, o 1
-          const newQuantity = Math.max(0, item.cantidad + randomChange);
-          
-          // Actualizar el estado basado en la nueva cantidad
-          let newStatus = "Disponible";
-          if (newQuantity === 0) {
-            newStatus = "Agotado";
-          } else if (newQuantity <= 5) {
-            newStatus = "Bajo stock";
+      setInventoryData(prevData => {
+        const updatedData = prevData.map(item => {
+          if (Math.random() < 0.2) {
+            const randomChange = Math.floor(Math.random() * 3) - 1;
+            const newQuantity = Math.max(0, item.cantidad + randomChange);
+            
+            let newStatus = "Disponible";
+            if (newQuantity === 0) newStatus = "Agotado";
+            else if (newQuantity <= 5) newStatus = "Bajo stock";
+            
+            if (item.estado !== newStatus) {
+              // Esta función ahora sí se ejecutará correctamente
+              addNotification(item.producto, newStatus);
+            }
+  
+            return {
+              ...item,
+              cantidad: newQuantity,
+              estado: newStatus,
+              ultimaActualizacion: new Date()
+            };
           }
-          
-          return {
-            ...item,
-            cantidad: newQuantity,
-            estado: newStatus,
-            ultimaActualizacion: new Date()
-          };
-        }
-        return item;
+          return item;
+        });
+  
+        setLastUpdateTime(new Date());
+        applyFilters(updatedData);
+        setToastMessage("Inventario actualizado automáticamente");
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+  
+        return updatedData;
       });
-      
-      setInventoryData(updatedData);
-      setLastUpdateTime(new Date());
-      
-      // Mostrar notificación de actualización
-      setToastMessage("Inventario actualizado automáticamente");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
-      
-      // Aplicar filtros actuales a los datos actualizados
-      applyFilters(updatedData);
-    }, 60000); // Actualizar cada minuto
-    
+    }, 60000);
+  
     return () => clearInterval(interval);
-  }, [inventoryData]);
+  }, []);
+  
+  
+  
+
   
   // Aplicar filtros cuando cambian
   useEffect(() => {
@@ -554,14 +558,51 @@ export default function Inventario() {
     setIsDialogOpen(false);
     setSelectedProduct(null);
   };
+
+  const addNotification = (producto, nuevoEstado) => {
+    const id = Date.now();
+    const nuevaNotificacion = {
+      id,
+      mensaje: `${producto} ha cambiado a estado: ${nuevoEstado}`,
+      estado: nuevoEstado
+    };
+  
+    setNotifications(prev => [nuevaNotificacion, ...prev]);
+  
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(notif => notif.id !== id));
+    }, 5000); // Se borra después de 5 segundos
+  };
+  
   
   return (
+    
     <>
+    
+
       <DynamicPageTitle
         header={<Title>Inventario</Title>}
         subHeader={<Text>Gestión y control de inventario de productos</Text>}
         className={styles.pageHeader}
       />
+
+{notifications.map(notif => (
+  <MessageStrip
+    key={notif.id}
+    design={
+      notif.estado === "Agotado"
+        ? "Negative"
+        : notif.estado === "Bajo stock"
+        ? "Warning"
+        : "Positive"
+    }
+    hideCloseButton={false}
+    style={{ marginBottom: "0.5rem" }}
+  >
+    {notif.mensaje}
+  </MessageStrip>
+))}
+
       
       <DynamicPageHeader className={styles.pageHeader}>
         <FlexBox 
@@ -602,6 +643,9 @@ export default function Inventario() {
           </FlexBox>
         </FlexBox>
       </DynamicPageHeader>
+
+      
+
       
       <div className={styles.pageContainer}>
         {/* Estadísticas de inventario */}
