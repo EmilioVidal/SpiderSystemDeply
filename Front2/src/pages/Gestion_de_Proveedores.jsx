@@ -19,6 +19,7 @@ import {
 } from '@ui5/webcomponents-react';
 import { useNavigate } from 'react-router-dom';
 import "@ui5/webcomponents-icons/dist/AllIcons.js";
+import { styles } from '../Styles/Gestion_de_Proovedores';
 
 const Gestion_de_Proveedores = () => {
   const navigate = useNavigate();
@@ -32,8 +33,9 @@ const Gestion_de_Proveedores = () => {
     email: '',
     telefono: '',
     direccion: '',
-    rating: 0
+    tipo: 'fabricante'
   });
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     // Simulación de carga de datos
@@ -41,23 +43,47 @@ const Gestion_de_Proveedores = () => {
       setProveedores([
         {
           id: 1,
-          nombre: 'Proveedor A',
+          nombre: 'Calzado Deportivo Premium',
           contacto: 'Juan Pérez',
-          email: 'juan@proveedora.com',
+          email: 'contacto@calzadopremium.com',
           telefono: '555-0101',
-          direccion: 'Calle Principal 123',
-          rating: 4.5,
-          estado: 'Activo'
+          direccion: 'Calle Industria 123, Ciudad de México',
+          tipo: 'fabricante',
+          productos: 24,
+          ultimoPedido: '15/10/2023'
         },
         {
           id: 2,
-          nombre: 'Proveedor B',
-          contacto: 'María García',
-          email: 'maria@proveedorb.com',
+          nombre: 'Distribuidora de Zapatos Elegance',
+          contacto: 'María Rodríguez',
+          email: 'maria@elegancesshoes.com',
           telefono: '555-0102',
-          direccion: 'Avenida Central 456',
-          rating: 3.8,
-          estado: 'Activo'
+          direccion: 'Av. Revolución 456, Guadalajara',
+          tipo: 'distribuidor',
+          productos: 36,
+          ultimoPedido: '02/10/2023'
+        },
+        {
+          id: 3,
+          nombre: 'Importadora Footwear Internacional',
+          contacto: 'Carlos Gómez',
+          email: 'cgomez@footwear-int.com',
+          telefono: '555-2468',
+          direccion: 'Blvd. Insurgentes 789, Ciudad de México',
+          tipo: 'importador',
+          productos: 18,
+          ultimoPedido: '20/08/2023'
+        },
+        {
+          id: 4,
+          nombre: 'Zapatos y Complementos Moda Total',
+          contacto: 'Ana López',
+          email: 'alopez@modatotal.mx',
+          telefono: '555-1357',
+          direccion: 'Calle Hidalgo 321, Monterrey',
+          tipo: 'mayorista',
+          productos: 42,
+          ultimoPedido: '28/09/2023'
         }
       ]);
       setLoading(false);
@@ -67,46 +93,64 @@ const Gestion_de_Proveedores = () => {
   // Definir las columnas para la tabla analítica
   const columns = [
     {
-      Header: "Nombre",
+      Header: "Proveedor",
       accessor: "nombre",
-      width: 150
+      width: 200,
+      Cell: ({ row }) => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+          <Text style={{ fontWeight: 'bold', fontSize: '1rem', color: '#0a6ed1', whiteSpace: 'normal' }}>
+            {row.original.nombre}
+          </Text>
+          <Text style={{ fontSize: '0.875rem', color: '#6a6a6a', whiteSpace: 'normal' }}>
+            <strong>Último pedido:</strong> {row.original.ultimoPedido}
+          </Text>
+        </div>
+      )
     },
     {
       Header: "Contacto",
       accessor: "contacto",
-      width: 150
+      width: 150,
+      Cell: ({ value }) => (
+        <Text style={{ fontSize: '0.875rem', color: '#333', whiteSpace: 'normal' }}>{value}</Text>
+      )
     },
     {
       Header: "Email",
       accessor: "email",
-      width: 200
-    },
-    {
-      Header: "Teléfono",
-      accessor: "telefono",
-      width: 120
-    },
-    {
-      Header: "Rating",
-      accessor: "rating",
-      width: 100,
+      width: 200,
       Cell: ({ value }) => (
-        <ObjectStatus 
-          state={value >= 4 ? ValueState.Success : value >= 3 ? ValueState.Warning : ValueState.Error}
-        >
-          {value.toFixed(1)}
-        </ObjectStatus>
+        <Text style={{ fontSize: '0.875rem', color: '#0a6ed1', textDecoration: 'underline', whiteSpace: 'normal' }}>
+          {value}
+        </Text>
       )
     },
     {
-      Header: "Estado",
-      accessor: "estado",
+      Header: "Productos",
+      accessor: "productos",
+      width: 100,
+      Cell: ({ value }) => (
+        <Text style={{ fontWeight: 'bold', fontSize: '1rem', color: '#107e3e', whiteSpace: 'normal' }}>{value}</Text>
+      )
+    },
+    {
+      Header: "Tipo",
+      accessor: "tipo",
       width: 120,
       Cell: ({ value }) => (
-        <ObjectStatus 
-          state={value === 'Activo' ? ValueState.Success : ValueState.Error}
+        <ObjectStatus
+          state={
+            value === "fabricante"
+              ? ValueState.Success
+              : value === "distribuidor"
+              ? ValueState.Information
+              : value === "importador"
+              ? ValueState.Warning
+              : ValueState.Error
+          }
+          style={{ fontSize: '0.875rem', fontWeight: 'bold', whiteSpace: 'normal' }}
         >
-          {value}
+          {value.charAt(0).toUpperCase() + value.slice(1)}
         </ObjectStatus>
       )
     },
@@ -115,17 +159,15 @@ const Gestion_de_Proveedores = () => {
       accessor: "id",
       width: 150,
       Cell: ({ row }) => (
-        <FlexBox>
+        <FlexBox justifyContent={FlexBoxJustifyContent.SpaceBetween}>
           <Button 
-            icon="edit" 
+            icon="show" 
             design="Transparent"
-            onClick={() => handleEditProveedor(row.original)}
-          />
-          <Button 
-            icon="delete" 
-            design="Transparent"
-            onClick={() => handleDeleteProveedor(row.original.id)}
-          />
+            onClick={() => handleViewDetails(row.original)}
+            style={{ fontSize: '0.875rem', color: '#0a6ed1', whiteSpace: 'normal' }}
+          >
+            Ver detalles
+          </Button>
         </FlexBox>
       )
     }
@@ -139,7 +181,7 @@ const Gestion_de_Proveedores = () => {
       email: '',
       telefono: '',
       direccion: '',
-      rating: 0
+      tipo: 'fabricante'
     });
     setShowDialog(true);
   };
@@ -172,22 +214,60 @@ const Gestion_de_Proveedores = () => {
     setProveedores(proveedores.filter(p => p.id !== id));
   };
 
+  const handleViewDetails = (proveedor) => {
+    setSelectedProveedor(proveedor);
+    setShowDialog(true);
+  };
+
+  const handleSearch = () => {
+    const filteredProveedores = proveedores.filter((proveedor) =>
+      proveedor.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setProveedores(filteredProveedores);
+  };
+
+  const handleCloseDialog = () => {
+    setShowDialog(false);
+    setSelectedProveedor(null);
+  };
+
   return (
-    <div style={{ padding: '1rem' }}>
-      <FlexBox justifyContent={FlexBoxJustifyContent.SpaceBetween} alignItems={FlexBoxAlignItems.Center}>
-        <Title>Gestión de Proveedores</Title>
-        <Button icon="add" onClick={handleAddProveedor}>
-          Nuevo Proveedor
-        </Button>
-      </FlexBox>
+    <div style={styles.container}>
+      <div style={styles.header}>
+        <Title style={styles.title}>Gestión de Proveedores</Title>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <Input
+            placeholder="Buscar proveedor..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ ...styles.input, width: '200px' }}
+          />
+          <Button
+            style={styles.button}
+            onMouseEnter={(e) => (e.target.style.backgroundColor = styles.buttonHover.backgroundColor)}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = styles.button.backgroundColor)}
+            onClick={handleSearch}
+          >
+            Buscar
+          </Button>
+          <Button
+            style={styles.button}
+            onMouseEnter={(e) => (e.target.style.backgroundColor = styles.buttonHover.backgroundColor)}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = styles.button.backgroundColor)}
+            onClick={handleAddProveedor}
+          >
+            + Nuevo Proveedor
+          </Button>
+        </div>
+      </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '2rem' }}>
-          <Icon name="loading" />
+        <div style={styles.loadingContainer}>
+          <Icon name="loading" style={styles.icon} />
           <Text>Cargando proveedores...</Text>
         </div>
       ) : (
-        <Card style={{ marginTop: '1rem' }}>
+        <Card style={styles.card}>
           <AnalyticalTable
             data={proveedores}
             columns={columns}
@@ -195,61 +275,84 @@ const Gestion_de_Proveedores = () => {
             minRows={5}
             scaleWidthMode="Smart"
             selectionMode="None"
+            style={styles.table} // Apply uniform font size for table content
           />
         </Card>
       )}
 
-      <Dialog
-        open={showDialog}
-        onAfterClose={() => setShowDialog(false)}
-        headerText={selectedProveedor ? 'Editar Proveedor' : 'Nuevo Proveedor'}
-      >
-        <Form>
-          <FormItem label="Nombre">
-            <Input
-              value={formData.nombre}
-              onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-            />
-          </FormItem>
-          <FormItem label="Contacto">
-            <Input
-              value={formData.contacto}
-              onChange={(e) => setFormData({ ...formData, contacto: e.target.value })}
-            />
-          </FormItem>
-          <FormItem label="Email">
-            <Input
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            />
-          </FormItem>
-          <FormItem label="Teléfono">
-            <Input
-              value={formData.telefono}
-              onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-            />
-          </FormItem>
-          <FormItem label="Dirección">
-            <Input
-              value={formData.direccion}
-              onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
-            />
-          </FormItem>
-          <FormItem label="Rating">
-            <Input
-              type="Number"
-              value={formData.rating}
-              onChange={(e) => setFormData({ ...formData, rating: parseFloat(e.target.value) })}
-            />
-          </FormItem>
-        </Form>
-        <div slot="footer">
-          <Button onClick={() => setShowDialog(false)}>Cancelar</Button>
-          <Button onClick={handleSaveProveedor}>Guardar</Button>
+      {showDialog && (
+        <div style={styles.dialogOverlay} onClick={handleCloseDialog}>
+          <div
+            style={styles.dialog}
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the dialog
+          >
+            {selectedProveedor ? (
+              <div style={{ lineHeight: '1.5' }}>
+                <Text style={{ ...styles.dialogTitle, ...styles.detailSection }}>Información del Proveedor</Text>
+                <Text style={styles.detailSection}><strong>Nombre:</strong> {selectedProveedor.nombre}</Text>
+                <Text style={styles.detailSection}><strong>Contacto:</strong> {selectedProveedor.contacto}</Text>
+                <Text style={styles.detailSection}><strong>Email:</strong> <span style={styles.link}>{selectedProveedor.email}</span></Text>
+                <Text style={styles.detailSection}><strong>Teléfono:</strong> {selectedProveedor.telefono}</Text>
+                <Text style={styles.detailSection}><strong>Dirección:</strong> {selectedProveedor.direccion}</Text>
+                <Text style={styles.detailSection}><strong>Tipo:</strong> {selectedProveedor.tipo.charAt(0).toUpperCase() + selectedProveedor.tipo.slice(1)}</Text>
+                <Text style={styles.detailSection}><strong>Productos:</strong> {selectedProveedor.productos}</Text>
+                <Text style={styles.detailSection}><strong>Último Pedido:</strong> {selectedProveedor.ultimoPedido}</Text>
+              </div>
+            ) : (
+              <Form>
+                <FormItem label="Nombre" style={styles.formLabel}>
+                  <Input
+                    value={formData.nombre}
+                    onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                    style={styles.input}
+                  />
+                </FormItem>
+                <FormItem label="Contacto">
+                  <Input
+                    value={formData.contacto}
+                    onChange={(e) => setFormData({ ...formData, contacto: e.target.value })}
+                    style={styles.input}
+                  />
+                </FormItem>
+                <FormItem label="Email">
+                  <Input
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    style={styles.input}
+                  />
+                </FormItem>
+                <FormItem label="Teléfono">
+                  <Input
+                    value={formData.telefono}
+                    onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+                    style={styles.input}
+                  />
+                </FormItem>
+                <FormItem label="Dirección">
+                  <Input
+                    value={formData.direccion}
+                    onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
+                    style={styles.input}
+                  />
+                </FormItem>
+                <FormItem label="Tipo">
+                  <Input
+                    value={formData.tipo}
+                    onChange={(e) => setFormData({ ...formData, tipo: e.target.value })}
+                    style={styles.input}
+                  />
+                </FormItem>
+              </Form>
+            )}
+            <div style={styles.dialogFooter}>
+              <Button onClick={handleCloseDialog}>Cerrar</Button>
+              {!selectedProveedor && <Button onClick={handleSaveProveedor}>Guardar</Button>}
+            </div>
+          </div>
         </div>
-      </Dialog>
+      )}
     </div>
   );
 };
 
-export default Gestion_de_Proveedores; 
+export default Gestion_de_Proveedores;
