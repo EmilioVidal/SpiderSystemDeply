@@ -3,8 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
-const loginRoutes = require('./Rutas/loginRutas');
-const { connectToHANA } = require('./confDB');
+const loginRoutes = require('./Routes/loginRutas');
+const { connectToHANA } = require('./Config/confDB');
 
 // Middleware
 app.use(cors());

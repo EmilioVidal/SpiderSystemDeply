@@ -1,3 +1,5 @@
+//función para hashear un texto
+
 const bcrypt = require('bcryptjs');
 
 const password = 'Santos_2008';
