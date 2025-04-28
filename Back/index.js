@@ -4,6 +4,7 @@ const cors = require("cors");
 const app = express();
 
 const loginRoutes = require('./Routes/loginRutas');
+const articuloRoutes = require('./Routes/articuloRutes');
 const { connectToHANA } = require('./Config/confDB');
 
 // Middleware
@@ -13,6 +14,8 @@ app.use(express.json());
 
 // Rutas de la API
 app.use('/login', loginRoutes);
+app.use('/api', articuloRoutes);
+
 
 
 
