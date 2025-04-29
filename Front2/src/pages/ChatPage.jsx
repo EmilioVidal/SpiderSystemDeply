@@ -581,7 +581,7 @@ const ChatPage = () => {
                 icon="send" 
                 design="Emphasized"
                 onClick={handleSendMessage}
-                disabled={!newMessage.trim()}
+                disabled={!newMessage}
               >
                 Enviar
               </Button>

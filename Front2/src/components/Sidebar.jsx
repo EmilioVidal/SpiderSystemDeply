@@ -99,7 +99,7 @@ export function Sidebar() {
             {isDarkMode ? '🌞' : '🌙'}
           </button>
           <button
-            onClick={handleLogout}
+            onClick={() => navigate('/cuenta')}
             style={{
               background: 'none',
               border: 'none',

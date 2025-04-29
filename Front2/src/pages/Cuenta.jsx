@@ -4,25 +4,20 @@ import {
   Title,
   Text,
   Button,
-  Dialog,
-  Input,
-  Label,
-  Form,
-  FormItem,
   FlexBox,
   FlexBoxJustifyContent,
   FlexBoxAlignItems,
   Icon,
   Avatar,
   ObjectStatus,
-  ValueState
+  ValueState,
+  Label
 } from '@ui5/webcomponents-react';
 import { useNavigate } from 'react-router-dom';
 
 const Cuenta = () => {
   const navigate = useNavigate();
-  const [showDialog, setShowDialog] = useState(false);
-  const [userData, setUserData] = useState({
+  const [userData] = useState({
     nombre: 'Juan Pérez',
     email: 'juan.perez@empresa.com',
     rol: 'Administrador',
@@ -30,107 +25,79 @@ const Cuenta = () => {
     departamento: 'TI',
     ultimoAcceso: '2024-03-15 14:30:00'
   });
-  const [formData, setFormData] = useState({ ...userData });
 
-  const handleEditProfile = () => {
-    setFormData({ ...userData });
-    setShowDialog(true);
-  };
-
-  const handleSaveProfile = () => {
-    setUserData({ ...formData });
-    setShowDialog(false);
-  };
-
-  const handleChangePassword = () => {
-    // Lógica para cambiar contraseña
-    console.log('Cambiar contraseña');
+  const handleLogout = () => {
+    // Aquí podrías agregar lógica para cerrar la sesión si es necesario
+    // Por ahora, simplemente navegamos a la página de login
+    navigate('/login');
   };
 
   return (
-    <div style={{ padding: '1rem' }}>
-      <Title>Mi Cuenta</Title>
+    <div style={{ 
+      padding: '1.5rem', 
+      paddingTop: '6rem', // Espacio para el header fijo
+      maxWidth: '100%',
+      boxSizing: 'border-box',
+      background: '#f5f5f5'
+    }}>
+      <Title level="H1" style={{ marginBottom: '1.5rem', color: '#333' }}>Mi Cuenta</Title>
 
-      <Card style={{ marginTop: '1rem' }}>
-        <FlexBox justifyContent={FlexBoxJustifyContent.SpaceBetween} alignItems={FlexBoxAlignItems.Center}>
-          <FlexBox alignItems={FlexBoxAlignItems.Center}>
-            <Avatar size="XL" style={{ marginRight: '1rem' }}>
-              <Icon name="employee" />
-            </Avatar>
-            <div>
-              <Title level="H2">{userData.nombre}</Title>
-              <Text>{userData.email}</Text>
-            </div>
+      <Card style={{ 
+        marginTop: '1rem', 
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+        borderRadius: '8px' 
+      }}>
+        <div style={{ padding: '1.5rem' }}>
+          <FlexBox justifyContent={FlexBoxJustifyContent.SpaceBetween} alignItems={FlexBoxAlignItems.Center}>
+            <FlexBox alignItems={FlexBoxAlignItems.Center}>
+              <Avatar size="XL" style={{ marginRight: '1.5rem', backgroundColor: '#0854a0' }}>
+                <Icon name="employee" />
+              </Avatar>
+              <div>
+                <Title level="H2">{userData.nombre}</Title>
+                <Text style={{ fontSize: '1rem', color: '#666' }}>{userData.email}</Text>
+              </div>
+            </FlexBox>
           </FlexBox>
-          <Button icon="edit" onClick={handleEditProfile}>
-            Editar Perfil
-          </Button>
-        </FlexBox>
 
-        <div style={{ marginTop: '2rem' }}>
-          <FlexBox direction="Column" style={{ gap: '1rem' }}>
-            <div>
-              <Label>Rol:</Label>
-              <Text>{userData.rol}</Text>
-            </div>
-            <div>
-              <Label>Teléfono:</Label>
-              <Text>{userData.telefono}</Text>
-            </div>
-            <div>
-              <Label>Departamento:</Label>
-              <Text>{userData.departamento}</Text>
-            </div>
-            <div>
-              <Label>Último Acceso:</Label>
-              <Text>{userData.ultimoAcceso}</Text>
-            </div>
-          </FlexBox>
-        </div>
+          <div style={{ marginTop: '2.5rem' }}>
+            <FlexBox direction="Column" style={{ gap: '1.5rem' }}>
+              <div style={{ display: 'flex', borderBottom: '1px solid #e5e5e5', paddingBottom: '0.75rem' }}>
+                <Label style={{ width: '150px', fontWeight: 'bold' }}>Rol:</Label>
+                <Text>{userData.rol}</Text>
+              </div>
+              <div style={{ display: 'flex', borderBottom: '1px solid #e5e5e5', paddingBottom: '0.75rem' }}>
+                <Label style={{ width: '150px', fontWeight: 'bold' }}>Teléfono:</Label>
+                <Text>{userData.telefono}</Text>
+              </div>
+              <div style={{ display: 'flex', borderBottom: '1px solid #e5e5e5', paddingBottom: '0.75rem' }}>
+                <Label style={{ width: '150px', fontWeight: 'bold' }}>Departamento:</Label>
+                <Text>{userData.departamento}</Text>
+              </div>
+              <div style={{ display: 'flex', borderBottom: '1px solid #e5e5e5', paddingBottom: '0.75rem' }}>
+                <Label style={{ width: '150px', fontWeight: 'bold' }}>Último Acceso:</Label>
+                <Text>{userData.ultimoAcceso}</Text>
+              </div>
+            </FlexBox>
+          </div>
 
-        <div style={{ marginTop: '2rem' }}>
-          <Button onClick={handleChangePassword} icon="key">
-            Cambiar Contraseña
-          </Button>
+          <div style={{ marginTop: '2.5rem', display: 'flex', justifyContent: 'flex-end' }}>
+            <Button 
+              onClick={handleLogout} 
+              icon="log" 
+              design="Negative"
+              style={{ 
+                backgroundColor: '#bb0000',
+                color: 'white',
+                padding: '0.5rem 1rem',
+                height: 'auto'
+              }}
+            >
+              Cerrar Sesión
+            </Button>
+          </div>
         </div>
       </Card>
-
-      <Dialog
-        open={showDialog}
-        onAfterClose={() => setShowDialog(false)}
-        headerText="Editar Perfil"
-      >
-        <Form>
-          <FormItem label="Nombre">
-            <Input
-              value={formData.nombre}
-              onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-            />
-          </FormItem>
-          <FormItem label="Email">
-            <Input
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            />
-          </FormItem>
-          <FormItem label="Teléfono">
-            <Input
-              value={formData.telefono}
-              onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-            />
-          </FormItem>
-          <FormItem label="Departamento">
-            <Input
-              value={formData.departamento}
-              onChange={(e) => setFormData({ ...formData, departamento: e.target.value })}
-            />
-          </FormItem>
-        </Form>
-        <div slot="footer">
-          <Button onClick={() => setShowDialog(false)}>Cancelar</Button>
-          <Button onClick={handleSaveProfile}>Guardar</Button>
-        </div>
-      </Dialog>
     </div>
   );
 };
