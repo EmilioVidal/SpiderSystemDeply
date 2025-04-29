@@ -94,23 +94,22 @@ const dataset = [
 // Transformar datos para la visualización
 const transformDataForCharts = () => {
   const lineChartData = [];
+  const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"];
   
-  // Para cada mes en el histórico
-  for (let i = 0; i < 5; i++) {
-    const ventasMes = dataset.reduce((sum, product) => sum + product.historico[i], 0);
+  // Para cada mes
+  for (let i = 0; i < meses.length; i++) {
+    const ventasMes = i < 5 ? dataset.reduce((sum, product) => sum + product.historico[i], 0) : null;
+    const prediccionMes = i === 5 ? dataset.reduce((sum, product) => sum + product.prediccion, 0) : 
+                         i === 4 ? ventasMes * 1.05 : // Predicción para Mayo
+                         i === 3 ? ventasMes * 1.1 : // Predicción para Abril
+                         null;
+    
     lineChartData.push({
-      mes: ["Enero", "Febrero", "Marzo", "Abril", "Mayo"][i],
+      mes: meses[i],
       ventas: ventasMes,
-      prediccion: i === 4 ? null : (i === 3 ? ventasMes * 1.1 : null)
+      prediccion: prediccionMes
     });
   }
-  
-  // Añadir predicción para el próximo mes
-  lineChartData.push({
-    mes: "Junio",
-    ventas: null,
-    prediccion: dataset.reduce((sum, product) => sum + product.prediccion, 0)
-  });
   
   return lineChartData;
 };
@@ -265,13 +264,79 @@ export default function Predictivo() {
   };
   
   return (
-    <>
-      <DynamicPageTitle
-        header={<Title>Análisis Predictivo</Title>}
-        subHeader={<Text>Pronósticos de ventas y recomendaciones basadas en inteligencia artificial</Text>}
-      />
-      
-      <DynamicPageHeader>
+    <div style={{ 
+      width: "100%",
+      minHeight: "100%",
+      padding: "1rem",
+      display: "flex",
+      flexDirection: "column",
+      gap: "1rem",
+      paddingTop: "2rem"
+    }}>
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        backgroundColor: "var(--sapBackgroundColor)",
+        padding: "1.25rem",
+        borderRadius: "0.5rem",
+        boxShadow: "var(--sapContent_Shadow0)",
+        marginTop: "0.5rem",
+        minHeight: "72px"
+      }}>
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.75rem"
+        }}>
+          <Icon 
+            name="future" 
+            style={{
+              fontSize: "1.75rem",
+              color: "var(--sapContent_IconColor)"
+            }}
+          />
+          <Title level="H1" style={{
+            margin: 0,
+            fontSize: "1.75rem",
+            color: "var(--sapTextColor)",
+            padding: "0.25rem 0"
+          }}>
+            Análisis Predictivo
+          </Title>
+        </div>
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem"
+        }}>
+          <Icon 
+            name="map" 
+            style={{
+              fontSize: "1rem",
+              color: "var(--sapContent_IconColor)"
+            }}
+          />
+          <Text style={{
+            fontSize: "0.875rem",
+            color: "var(--sapContent_LabelColor)"
+          }}>
+            Plaza Comercial Reforma, Local 42B, CDMX
+          </Text>
+        </div>
+      </div>
+
+      <div style={{
+        padding: "0.5rem 1rem",
+        backgroundColor: "var(--sapList_Background)",
+        borderRadius: "0.5rem",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        boxShadow: "var(--sapContent_Shadow0)",
+        margin: "0.5rem 0"
+      }}>
         <FlexBox 
           justifyContent={FlexBoxJustifyContent.SpaceBetween}
           alignItems={FlexBoxAlignItems.Center}
@@ -294,8 +359,8 @@ export default function Predictivo() {
             </Button>
           )}
         </FlexBox>
-      </DynamicPageHeader>
-      
+      </div>
+
       <div style={{ padding: "1rem" }}>
         {/* Métricas de rendimiento del modelo */}
         {!selectedProduct && (
@@ -495,13 +560,23 @@ export default function Predictivo() {
                     dataset={chartData}
                     dimensions={[{ accessor: "mes" }]}
                     measures={[
-                      { accessor: "ventas", label: "Ventas Reales" },
-                      { accessor: "prediccion", label: "Predicción", type: "line" }
+                      { 
+                        accessor: "ventas", 
+                        label: "Ventas Reales",
+                        color: "#0070F2"
+                      },
+                      { 
+                        accessor: "prediccion", 
+                        label: "Predicción",
+                        color: "#16B9D4",
+                        type: "dashed"
+                      }
                     ]}
                     chartConfig={{
-                      zoomingTool: true,
-                      legendPosition: "bottom",
-                      legendHorizontalAlign: "center"
+                      legendPosition: "top",
+                      legendHorizontalAlign: "left",
+                      paddingTop: 50,
+                      zoomingTool: false
                     }}
                   />
                 ) : (
@@ -509,13 +584,22 @@ export default function Predictivo() {
                     dataset={chartData}
                     dimensions={[{ accessor: "mes" }]}
                     measures={[
-                      { accessor: "ventas", label: "Ventas Reales" },
-                      { accessor: "prediccion", label: "Predicción" }
+                      { 
+                        accessor: "ventas", 
+                        label: "Ventas Reales",
+                        color: "#0070F2"
+                      },
+                      { 
+                        accessor: "prediccion", 
+                        label: "Predicción",
+                        color: "#16B9D4"
+                      }
                     ]}
                     chartConfig={{
-                      zoomingTool: true,
-                      legendPosition: "bottom",
-                      legendHorizontalAlign: "center"
+                      legendPosition: "top",
+                      legendHorizontalAlign: "left",
+                      paddingTop: 50,
+                      zoomingTool: false
                     }}
                   />
                 )}
@@ -548,6 +632,6 @@ export default function Predictivo() {
           </>
         )}
       </div>
-    </>
+    </div>
   );
 } 
