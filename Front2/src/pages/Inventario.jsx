@@ -36,6 +36,7 @@ import {
   ValueState
 } from "@ui5/webcomponents-react";
 import { useUI5Theme } from "../components/UI5ThemeProvider";
+import { styles } from "../Styles/InventarioStyles";
 
 // Importar íconos necesarios
 import "@ui5/webcomponents-icons/dist/inventory.js";
@@ -265,6 +266,8 @@ export default function Inventario() {
   const [lastUpdateTime, setLastUpdateTime] = useState(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+
   
   // Estadísticas de inventario
   const totalProducts = inventoryData.length;
@@ -304,9 +307,7 @@ export default function Inventario() {
       accessor: "estado",
       width: 130,
       Cell: ({ value }) => {
-        let state;
-        let icon;
-        
+        let state, icon;
         switch (value) {
           case "Agotado":
             state = ValueState.Error;
@@ -316,16 +317,40 @@ export default function Inventario() {
             state = ValueState.Warning;
             //icon = "warning";
             break;
-          case "Disponible":
           default:
             state = ValueState.Success;
             //icon = "message-success";
             break;
         }
-        
-        return <ObjectStatus state={state} icon={icon}>{value}</ObjectStatus>;
+    
+        return (
+          <span
+            style={{
+              display: "block",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+            title={value}
+          >
+            <ObjectStatus
+              state={state}
+             // icon={icon}
+              style={{
+                display: "inline",
+              }}
+            >
+              {value}
+            </ObjectStatus>
+          </span>
+        );
       }
-    },
+    }
+    
+    
+    ,
+    
+    
     {
       Header: "Ubicación",
       accessor: "ubicacion",
@@ -383,45 +408,47 @@ export default function Inventario() {
   // Efecto para simular actualizaciones periódicas
   useEffect(() => {
     const interval = setInterval(() => {
-      // Simular una actualización de datos - por ejemplo, cambiar algunas cantidades
-      const updatedData = inventoryData.map(item => {
-        // 20% de probabilidad de actualizar un elemento
-        if (Math.random() < 0.2) {
-          const randomChange = Math.floor(Math.random() * 3) - 1; // -1, 0, o 1
-          const newQuantity = Math.max(0, item.cantidad + randomChange);
-          
-          // Actualizar el estado basado en la nueva cantidad
-          let newStatus = "Disponible";
-          if (newQuantity === 0) {
-            newStatus = "Agotado";
-          } else if (newQuantity <= 5) {
-            newStatus = "Bajo stock";
+      setInventoryData(prevData => {
+        const updatedData = prevData.map(item => {
+          if (Math.random() < 0.2) {
+            const randomChange = Math.floor(Math.random() * 3) - 1;
+            const newQuantity = Math.max(0, item.cantidad + randomChange);
+            
+            let newStatus = "Disponible";
+            if (newQuantity === 0) newStatus = "Agotado";
+            else if (newQuantity <= 5) newStatus = "Bajo stock";
+            
+            if (item.estado !== newStatus) {
+              // Esta función ahora sí se ejecutará correctamente
+              addNotification(item.producto, newStatus);
+            }
+  
+            return {
+              ...item,
+              cantidad: newQuantity,
+              estado: newStatus,
+              ultimaActualizacion: new Date()
+            };
           }
-          
-          return {
-            ...item,
-            cantidad: newQuantity,
-            estado: newStatus,
-            ultimaActualizacion: new Date()
-          };
-        }
-        return item;
+          return item;
+        });
+  
+        setLastUpdateTime(new Date());
+        applyFilters(updatedData);
+        setToastMessage("Inventario actualizado automáticamente");
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+  
+        return updatedData;
       });
-      
-      setInventoryData(updatedData);
-      setLastUpdateTime(new Date());
-      
-      // Mostrar notificación de actualización
-      setToastMessage("Inventario actualizado automáticamente");
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
-      
-      // Aplicar filtros actuales a los datos actualizados
-      applyFilters(updatedData);
-    }, 60000); // Actualizar cada minuto
-    
+    }, 60000);
+  
     return () => clearInterval(interval);
-  }, [inventoryData]);
+  }, []);
+  
+  
+  
+
   
   // Aplicar filtros cuando cambian
   useEffect(() => {
@@ -531,19 +558,59 @@ export default function Inventario() {
     setIsDialogOpen(false);
     setSelectedProduct(null);
   };
+
+  const addNotification = (producto, nuevoEstado) => {
+    const id = Date.now();
+    const nuevaNotificacion = {
+      id,
+      mensaje: `${producto} ha cambiado a estado: ${nuevoEstado}`,
+      estado: nuevoEstado
+    };
+  
+    setNotifications(prev => [nuevaNotificacion, ...prev]);
+  
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(notif => notif.id !== id));
+    }, 5000); // Se borra después de 5 segundos
+  };
+  
   
   return (
+    
     <>
+    
+
       <DynamicPageTitle
         header={<Title>Inventario</Title>}
         subHeader={<Text>Gestión y control de inventario de productos</Text>}
+        className={styles.pageHeader}
       />
+
+{notifications.map(notif => (
+  <MessageStrip
+    key={notif.id}
+    design={
+      notif.estado === "Agotado"
+        ? "Negative"
+        : notif.estado === "Bajo stock"
+        ? "Warning"
+        : "Positive"
+    }
+    hideCloseButton={false}
+    style={{ marginBottom: "0.5rem" }}
+  >
+    {notif.mensaje}
+  </MessageStrip>
+))}
+
       
-      <DynamicPageHeader>
+      <DynamicPageHeader className={styles.pageHeader}>
         <FlexBox 
           justifyContent={FlexBoxJustifyContent.SpaceBetween}
           alignItems={FlexBoxAlignItems.Center}
           wrap={FlexBoxWrap.Wrap}
+          style={{ marginTop: "0.5rem", marginBottom: "1.5rem" }}
+
         >
           <Text>
             Última actualización: {lastUpdateTime.toLocaleString()}
@@ -576,70 +643,62 @@ export default function Inventario() {
           </FlexBox>
         </FlexBox>
       </DynamicPageHeader>
+
       
-      <div style={{ padding: "1rem" }}>
+
+      
+      <div className={styles.pageContainer}>
         {/* Estadísticas de inventario */}
-        <Grid defaultSpan="XL3 L3 M6 S12" style={{ marginBottom: "1rem" }}>
-          <Card>
-            <CardHeader
-              titleText="Total de Productos"
-              avatar={<Icon name="inventory" />}
-            />
-            <div style={{ padding: "1rem", textAlign: "center" }}>
-              <Title style={{ fontSize: "2rem" }}>
-                {totalProducts}
-              </Title>
-              <Text>
-                Productos en el inventario
-              </Text>
-            </div>
-          </Card>
-          
-          <Card>
-            <CardHeader
-              titleText="Stock Total"
-              avatar={<Icon name="shipping-status" />}
-            />
-            <div style={{ padding: "1rem", textAlign: "center" }}>
-              <Title style={{ fontSize: "2rem" }}>
-                {totalStock}
-              </Title>
-              <Text>
-                Unidades en total
-              </Text>
-            </div>
-          </Card>
-          
-          <Card>
-            <CardHeader
-              titleText="Bajo Stock"
-              avatar={<Icon name="warning" />}
-            />
-            <div style={{ padding: "1rem", textAlign: "center" }}>
-              <Title style={{ fontSize: "2rem", color: "var(--sapWarningColor)" }}>
-                {lowStockProducts}
-              </Title>
-              <Text>
-                Productos con bajo stock
-              </Text>
-            </div>
-          </Card>
-          
-          <Card>
-            <CardHeader
-              titleText="Agotados"
-              avatar={<Icon name="alert" />}
-            />
-            <div style={{ padding: "1rem", textAlign: "center" }}>
-              <Title style={{ fontSize: "2rem", color: "var(--sapErrorColor)" }}>
-                {outOfStockProducts}
-              </Title>
-              <Text>
-                Productos sin stock
-              </Text>
-            </div>
-          </Card>
-        </Grid>
+        <Grid defaultSpan="XL3 L3 M6 S12" className={styles.statCard}>
+        <Card style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+  <CardHeader titleText="Total de Productos" avatar={<Icon name="inventory" />} />
+  <div
+    className={styles.statInfo}
+    style={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center" }}
+  >
+    <Title className={styles.statValue}>{totalProducts}</Title>
+    <Text className={styles.statLabel}>Productos en el inventario</Text>
+  </div>
+</Card>
+
+
+<Card style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+  <CardHeader titleText="Stock Total" avatar={<Icon name="shipping-status" />} />
+  <div
+    className={styles.statInfo}
+    style={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center" }}
+  >
+    <Title className={styles.statValue}>{totalStock}</Title>
+    <Text className={styles.statLabel}>Unidades en total</Text>
+  </div>
+</Card>
+
+
+<Card style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+  <CardHeader titleText="Bajo Stock" avatar={<Icon name="warning" />} />
+  <div
+    className={styles.statInfo}
+    style={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center" }}
+  >
+    <Title className={styles.statValue} style={{ color: "var(--sapWarningColor)" }}>{lowStockProducts}</Title>
+    <Text className={styles.statLabel}>Productos con bajo stock</Text>
+  </div>
+</Card>
+
+
+<Card style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+  <CardHeader titleText="Agotados" avatar={<Icon name="alert" />} />
+  <div
+    className={styles.statInfo}
+    style={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center" }}
+  >
+    <Title className={styles.statValue} style={{ color: "var(--sapErrorColor)" }}>{outOfStockProducts}</Title>
+    <Text className={styles.statLabel}>Productos sin stock</Text>
+  </div>
+</Card>
+</Grid>
+
+
         
         {/* Filtros */}
         <FilterBar 
@@ -647,7 +706,7 @@ export default function Inventario() {
           showRestoreButton
           showClearButton
           onClear={handleClearFilters}
-          style={{ marginBottom: "1rem" }}
+          className={styles.filterBar}
         >
           <FilterGroupItem label="Búsqueda">
             <Input 
@@ -655,6 +714,7 @@ export default function Inventario() {
               value={searchQuery}
               onChange={handleSearch}
               icon="search"
+              className={styles.inputFullWidth}
             />
           </FilterGroupItem>
           
@@ -698,13 +758,13 @@ export default function Inventario() {
             direction={FlexBoxDirection.Column}
             justifyContent={FlexBoxJustifyContent.Center}
             alignItems={FlexBoxAlignItems.Center}
-            style={{ height: "400px" }}
+            className={styles.tableWrapper}
           >
             <BusyIndicator size="Large" />
             <Text style={{ marginTop: "1rem" }}>Cargando datos de inventario...</Text>
           </FlexBox>
         ) : (
-          <Card>
+          <Card className={styles.tableWrapper}>
             <AnalyticalTable
               data={filteredData}
               columns={columns}
@@ -726,7 +786,7 @@ export default function Inventario() {
                   }
                 />
               }
-              scaleWidthMode="Grow"
+              scaleWidthMode="Smart"
               selectionMode="SingleSelect"
               withRowHighlight
               sortable
@@ -738,7 +798,7 @@ export default function Inventario() {
         
         {/* Toast para notificaciones */}
         {showToast && (
-          <Toast duration={3000}>
+          <Toast duration={3000} className={styles.toastContent}>
             <FlexBox alignItems={FlexBoxAlignItems.Center}>
               <Icon name="synchronize" style={{ marginRight: '0.5rem' }} />
               <Text>{toastMessage}</Text>
@@ -752,6 +812,7 @@ export default function Inventario() {
             headerText="Editar Producto"
             open={isDialogOpen}
             onAfterClose={handleCloseDialog}
+            className={styles.dialogContent}
             footer={
               <Bar 
                 design={BarDesign.Footer}
@@ -764,7 +825,7 @@ export default function Inventario() {
               />
             }
           >
-            <div style={{ padding: "1rem", width: "500px" }}>
+            <div className={styles.formColumn}>
               <FlexBox direction={FlexBoxDirection.Column} style={{ gap: "1rem" }}>
                 <Label required>Producto</Label>
                 <Input value={selectedProduct.producto} />
@@ -802,4 +863,4 @@ export default function Inventario() {
       </div>
     </>
   );
-} 
+}
