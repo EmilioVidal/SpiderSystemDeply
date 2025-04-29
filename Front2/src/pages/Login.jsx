@@ -150,13 +150,6 @@ export default function Login() {
     boxShadow: "0 4px 6px rgba(66, 153, 225, 0.2)",
   };
 
-  const forgotPasswordStyle = {
-    textAlign: "right",
-    marginTop: "-0.5rem",
-    marginBottom: "1.5rem",
-    width: "100%",
-    display: "block",
-  };
 
   const createAccountStyle = {
     display: "flex",
@@ -277,10 +270,6 @@ export default function Login() {
                 style={inputStyle}
               />
             </div>
-            
-            <Link style={forgotPasswordStyle}>
-              ¿Olvidaste tu contraseña?
-            </Link>
             
             <Button 
               design="Emphasized"
