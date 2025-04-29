@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix Back\" \"npm run dev --prefix Front2\""
+  },
+  "dependencies": {
+    "@sap/hana-client": "^2.24.24"
+  }
+}

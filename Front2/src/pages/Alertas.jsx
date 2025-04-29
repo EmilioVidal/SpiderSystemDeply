@@ -134,6 +134,7 @@ export default function Alertas() {
   
   // Generar alertas basadas en datos
   useEffect(() => {
+    console.log(localStorage.getItem("token"))
     const generateAlerts = () => {
       setIsLoading(true);
       
