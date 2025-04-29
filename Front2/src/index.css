@@ -20,4 +20,53 @@ body {
 
 html, body, #root {
   height: 100%;
+}
+
+/* Estilos para eliminar el overlay de UI5 */
+ui5-static-area-item[ui5-static-area-item],
+[ui5-static-area-item],
+.ui5-block-layer,
+.ui5-popup-root,
+[ui5-popup-root],
+[data-sap-ui-integration-popup-content] {
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+ui5-static-area-item::before,
+ui5-static-area-item::after,
+.ui5-block-layer::before,
+.ui5-block-layer::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+}
+
+ui5-dialog::part(footer),
+ui5-dialog::part(content),
+ui5-dialog::part(header) {
+  background-color: var(--sapBackgroundColor) !important;
+}
+
+/* Asegurarse que el diálogo mantenga su estilo */
+ui5-dialog {
+  box-shadow: var(--sapContent_Shadow2) !important;
+  border-radius: 0.5rem !important;
+}
+
+/* Estilos específicos para diálogos sin overlay */
+.no-overlay-dialog::part(root),
+.no-overlay-dialog::part(content),
+.no-overlay-dialog::part(footer),
+.no-overlay-dialog::part(header) {
+  background: var(--sapBackgroundColor) !important;
+}
+
+.no-overlay-dialog + ui5-static-area-item .ui5-block-layer,
+.no-overlay-dialog ~ ui5-static-area-item .ui5-block-layer {
+  display: none !important;
+  background: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 } 
