@@ -5,6 +5,10 @@ const app = express();
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'spidersystemdeply-production.up.railway.app';
 
+
+app.get('/health', (_req, res) => res.json({ status: 'ok' }));
+
+
 app.use(cors({ origin: FRONTEND_URL }));
 app.use(express.json());
 
