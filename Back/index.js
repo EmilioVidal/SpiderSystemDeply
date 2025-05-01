@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
-const FRONTEND_URL = process.env.FRONTEND_URL || 'spidersystemdeply-production.up.railway.app';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://spidersystemdeply-production.up.railway.app';
 
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
