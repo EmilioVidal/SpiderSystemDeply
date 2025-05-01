@@ -43,6 +43,9 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
+  // base URL desde env
+  const API_BASE = import.meta.env.VITE_API_URL;
+  
   // Determinar qué logo usar según el modo
   const logoToUse = isDarkMode ? LOGO_DARK : LOGO_LIGHT;
 
@@ -56,7 +59,7 @@ export default function Login() {
     }
   
     try {
-      const res = await fetch("/api/login", {
+      const res = await fetch(`${API_BASE}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
