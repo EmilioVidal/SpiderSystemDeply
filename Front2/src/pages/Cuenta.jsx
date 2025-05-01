@@ -37,7 +37,7 @@ const Cuenta = () => {
   const handleLogout = () => {
     // Aquí podrías agregar lógica para cerrar la sesión si es necesario
     // Por ahora, simplemente navegamos a la página de login
-    navigate('/login');
+    navigate('/');
   };
 
   return (
