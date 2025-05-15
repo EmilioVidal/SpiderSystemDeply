@@ -1,42 +1,56 @@
-name: CI
+name: CI Monorepo
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
-  build:
+  frontend:
+    name: Frontend CI
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Front2
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
-        with:
-          node-version: '18.x'
+        with: { node-version: '18.x' }
 
-      - name: Install dependencies
+      - name: Install deps
         run: npm install
 
       - name: Run tests
         run: npm test
 
-      - name: Lint code
-        run: npm run lint
+      - name: Lint & Build
+        run: |
+          npm run lint
+          npm run build
 
-      # Este paso levanta tu app (por ejemplo para validar que arranca),
-      # pero aunque falle, la job NO fallará gracias a continue-on-error.
-      - name: Start app for smoke test
-        run: npm start &
-        continue-on-error: true
+  backend:
+    name: Backend CI
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Back
+    steps:
+      - uses: actions/checkout@v3
 
-      # Paso "deploy" simulado: no hace push a Vercel/Railway,
-      # solo emite un status check.
-      - name: Deploy (placeholder)
-        run: echo "✅ Deploy placeholder – CI está listo para Vercel/Railway"
-        continue-on-error: true
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with: { node-version: '18.x' }
+
+      - name: Install deps
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Lint & Build
+        run: |
+          npm run lint
+          npm run build
