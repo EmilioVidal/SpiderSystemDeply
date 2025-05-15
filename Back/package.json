@@ -5,6 +5,7 @@
     "scripts": {
         "dev": "nodemon index.js",
         "start": "node index.js",
+        "lint": "eslint . --ext .js",
         "test": "echo \"No tests yet — OK\" && exit 0"
     },
     "keywords": [],
@@ -21,6 +22,8 @@
         "jsonwebtoken": "^9.0.2"
     },
     "devDependencies": {
+        "eslint": "^9.26.0",
+        "globals": "^16.1.0",
         "nodemon": "^3.1.9"
     }
 }
